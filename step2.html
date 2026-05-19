@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>K Auction 회원가입 – 2단계</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; font-size:16px; color:#252525; background:#fff; -webkit-font-smoothing:antialiased; }
+    input  { outline:none; -webkit-appearance:none; font-family:inherit; font-size:inherit; border:none; background:none; padding:0; margin:0; }
+    input::placeholder { color:#868686; }
+    button { font-family:inherit; cursor:pointer; background:none; border:none; padding:0; margin:0; }
+    select { font-family:inherit; font-size:inherit; outline:none; -webkit-appearance:none; appearance:none; }
+    img    { display:block; }
+
+    /* ── PC Layout ── */
+    #layout { display: flex; min-height: 100svh; }
+    #left-panel {
+      width: 440px; flex-shrink: 0;
+      position: sticky; top: 0; height: 100svh;
+      display: none; overflow: hidden; background: #1a1a1a;
+    }
+    #left-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    #left-tagline {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+      height: 256px; padding: 116px 40px 80px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+      display: flex; align-items: flex-end;
+    }
+    #left-tagline p { font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -0.192px; line-height: 32px; margin: 0; }
+    #right-content { flex: 1; display: flex; justify-content: center; }
+    #pc-footer { display: none; border-top: 1px solid #EAEAEA; padding: 16px 20px; background: #fff; }
+    #pc-footer-inner { display: flex; align-items: center; justify-content: space-between; }
+    #pc-footer .copy  { font-size: 12px; color: #868686; letter-spacing: -0.096px; }
+    #pc-footer .links { display: flex; align-items: center; }
+    #pc-footer .flink { font-size: 12px; color: #868686; letter-spacing: -0.096px; }
+    #pc-footer .fsep  { margin: 0 8px; font-size: 12px; color: #D7D7D7; }
+    @media (min-width: 1024px) {
+      #left-panel { display: block; }
+      #pc-footer  { display: block; }
+      #toast-wrap { left: 440px; }
+      #email-dropdown { position: fixed; }
+      .overlay { left: 440px; }
+    }
+    /* ── App ── */
+    #app { display:flex; flex-direction:column; min-height:100svh; width:100%; max-width:560px; background:#fff; }
+
+    /* ── Header ── */
+    .header { display:flex; align-items:center; height:56px; padding:0 20px; background:#fff; position:sticky; top:0; z-index:10; }
+    .header__back { width:24px; height:24px; display:flex; align-items:center; justify-content:center; margin-right:4px; flex-shrink:0; }
+    .header__title { flex:1; text-align:center; font-size:16px; font-weight:600; letter-spacing:-0.128px; }
+    .header__lang  { font-size:14px; font-weight:500; letter-spacing:-0.112px; border-bottom:1.5px solid #252525; padding-bottom:2px; line-height:1; }
+
+    /* ── Step Indicator ── */
+    .step-indicator { display:flex; gap:6px; padding:0 20px; background:#fff; }
+    .step-bar-wrap  { flex:1; height:10px; display:flex; align-items:center; background:none; border:none; cursor:pointer; padding:0; }
+    .step-bar-track { width:100%; height:3px; border-radius:500px; background:#EAEAEA; position:relative; overflow:hidden; }
+    .step-bar-fill  { position:absolute; inset:0; background:#F76E33; border-radius:500px; transform-origin:left center; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+    /* ── Title ── */
+    .page-title {
+      padding: 32px 20px 20px;
+      font-size:24px; font-weight:600; color:#252525;
+      letter-spacing:-0.192px; line-height:32px; margin:0;
+      white-space:pre-line;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-out { opacity:0; transform:translateY(4px); }
+
+    /* ── Content ── */
+    .flex-1 { flex:1; display:flex; flex-direction:column; }
+
+    /* ── Section reveal (grid trick) ── */
+    .section-reveal { display:grid; grid-template-rows:0fr; transition:grid-template-rows 0.38s ease-in-out; }
+    .section-reveal.open { grid-template-rows:1fr; }
+    .section-reveal-inner { min-height:0; overflow:hidden; }
+
+    /* ── Section label ── */
+    .sec-label { font-size:14px; font-weight:600; letter-spacing:-0.112px; margin:0 0 10px; }
+
+    /* ── Field wrap ── */
+    .field-wrap { border:1px solid #D7D7D7; border-radius:4px; background:#fff; transition:border-color 0.1s; }
+    .field-wrap:hover:not(.disabled) { border-color:#A3A3A3; }
+    .field-wrap:focus-within:not(.disabled) { border-color:#252525; }
+    .field-wrap.error { border-color:#E51B27 !important; }
+    .field-wrap.disabled { background:#F9F9F9; border-color:#D7D7D7 !important; cursor:default; pointer-events:none; }
+    .field-row { height:52px; display:flex; align-items:center; padding:0 16px; gap:8px; }
+    .field-row input { flex:1; font-size:16px; color:#252525; letter-spacing:-0.128px; min-width:0; }
+
+    /* ── Icons ── */
+    .icon-btn       { flex-shrink:0; display:flex; align-items:center; justify-content:center; width:20px; height:20px; cursor:pointer; }
+    .enter-icon-wrap { flex-shrink:0; display:flex; align-items:center; justify-content:center; width:20px; height:20px; }
+    .show-hide-btn   { flex-shrink:0; padding:4px; display:flex; align-items:center; justify-content:center; }
+
+    /* ── Hint / error ── */
+    .hint-row { display:flex; align-items:center; gap:6px; margin-top:10px; }
+    .hint-text { font-size:13px; letter-spacing:-0.104px; line-height:19px; }
+    .err-text  { font-size:13px; color:#E51B27; margin:10px 0 0; letter-spacing:-0.104px; }
+    .suc-text  { font-size:13px; color:#31A427; margin:10px 0 0; letter-spacing:-0.104px; }
+    .c-gray   { color:#868686; }
+    .c-error  { color:#E51B27; }
+    .c-success { color:#31A427; }
+
+    /* ── Inner small button ── */
+    .inner-btn {
+      display:flex; height:32px; padding:0 12px; align-items:center; justify-content:center;
+      border-radius:4px; border:1px solid #C1C1C1; background:#fff;
+      color:#252525; font-size:14px; font-weight:500; letter-spacing:-0.112px; flex-shrink:0; white-space:nowrap;
+    }
+    .inner-btn:hover { background:#F3F3F3; }
+
+    /* ── Success mark ── */
+    .success-mark { flex-shrink:0; display:flex; }
+
+    /* ── Sticky CTA button ── */
+    .inline-btn-wrap {
+      position:sticky; bottom:0; padding:0 20px;
+      background:transparent;
+      transition:background 0.1s;
+    }
+    .inline-btn-wrap.sticky { background:#fff; padding-top:10px; padding-bottom:10px; }
+    .btn-main {
+      display:flex; height:52px; padding:0 16px; align-items:center; justify-content:center; gap:6px;
+      width:100%; border-radius:6px; background:#252525; color:#fff; border:none;
+      font-size:16px; font-weight:700; letter-spacing:-0.128px;
+      cursor:pointer; transition:background 0.15s;
+    }
+    .btn-main:hover:not(:disabled) { background:#4E4E4E; }
+    .btn-main:disabled { background:#C1C1C1; border:1px solid #C1C1C1; cursor:default; }
+
+    /* ── Address ── */
+    .addr-clickable { cursor:pointer; }
+
+    /* ── Bottom sheet ── */
+    .overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      z-index:200; display:flex; align-items:flex-end; justify-content:center;
+    }
+    .bottom-sheet {
+      width:100%; max-width:560px; background:#fff;
+      border-radius:20px 20px 0 0;
+      box-shadow:0px -2px 5px rgba(0,0,0,0.16);
+      padding-bottom:env(safe-area-inset-bottom,16px);
+    }
+    @media(min-width:768px){
+      .overlay { align-items:center; padding:0 20px; }
+      .bottom-sheet { max-width:440px; border-radius:8px; border:1px solid #EAEAEA; box-shadow:0 2px 10px rgba(0,0,0,0.08); padding-bottom:0; }
+    }
+    .sheet-close { display:flex; justify-content:flex-end; padding:16px 20px 0; }
+    .sheet-title { padding:0 20px 24px; font-size:20px; font-weight:600; letter-spacing:-0.1px; line-height:28px; white-space:pre-line; margin:0; }
+    .sheet-sub   { font-size:14px; color:#868686; margin:8px 20px 24px; line-height:22px; letter-spacing:-0.112px; }
+    .sheet-btns  { display:flex; gap:8px; padding:10px 20px; }
+    @media(min-width:768px){ .sheet-btns { padding:20px; } }
+    .sheet-btn-cancel {
+      flex:1; height:52px; display:flex; align-items:center; justify-content:center;
+      border-radius:6px; background:#EAEAEA; border:none;
+      color:#4E4E4E; font-size:16px; font-weight:700; letter-spacing:-0.128px; cursor:pointer;
+    }
+    .sheet-btn-cancel:hover { background:#D7D7D7; }
+    .sheet-btn-confirm {
+      flex:1; height:52px; display:flex; align-items:center; justify-content:center;
+      border-radius:6px; background:#252525; border:none;
+      color:#fff; font-size:16px; font-weight:700; letter-spacing:-0.128px; cursor:pointer;
+    }
+    .sheet-btn-confirm:hover { background:#4E4E4E; }
+
+    /* ── Email dropdown ── */
+    #email-dropdown {
+      position:fixed; z-index:200; background:#fff; border:1px solid #D7D7D7;
+      border-radius:4px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1); display:none;
+    }
+    .email-option {
+      width:100%; text-align:left; padding:0 16px; height:48px;
+      display:flex; align-items:center; font-size:15px; color:#252525; letter-spacing:-0.12px;
+      border-bottom:1px solid #EAEAEA; cursor:pointer; background:none; border-left:none; border-right:none;
+      font-family:inherit;
+    }
+    .email-option:last-child { border-bottom:none; }
+    .email-option:hover, .email-option.active { background:#F3F3F3; }
+
+    /* ── Animations ── */
+    @keyframes slideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+    .section-new  { animation:slideUp 0.4s ease-out 0.3s both; }
+    .section-fade { animation:fadeIn 0.32s ease-out 0.35s both; }
+
+    @keyframes toastSlideUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes toastSlideDown { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(16px)} }
+    .toast-enter { animation:toastSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    .toast-leave { animation:toastSlideDown 0.3s ease-in forwards; }
+
+    /* ── Footer ── */
+    .footer {
+      border-top:1px solid #EAEAEA; padding:12px 20px;
+      display:flex; flex-direction:column; align-items:center; gap:6px; margin-top:auto;
+    }
+    .footer__copy  { font-size:12px; color:#868686; letter-spacing:-0.096px; line-height:18px; text-align:center; }
+    .footer__links { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; }
+    .footer__link  { font-size:12px; color:#868686; letter-spacing:-0.096px; line-height:18px; }
+    .footer__sep   { width:1px; height:12px; background:#D7D7D7; display:inline-block; }
+
+    /* ── Toast ── */
+    #toast-wrap {
+      position:fixed; bottom:32px; left:0; right:0;
+      display:flex; justify-content:center; z-index:50; padding:0 20px;
+      pointer-events:none;
+    }
+    .toast {
+      max-width:35rem; width:100%; padding:13px 20px;
+      display:flex; justify-content:center; align-items:center;
+      border-radius:500px; background:rgba(106,106,106,0.9);
+      color:#fff; font-size:15px; font-weight:600; line-height:20px; letter-spacing:-0.06px;
+    }
+
+    .hidden { display:none !important; }
+    .spacer-68 { height:68px; }
+  </style>
+</head>
+<body>
+<div id="layout">
+
+<div id="left-panel">
+  <img src="../src/assets/images/banner.jpg" alt="auction artwork"/>
+  <div id="left-tagline">
+    <div><p>작품을 사고 팔 땐,</p><p>미술품 경매 회사 케이옥션</p></div>
+  </div>
+</div>
+
+<div id="right-content">
+<div id="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <button class="header__back" onclick="history.back()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M10.5 3.5L2 12L10.5 20.5" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <span class="header__title">케이옥션 회원가입</span>
+    <button class="header__lang">EN</button>
+  </header>
+
+  <!-- ── Step Indicator ── -->
+  <div class="step-indicator">
+    <button class="step-bar-wrap" onclick="App.clickStep(1)">
+      <div class="step-bar-track"><div class="step-bar-fill" id="bar1" style="transform:scaleX(1)"></div></div>
+    </button>
+    <button class="step-bar-wrap" onclick="App.clickStep(2)">
+      <div class="step-bar-track"><div class="step-bar-fill" id="bar2" style="transform:scaleX(0)"></div></div>
+    </button>
+  </div>
+
+  <!-- ── Title ── -->
+  <h1 class="page-title" id="page-title">계정 정보를 입력해 주세요.</h1>
+
+  <!-- ── All sections ── -->
+  <div class="flex-1" id="sections-wrap">
+
+    <!-- [3] 주소 그룹 (phase >= 2) -->
+    <div class="section-reveal" id="addr-section">
+      <div class="section-reveal-inner">
+        <div style="padding:12px 20px;" class="section-fade">
+          <p class="sec-label">주소 <span style="font-weight:400;color:#868686;">(선택)</span></p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <!-- 우편번호 -->
+            <div class="field-wrap addr-clickable" onclick="App.openAddr()" id="zip-wrap">
+              <div class="field-row">
+                <span id="zip-text" style="flex:1;font-size:16px;letter-spacing:-0.128px;color:#868686;">우편번호</span>
+                <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
+              </div>
+            </div>
+            <!-- 도로명 주소 -->
+            <div class="field-wrap addr-clickable" onclick="App.openAddr()">
+              <div class="field-row">
+                <span id="road-text" style="flex:1;font-size:16px;letter-spacing:-0.128px;color:#868686;">도로명 주소</span>
+              </div>
+            </div>
+            <!-- 상세 주소 -->
+            <div class="field-wrap" id="detail-wrap">
+              <div class="field-row" style="padding:0 16px;gap:8px;">
+                <input type="text" id="detail-input" placeholder="상세 주소 입력"
+                  onfocus="App.onDetailFocus(event)"
+                  onblur="App.onDetailBlur()"
+                  oninput="App.onDetailInput(this)"
+                  onkeydown="App.onDetailKeyDown(event)"
+                  style="flex:1;font-size:16px;color:#252525;letter-spacing:-0.128px;"/>
+                <div id="detail-enter" class="enter-icon-wrap hidden">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- addr CTA -->
+    <div class="inline-btn-wrap section-fade hidden" id="btn-addr-wrap" style="padding-top:28px;padding-bottom:28px;">
+      <button class="btn-main" id="btn-addr" onclick="App.handleNext()">가입 완료</button>
+    </div>
+
+    <!-- [2] 인적 사항 그룹 (phase >= 1) -->
+    <div class="section-reveal" id="personal-section">
+      <div class="section-reveal-inner">
+        <div style="padding:12px 20px;" class="section-fade">
+          <div style="display:flex;flex-direction:column;gap:24px;">
+
+            <!-- 이름 -->
+            <div id="field-name">
+              <p class="sec-label">이름</p>
+              <div class="field-wrap" id="name-wrap">
+                <div class="field-row">
+                  <input type="text" id="name-input" placeholder="이름 입력"
+                    oninput="App.onNameInput(this)"
+                    onkeydown="App.onFieldEnter('name',event)"
+                    onfocus="App.setFocus('name')" onblur="App.clearFocus('name')"/>
+                  <div id="name-clear" class="icon-btn hidden" onmousedown="App.clearField('name',event)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  </div>
+                  <div id="name-enter" class="enter-icon-wrap hidden">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+              </div>
+              <p id="name-err" class="err-text hidden"></p>
+            </div>
+
+            <!-- 생년월일 -->
+            <div id="field-birthdate">
+              <p class="sec-label">생년월일</p>
+              <div class="field-wrap" id="birth-wrap">
+                <div class="field-row">
+                  <input type="text" inputmode="numeric" id="birth-input" placeholder="생년월일 8자리 입력" maxlength="10"
+                    oninput="App.onBirthInput(this)"
+                    onkeydown="App.onFieldEnter('birthdate',event)"
+                    onfocus="App.setFocus('birthdate')" onblur="App.clearFocus('birthdate')"/>
+                  <div id="birthdate-clear" class="icon-btn hidden" onmousedown="App.clearField('birthdate',event)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  </div>
+                  <div id="birthdate-enter" class="enter-icon-wrap hidden">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+              </div>
+              <p id="birth-err" class="err-text hidden"></p>
+            </div>
+
+            <!-- 이메일 (이메일 인증이 아닌 경우) -->
+            <div id="field-email">
+              <p class="sec-label">이메일</p>
+              <div class="field-wrap" id="email-wrap">
+                <div class="field-row">
+                  <input type="email" id="email-input" placeholder="이메일 입력"
+                    oninput="App.onEmailInput(this)"
+                    onkeydown="App.onEmailKeyDown(event)"
+                    onfocus="App.setFocus('email')" onblur="App.onEmailBlur(event)"/>
+                  <div id="email-clear" class="icon-btn hidden" onmousedown="App.clearField('email',event)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  </div>
+                  <div id="email-enter" class="enter-icon-wrap hidden">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
+              </div>
+              <p id="email-err" class="err-text hidden"></p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- personal CTA -->
+    <div class="inline-btn-wrap section-new hidden" id="btn-personal-wrap" style="padding-top:28px;padding-bottom:28px;">
+      <button class="btn-main" id="btn-personal" onclick="App.handleNext()" disabled>다음</button>
+    </div>
+
+    <!-- [1] 계정 정보 그룹 (항상 표시) -->
+    <div style="padding:12px 20px;" class="section-new">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- 아이디 -->
+        <div id="field-id">
+          <p class="sec-label">아이디</p>
+          <div class="field-wrap" id="id-wrap">
+            <div class="field-row">
+              <input type="text" id="id-input" placeholder="아이디 입력" maxlength="12"
+                oninput="App.onIdInput(this)"
+                onkeydown="App.onFieldEnter('id',event)"
+                onfocus="App.setFocus('id')" onblur="App.clearFocus('id')"/>
+              <div id="id-clear" class="icon-btn hidden" onmousedown="App.clearField('id',event)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <div id="id-enter" class="enter-icon-wrap hidden">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="hint-row" id="id-hint-row">
+            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" id="id-check-icon">
+              <path d="M1 5L4.5 8.5L11 1" stroke="#868686" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p class="hint-text c-gray" id="id-hint">영문, 숫자 2가지 조합 5자리 이상 12자리 이하</p>
+          </div>
+          <p id="id-err" class="err-text hidden"></p>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div id="field-password">
+          <p class="sec-label">비밀번호</p>
+          <div class="field-wrap" id="pw-wrap">
+            <div class="field-row">
+              <input type="password" id="pw-input" placeholder="비밀번호 입력"
+                oninput="App.onPwInput(this)"
+                onkeydown="App.onFieldEnter('password',event)"
+                onfocus="App.setFocus('password')" onblur="App.clearFocus('password')"/>
+              <div id="pw-clear" class="icon-btn hidden" onmousedown="App.clearField('password',event)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <div id="pw-enter" class="enter-icon-wrap hidden">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <button tabindex="-1" class="show-hide-btn" onclick="App.togglePw()" id="pw-eye">
+                <!-- hide icon (default) -->
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" id="pw-eye-hide">
+                  <path d="M16.949 2.44C17.259 2.13 17.779 2.14 18.079 2.44C18.379 2.74 18.389 3.239 18.099 3.549L3.789 17.86C3.639 18.019 3.439 18.089 3.229 18.089C3.019 18.089 2.819 18.019 2.659 17.86C2.349 17.55 2.349 17.04 2.659 16.73L4.76 14.629C1.943 12.951 1.111 10.366 1.099 10.32C1.049 10.15 1.059 9.98 1.119 9.81C1.139 9.76 3.329 3.969 10.349 3.969C12.019 3.969 13.42 4.299 14.59 4.799L16.949 2.44ZM17.319 6.589C18.969 8.129 19.619 9.81 19.619 9.81C19.679 9.97 19.689 10.15 19.639 10.32C19.616 10.389 17.812 16.049 10.369 16.049C9.529 16.049 8.759 15.979 8.059 15.849L9.5 14.419C9.78 14.439 10.069 14.449 10.369 14.449C15.779 14.449 17.6 11.07 18.01 10.11C17.79 9.65 17.24 8.649 16.21 7.709L17.319 6.589ZM13.8 10.119C13.78 11.989 12.27 13.5 10.4 13.52L13.8 10.119ZM10.35 5.57C5.23 5.57 3.2 9.12 2.73 10.11C3 10.75 3.85 12.389 5.919 13.469L7.48 11.909C7.13 11.379 6.94 10.759 6.94 10.089C6.94 8.189 8.48 6.65 10.37 6.65C11.05 6.65 11.67 6.84 12.2 7.19L13.36 6.03C12.5 5.75 11.5 5.57 10.35 5.57ZM10.37 8.249C9.36 8.249 8.54 9.079 8.54 10.089C8.54 10.319 8.58 10.53 8.66 10.73L11.01 8.379C10.81 8.289 10.6 8.249 10.37 8.249Z" fill="#252525"/>
+                </svg>
+                <!-- show icon -->
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" id="pw-eye-show" style="display:none;">
+                  <path d="M9.971 3.96C16.98 3.96 19.221 9.737 19.242 9.8H19.252C19.312 9.96 19.321 10.14 19.271 10.31C19.251 10.37 17.452 16.04 10.002 16.04C2.552 16.04 0.751 10.37 0.731 10.31C0.681 10.14 0.682 9.96 0.742 9.8C0.767 9.727 2.97 3.96 9.971 3.96ZM9.971 5.56C4.852 5.56 2.821 9.109 2.351 10.1C2.761 11.08 4.562 14.44 9.992 14.44C15.402 14.44 17.222 11.06 17.632 10.1C17.151 9.089 15.091 5.56 9.971 5.56ZM9.991 6.641C11.881 6.641 13.421 8.18 13.421 10.07C13.421 11.96 11.881 13.5 9.991 13.5C8.101 13.5 6.56 11.96 6.56 10.07C6.56 8.18 8.101 6.641 9.991 6.641ZM9.991 8.25C8.981 8.25 8.161 9.07 8.161 10.08C8.161 11.09 8.981 11.91 9.991 11.91C11.001 11.91 11.82 11.09 11.82 10.08C11.82 9.07 11.001 8.25 9.991 8.25Z" fill="#252525"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="hint-row">
+            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" id="pw-check-icon"><path d="M1 5L4.5 8.5L11 1" stroke="#868686" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="hint-text c-gray" id="pw-hint">숫자 2자리 이상</p>
+          </div>
+          <p id="pw-err" class="err-text hidden"></p>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div id="field-confirmPw">
+          <p class="sec-label">비밀번호 확인</p>
+          <div class="field-wrap" id="cpw-wrap">
+            <div class="field-row">
+              <input type="password" id="cpw-input" placeholder="비밀번호 재입력"
+                oninput="App.onCpwInput(this)"
+                onkeydown="App.onFieldEnter('confirmPw',event)"
+                onfocus="App.setFocus('confirmPw')" onblur="App.clearFocus('confirmPw')"/>
+              <div id="confirmPw-clear" class="icon-btn hidden" onmousedown="App.clearField('confirmPw',event)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <div id="confirmPw-enter" class="enter-icon-wrap hidden">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <button tabindex="-1" class="show-hide-btn" onclick="App.toggleCpw()" id="cpw-eye">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" id="cpw-eye-hide">
+                  <path d="M16.949 2.44C17.259 2.13 17.779 2.14 18.079 2.44C18.379 2.74 18.389 3.239 18.099 3.549L3.789 17.86C3.639 18.019 3.439 18.089 3.229 18.089C3.019 18.089 2.819 18.019 2.659 17.86C2.349 17.55 2.349 17.04 2.659 16.73L4.76 14.629C1.943 12.951 1.111 10.366 1.099 10.32C1.049 10.15 1.059 9.98 1.119 9.81C1.139 9.76 3.329 3.969 10.349 3.969C12.019 3.969 13.42 4.299 14.59 4.799L16.949 2.44ZM17.319 6.589C18.969 8.129 19.619 9.81 19.619 9.81C19.679 9.97 19.689 10.15 19.639 10.32C19.616 10.389 17.812 16.049 10.369 16.049C9.529 16.049 8.759 15.979 8.059 15.849L9.5 14.419C9.78 14.439 10.069 14.449 10.369 14.449C15.779 14.449 17.6 11.07 18.01 10.11C17.79 9.65 17.24 8.649 16.21 7.709L17.319 6.589ZM13.8 10.119C13.78 11.989 12.27 13.5 10.4 13.52L13.8 10.119ZM10.35 5.57C5.23 5.57 3.2 9.12 2.73 10.11C3 10.75 3.85 12.389 5.919 13.469L7.48 11.909C7.13 11.379 6.94 10.759 6.94 10.089C6.94 8.189 8.48 6.65 10.37 6.65C11.05 6.65 11.67 6.84 12.2 7.19L13.36 6.03C12.5 5.75 11.5 5.57 10.35 5.57ZM10.37 8.249C9.36 8.249 8.54 9.079 8.54 10.089C8.54 10.319 8.58 10.53 8.66 10.73L11.01 8.379C10.81 8.289 10.6 8.249 10.37 8.249Z" fill="#252525"/>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" id="cpw-eye-show" style="display:none;">
+                  <path d="M9.971 3.96C16.98 3.96 19.221 9.737 19.242 9.8H19.252C19.312 9.96 19.321 10.14 19.271 10.31C19.251 10.37 17.452 16.04 10.002 16.04C2.552 16.04 0.751 10.37 0.731 10.31C0.681 10.14 0.682 9.96 0.742 9.8C0.767 9.727 2.97 3.96 9.971 3.96ZM9.971 5.56C4.852 5.56 2.821 9.109 2.351 10.1C2.761 11.08 4.562 14.44 9.992 14.44C15.402 14.44 17.222 11.06 17.632 10.1C17.151 9.089 15.091 5.56 9.971 5.56ZM9.991 6.641C11.881 6.641 13.421 8.18 13.421 10.07C13.421 11.96 11.881 13.5 9.991 13.5C8.101 13.5 6.56 11.96 6.56 10.07C6.56 8.18 8.101 6.641 9.991 6.641ZM9.991 8.25C8.981 8.25 8.161 9.07 8.161 10.08C8.161 11.09 8.981 11.91 9.991 11.91C11.001 11.91 11.82 11.09 11.82 10.08C11.82 9.07 11.001 8.25 9.991 8.25Z" fill="#252525"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p id="cpw-msg" class="hidden"></p>
+        </div>
+
+        <!-- 휴대폰 번호 -->
+        <div id="field-phone">
+          <p class="sec-label">휴대폰 번호</p>
+          <div class="field-wrap" id="phone-wrap">
+            <div class="field-row">
+              <input type="tel" id="phone-input" placeholder='"-"를 제외하고 입력' maxlength="13"
+                oninput="App.onPhoneInput(this)"
+                onkeydown="App.onFieldEnter('phone',event)"
+                onfocus="App.setFocus('phone')" onblur="App.clearFocus('phone')"/>
+              <div id="phone-clear" class="icon-btn hidden" onmousedown="App.clearField('phone',event)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <div id="phone-enter" class="enter-icon-wrap hidden">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+          <p id="phone-err" class="err-text hidden"></p>
+        </div>
+
+      </div>
+    </div>
+    <!-- account CTA -->
+    <div class="inline-btn-wrap section-new" id="btn-account-wrap" style="padding-top:28px;padding-bottom:28px;">
+      <button class="btn-main" id="btn-account" onclick="App.handleNext()" disabled>다음</button>
+    </div>
+
+    <div class="spacer-68"></div>
+    <footer class="footer">
+      <p class="footer__copy">© <span class="copy-year"></span> K Auction. All Rights Reserved.</p>
+      <div class="footer__links">
+        <span class="footer__link">경매약관</span><span class="footer__sep"></span>
+        <span class="footer__link">온라인경매약관</span><span class="footer__sep"></span>
+        <span class="footer__link">개인정보처리방침</span><span class="footer__sep"></span>
+        <span class="footer__link">내부정보관리규정</span><span class="footer__sep"></span>
+        <span class="footer__link">윤리경영</span>
+      </div>
+    </footer>
+  </div>
+
+</div><!-- /app -->
+</div><!-- /right-content -->
+</div><!-- /layout -->
+
+<div id="pc-footer">
+  <div id="pc-footer-inner">
+    <span class="copy">© <span class="copy-year"></span> K Auction. All Rights Reserved.</span>
+    <div class="links">
+      <span class="flink">경매약관</span><span class="fsep">|</span>
+      <span class="flink">온라인경매약관</span><span class="fsep">|</span>
+      <span class="flink">개인정보처리방침</span><span class="fsep">|</span>
+      <span class="flink">내부정보관리규정</span><span class="fsep">|</span>
+      <span class="flink">윤리경영</span>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom sheets -->
+<div class="overlay hidden" id="addr-consent-overlay" onclick="App.closeAddrConsent()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-close"><button onclick="App.closeAddrConsent()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <p class="sheet-title">경매 응찰을 위한 '주소'<br>개인정보 수집 · 이용에 동의하시나요?</p>
+    <div class="sheet-btns">
+      <button class="sheet-btn-cancel" onclick="App.addrConsentCancel()">비동의</button>
+      <button class="sheet-btn-confirm" onclick="App.addrConsentConfirm()">동의</button>
+    </div>
+  </div>
+</div>
+<div class="overlay hidden" id="skip-overlay" onclick="App.closeSkip()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-close"><button onclick="App.closeSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <p class="sheet-title">주소 정보를 입력하지 않고 가입하시겠어요?</p>
+    <p class="sheet-sub">경매 응찰을 원하신다면 주소 정보가 필요합니다.</p>
+    <div class="sheet-btns">
+      <button class="sheet-btn-cancel" onclick="App.skipCancel()">주소 입력하기</button>
+      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">가입 완료하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- Email dropdown -->
+<div id="email-dropdown"></div>
+
+<!-- Toast -->
+<div id="toast-wrap" style="display:none;">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<script>
+const App = (() => {
+  const $ = (id) => document.getElementById(id)
+  const show = (id) => { const el=$(id); if(el){el.classList.remove('hidden');el.style.display='';} }
+  const hide = (id) => { const el=$(id); if(el){el.classList.add('hidden');} }
+
+  /* ── State ── */
+  let form = { id:'', password:'', confirmPw:'', phone:'', name:'', birthdate:'', email:'', zip:'', address:'', detail:'' }
+  let err  = {}
+  let focusedField = null
+  let phase = 'account'   // 'account' | 'personal' | 'address'
+  let showPw = false, showCPw = false
+  let addrConsentGranted = false
+  let pendingAddrAction  = null
+  let skipShown = false
+  let emailSuggestions = [], emailSugIdx = -1
+
+  const EMAIL_DOMAINS = ['@naver.com','@daum.com','@gmail.com','@outlook.com','@hotmail.com','@icloud.com']
+
+  /* ── Toast ── */
+  let toastT1, toastT2
+  function showToast(msg) {
+    const wrap=$('toast-wrap'), el=$('toast-msg')
+    el.textContent=msg; el.className='toast toast-enter'; wrap.style.display='flex'
+    clearTimeout(toastT1); clearTimeout(toastT2)
+    toastT1=setTimeout(()=>{el.className='toast toast-leave'},2700)
+    toastT2=setTimeout(()=>{wrap.style.display='none'},3100)
+  }
+
+  /* ── Validations ── */
+  const isIdValid  = (v) => /^[a-zA-Z0-9]{5,12}$/.test(v)
+  const isPwValid  = (v) => (v.match(/[0-9]/g)||[]).length >= 2
+  const isEmailV   = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  const isPhoneV   = (v) => v.startsWith('010') && v.replace(/[^0-9]/g,'').length === 11
+
+  const accountValid = () =>
+    isIdValid(form.id) && isPwValid(form.password) &&
+    form.password === form.confirmPw && isPhoneV(form.phone)
+  const personalValid = () =>
+    form.name.trim() !== '' && form.birthdate.length >= 8 && isEmailV(form.email)
+
+  /* ── Step bar ── */
+  function updateStepBar() {
+    const map = { account: 1/3, personal: 2/3, address: 1 }
+    $('bar2').style.transform = `scaleX(${map[phase]||1/3})`
+  }
+
+  /* ── Title dissolve ── */
+  const TITLES = { account:'계정 정보를 입력해 주세요.', personal:'인적 사항을 입력해 주세요.', address:'경매 응찰을 원하신다면\n주소 정보를 입력해 주세요.' }
+  function updateTitle() {
+    const el = $('page-title')
+    el.classList.add('fade-out')
+    setTimeout(() => { el.textContent = TITLES[phase]; el.classList.remove('fade-out') }, 300)
+  }
+
+  /* ── CTA button state ── */
+  function updateBtn() {
+    if (phase === 'account') {
+      const ok = accountValid()
+      const btn = $('btn-account'); btn.disabled = !ok
+    } else if (phase === 'personal') {
+      const ok = personalValid()
+      const btn = $('btn-personal'); btn.disabled = !ok
+    }
+  }
+
+  /* ── Focus / icon helpers ── */
+  function setFocus(field) {
+    focusedField = field
+    updateClearEnter(field)
+  }
+  function clearFocus(field) {
+    focusedField = null
+    hide(field+'-clear'); hide(field+'-enter')
+    if (field === 'email') setTimeout(()=>{ emailSuggestions=[]; renderEmailDrop() }, 150)
+  }
+  function updateClearEnter(field) {
+    const val = form[field] || ''
+    val ? show(field+'-clear') : hide(field+'-clear')
+    show(field+'-enter')
+  }
+  function clearField(field, e) {
+    if (e) e.preventDefault()
+    form[field] = ''
+    const input = $(field === 'id' ? 'id-input' : field === 'password' ? 'pw-input' : field === 'confirmPw' ? 'cpw-input' : field+'-input')
+    if (input) input.value = ''
+    hide(field+'-clear')
+    if (field === 'email') { emailSuggestions=[]; renderEmailDrop() }
+    updateBtn()
+    if (field === 'id')        updateIdHint()
+    if (field === 'password')  updatePwHint()
+    if (field === 'confirmPw') updateCpwMsg()
+  }
+
+  /* ── ID ── */
+  function onIdInput(el) {
+    form.id = el.value
+    focusedField==='id' ? (form.id?show('id-clear'):hide('id-clear')) : null
+    updateIdHint(); updateBtn()
+  }
+  function updateIdHint() {
+    const v = form.id, ok = isIdValid(v)
+    const icon = $('id-check-icon'), hint = $('id-hint')
+    const color = ok ? '#31A427' : (v ? '#E51B27' : '#868686')
+    icon.querySelector('path').setAttribute('stroke', color)
+    hint.className = 'hint-text ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
+  }
+
+  /* ── Password ── */
+  function onPwInput(el) {
+    form.password = el.value
+    focusedField==='password' ? (form.password?show('pw-clear'):hide('pw-clear')) : null
+    updatePwHint(); updateCpwMsg(); updateBtn()
+  }
+  function togglePw() {
+    showPw = !showPw
+    $('pw-input').type = showPw ? 'text' : 'password'
+    $('pw-eye-hide').style.display = showPw ? 'none' : ''
+    $('pw-eye-show').style.display = showPw ? '' : 'none'
+  }
+  function updatePwHint() {
+    const v = form.password, ok = isPwValid(v)
+    const icon = $('pw-check-icon'), hint = $('pw-hint')
+    const color = ok ? '#31A427' : (v ? '#E51B27' : '#868686')
+    icon.querySelector('path').setAttribute('stroke', color)
+    hint.className = 'hint-text ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
+  }
+
+  /* ── Confirm PW ── */
+  function onCpwInput(el) {
+    form.confirmPw = el.value
+    focusedField==='confirmPw' ? (form.confirmPw?show('confirmPw-clear'):hide('confirmPw-clear')) : null
+    updateCpwMsg(); updateBtn()
+  }
+  function toggleCpw() {
+    showCPw = !showCPw
+    $('cpw-input').type = showCPw ? 'text' : 'password'
+    $('cpw-eye-hide').style.display = showCPw ? 'none' : ''
+    $('cpw-eye-show').style.display = showCPw ? '' : 'none'
+  }
+  function updateCpwMsg() {
+    const msg = $('cpw-msg')
+    if (!form.confirmPw) { msg.className = 'hidden'; return }
+    const match = form.confirmPw === form.password
+    msg.textContent  = match ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'
+    msg.className    = match ? 'suc-text' : 'err-text'
+  }
+
+  /* ── Phone ── */
+  function onPhoneInput(el) {
+    form.phone = el.value.replace(/[^0-9]/g,'').slice(0,11)
+    el.value   = form.phone
+    focusedField==='phone' ? (form.phone?show('phone-clear'):hide('phone-clear')) : null
+    updateBtn()
+  }
+
+  /* ── Name ── */
+  function onNameInput(el) {
+    form.name = el.value.replace(/[0-9\-!@#$%^&*()_+=\[\]{};':"|,.<>\/?`~]/g,'')
+    el.value  = form.name
+    focusedField==='name' ? (form.name?show('name-clear'):hide('name-clear')) : null
+    updateBtn()
+  }
+
+  /* ── Birthdate ── */
+  function onBirthInput(el) {
+    const raw = el.value.replace(/[^0-9]/g,'').slice(0,8)
+    form.birthdate = raw
+    // Format display: YYYY.MM.DD
+    if (focusedField === 'birthdate') {
+      el.value = raw
+    } else {
+      el.value = raw.length<=4 ? raw : raw.length<=6 ? raw.slice(0,4)+'.'+raw.slice(4) : raw.slice(0,4)+'.'+raw.slice(4,6)+'.'+raw.slice(6)
+    }
+    focusedField==='birthdate' ? (form.birthdate?show('birthdate-clear'):hide('birthdate-clear')) : null
+    updateBtn()
+  }
+
+  /* ── Email ── */
+  function onEmailInput(el) {
+    form.email = el.value
+    hide('email-err')
+    focusedField==='email' ? (form.email?show('email-clear'):hide('email-clear')) : null
+    const atIdx = form.email.indexOf('@')
+    if (atIdx >= 0) {
+      const after = form.email.slice(atIdx)
+      emailSuggestions = EMAIL_DOMAINS.filter(d=>d.startsWith(after)&&d!==after)
+    } else { emailSuggestions = [] }
+    emailSugIdx = -1; renderEmailDrop(); updateBtn()
+  }
+  function onEmailBlur(e) {
+    focusedField = null
+    hide('email-clear'); hide('email-enter')
+    setTimeout(()=>{ emailSuggestions=[]; renderEmailDrop() },150)
+    if (form.email && !isEmailV(form.email)) {
+      $('email-err').textContent = '올바른 이메일 형식을 입력해 주세요.'
+      show('email-err')
+    }
+  }
+  function onEmailKeyDown(e) {
+    if (emailSuggestions.length > 0) {
+      if (e.key==='ArrowDown'){e.preventDefault();emailSugIdx=Math.min(emailSugIdx+1,emailSuggestions.length-1);renderEmailDrop();return}
+      if (e.key==='ArrowUp'){e.preventDefault();emailSugIdx=Math.max(emailSugIdx-1,-1);renderEmailDrop();return}
+      if (e.key==='Enter'&&emailSugIdx>=0){e.preventDefault();applyDomain(emailSuggestions[emailSugIdx]);return}
+      if (e.key==='Escape'){e.preventDefault();emailSuggestions=[];renderEmailDrop();return}
+    }
+    onFieldEnter('email', e)
+  }
+  function applyDomain(domain) {
+    const local = form.email.slice(0, Math.max(form.email.indexOf('@'),0)||form.email.length)
+    form.email = local + domain
+    $('email-input').value = form.email
+    emailSuggestions=[]; emailSugIdx=-1; renderEmailDrop()
+    hide('email-err'); updateBtn()
+  }
+  function renderEmailDrop() {
+    const dd = $('email-dropdown'), wrap = $('email-wrap')
+    if (!emailSuggestions.length) { dd.style.display='none'; return }
+    const rect = wrap.getBoundingClientRect()
+    dd.style.cssText = `display:block;top:${rect.bottom+8+window.scrollY}px;left:${rect.left}px;width:${rect.width}px;position:absolute;`
+    const local = form.email.slice(0, form.email.indexOf('@'))
+    dd.innerHTML = emailSuggestions.map((d,i)=>`
+      <button class="email-option${i===emailSugIdx?' active':''}" onmousedown="event.preventDefault();App.applyDomain('${d}')">${local+d}</button>`).join('')
+  }
+
+  /* ── Address ── */
+  function openAddr() {
+    if (addrConsentGranted) { _openPostcode(); return }
+    pendingAddrAction = _openPostcode
+    show('addr-consent-overlay')
+  }
+  function _openPostcode() {
+    if (!window.daum?.Postcode) { alert('주소검색 API 로드 중입니다.'); return }
+    new window.daum.Postcode({ oncomplete(d) {
+      form.zip     = d.zonecode
+      form.address = d.roadAddress || d.jibunAddress
+      $('zip-text').textContent  = form.zip;     $('zip-text').style.color  = '#252525'
+      $('road-text').textContent = form.address; $('road-text').style.color = '#252525'
+      $('detail-wrap').classList.remove('disabled')
+      $('detail-input').removeAttribute('readonly')
+      setTimeout(()=>$('detail-input').focus(),100)
+    }}).open()
+  }
+  function addrConsentConfirm() { addrConsentGranted=true; hide('addr-consent-overlay'); setTimeout(()=>pendingAddrAction?.(),0); pendingAddrAction=null }
+  function addrConsentCancel()  { hide('addr-consent-overlay'); pendingAddrAction=null }
+  function closeAddrConsent()   { addrConsentCancel() }
+
+  function onDetailFocus(e) {
+    if (!form.address) { e.target.blur(); openAddr(); return }
+    setFocus('detail')
+  }
+  function onDetailBlur()  { focusedField=null; hide('detail-enter') }
+  function onDetailInput(el) { form.detail = el.value; show('detail-enter') }
+
+  /* ── Skip ── */
+  function skipConfirm() { hide('skip-overlay'); goComplete() }
+  function skipCancel()  { hide('skip-overlay'); openAddr() }
+  function closeSkip()   { hide('skip-overlay') }
+
+  /* ── Field Enter key nav ── */
+  const GROUP_FIELDS = {
+    account:  ['id','password','confirmPw','phone'],
+    personal: ['name','birthdate','email'],
+    address:  ['detail'],
+  }
+  const FIELD_INPUT_IDS = { id:'id-input', password:'pw-input', confirmPw:'cpw-input', phone:'phone-input', name:'name-input', birthdate:'birth-input', email:'email-input', detail:'detail-input' }
+  const isFieldEmpty = (f) => {
+    if (f==='id')        return !isIdValid(form.id)
+    if (f==='password')  return !isPwValid(form.password)
+    if (f==='confirmPw') return !form.confirmPw||form.password!==form.confirmPw
+    if (f==='phone')     return !isPhoneV(form.phone)
+    if (f==='name')      return !form.name.trim()
+    if (f==='birthdate') return form.birthdate.length<8
+    if (f==='email')     return !isEmailV(form.email)
+    return false
+  }
+  function onFieldEnter(fieldName, e) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const group  = phase === 'account' ? 'account' : phase === 'personal' ? 'personal' : 'address'
+    const fields = GROUP_FIELDS[group]
+    const idx    = fields.indexOf(fieldName)
+    const isLast = idx === fields.length - 1
+    if (isLast) { handleNext(); return }
+    const next = fields[idx+1]
+    if (isFieldEmpty(next)) $(FIELD_INPUT_IDS[next])?.focus()
+    else {
+      const firstEmpty = fields.find(isFieldEmpty)
+      if (firstEmpty) $(FIELD_INPUT_IDS[firstEmpty])?.focus()
+      else handleNext()
+    }
+  }
+  function onDetailKeyDown(e) { onFieldEnter('detail', e) }
+
+  /* ── Next / complete ── */
+  function handleNext() {
+    if (phase === 'account') {
+      if (!accountValid()) return
+      advanceTo('personal')
+    } else if (phase === 'personal') {
+      if (!personalValid()) return
+      advanceTo('address')
+    } else if (phase === 'address') {
+      if (!form.address) {
+        if (skipShown) { goComplete(); return }
+        skipShown = true; show('skip-overlay'); return
+      }
+      goComplete()
+    }
+  }
+
+  function advanceTo(next) {
+    phase = next
+    updateStepBar()
+    updateTitle()
+    if (next === 'personal') {
+      show('personal-section'); $('personal-section').classList.add('open')
+      hide('btn-account-wrap')
+      show('btn-personal-wrap')
+      updateBtn()
+      setTimeout(() => $('name-input').focus(), 400)
+    } else if (next === 'address') {
+      show('addr-section'); $('addr-section').classList.add('open')
+      hide('btn-personal-wrap')
+      show('btn-addr-wrap')
+    }
+    window.scrollTo({ top:0, behavior:'smooth' })
+  }
+
+  function goComplete() { window.location.href = 'complete.html' }
+
+  /* ── Step indicator click ── */
+  function clickStep(n) {
+    if (n === 1) history.back()
+  }
+
+  /* ── Init ── */
+  function init() {
+    // detail field starts disabled (no address yet)
+    $('detail-wrap').classList.add('disabled')
+    $('detail-input').setAttribute('readonly','')
+    // Hide sections initially
+    hide('personal-section')
+    hide('btn-personal-wrap')
+    hide('addr-section')
+    hide('btn-addr-wrap')
+    updateStepBar()
+    updateBtn()
+    setTimeout(() => $('id-input').focus(), 100)
+  }
+
+  init()
+
+  return {
+    setFocus, clearFocus, clearField, clickStep,
+    onIdInput, onPwInput, togglePw, onCpwInput, toggleCpw,
+    onPhoneInput, onNameInput, onBirthInput,
+    onEmailInput, onEmailBlur, onEmailKeyDown, applyDomain,
+    onDetailFocus, onDetailBlur, onDetailInput, onDetailKeyDown,
+    openAddr, addrConsentConfirm, addrConsentCancel, closeAddrConsent,
+    skipConfirm, skipCancel, closeSkip,
+    handleNext, onFieldEnter,
+  }
+})()
+</script>
+<script>document.querySelectorAll('.copy-year').forEach(el => el.textContent = new Date().getFullYear())</script>
+</body>
+</html>
