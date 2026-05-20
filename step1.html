@@ -19,6 +19,7 @@
     input  { outline: none; -webkit-appearance: none; font-family: inherit; font-size: inherit; border: none; background: none; padding: 0; margin: 0; }
     input::placeholder { color: #868686; }
     button { font-family: inherit; cursor: pointer; background: none; border: none; padding: 0; margin: 0; font-size: inherit; }
+    p      { margin: 0; }
     img    { display: block; }
 
     /* ── PC Layout ── */
@@ -48,6 +49,7 @@
       #pc-footer  { display: block; }
       #toast-wrap { left: 440px; }
       #email-dropdown { position: fixed; }
+      .footer { display: none !important; }
     }
 
     /* ── App ── */
@@ -309,10 +311,8 @@
     .email-option {
       width: 100%; text-align: left; padding: 0 16px; height: 48px;
       display: flex; align-items: center; font-size: 15px;
-      color: #252525; letter-spacing: -0.12px;
-      border-bottom: 1px solid #EAEAEA; cursor: pointer;
+      color: #252525; letter-spacing: -0.12px; cursor: pointer;
     }
-    .email-option:last-child { border-bottom: none; }
     .email-option:hover, .email-option.active { background: #F3F3F3; }
 
     /* ── Misc ── */

@@ -15,6 +15,7 @@
     input  { outline:none; -webkit-appearance:none; font-family:inherit; font-size:inherit; border:none; background:none; padding:0; margin:0; }
     input::placeholder { color:#868686; }
     button { font-family:inherit; cursor:pointer; background:none; border:none; padding:0; margin:0; }
+    p { margin:0; }
     select { font-family:inherit; font-size:inherit; outline:none; -webkit-appearance:none; appearance:none; }
     img    { display:block; }
 
@@ -46,6 +47,7 @@
       #toast-wrap { left: 440px; }
       #email-dropdown { position: fixed; }
       .overlay { left: 440px; }
+      .footer { display: none !important; }
     }
     /* ── App ── */
     #app { display:flex; flex-direction:column; min-height:100svh; width:100%; max-width:560px; background:#fff; }
@@ -99,7 +101,7 @@
 
     /* ── Hint / error ── */
     .hint-row { display:flex; align-items:center; gap:6px; margin-top:10px; }
-    .hint-text { font-size:13px; letter-spacing:-0.104px; line-height:19px; }
+    .hint-text { font-size:13px; letter-spacing:-0.104px; line-height:19px; margin:0; }
     .err-text  { font-size:13px; color:#E51B27; margin:10px 0 0; letter-spacing:-0.104px; }
     .suc-text  { font-size:13px; color:#31A427; margin:10px 0 0; letter-spacing:-0.104px; }
     .c-gray   { color:#868686; }
@@ -151,10 +153,11 @@
       .overlay { align-items:center; padding:0 20px; }
       .bottom-sheet { max-width:440px; border-radius:8px; border:1px solid #EAEAEA; box-shadow:0 2px 10px rgba(0,0,0,0.08); padding-bottom:0; }
     }
-    .sheet-close { display:flex; justify-content:flex-end; padding:16px 20px 0; }
-    .sheet-title { padding:0 20px 24px; font-size:20px; font-weight:600; letter-spacing:-0.1px; line-height:28px; white-space:pre-line; margin:0; }
-    .sheet-sub   { font-size:14px; color:#868686; margin:8px 20px 24px; line-height:22px; letter-spacing:-0.112px; }
-    .sheet-btns  { display:flex; gap:8px; padding:10px 20px; }
+    .sheet-close   { display:flex; justify-content:flex-end; padding:16px 20px 0; }
+    .sheet-body    { padding:0 20px 24px; }
+    .sheet-title   { font-size:20px; font-weight:600; letter-spacing:-0.1px; line-height:28px; white-space:pre-line; }
+    .sheet-sub     { font-size:14px; color:#868686; margin-top:8px; line-height:22px; letter-spacing:-0.112px; }
+    .sheet-btns    { display:flex; gap:8px; padding:10px 20px; }
     @media(min-width:768px){ .sheet-btns { padding:20px; } }
     .sheet-btn-cancel {
       flex:1; height:52px; display:flex; align-items:center; justify-content:center;
@@ -177,10 +180,8 @@
     .email-option {
       width:100%; text-align:left; padding:0 16px; height:48px;
       display:flex; align-items:center; font-size:15px; color:#252525; letter-spacing:-0.12px;
-      border-bottom:1px solid #EAEAEA; cursor:pointer; background:none; border-left:none; border-right:none;
-      font-family:inherit;
+      cursor:pointer; background:none; border:none; font-family:inherit;
     }
-    .email-option:last-child { border-bottom:none; }
     .email-option:hover, .email-option.active { background:#F3F3F3; }
 
     /* ── Animations ── */
@@ -531,7 +532,9 @@
 <div class="overlay hidden" id="addr-consent-overlay" onclick="App.closeAddrConsent()">
   <div class="bottom-sheet" onclick="event.stopPropagation()">
     <div class="sheet-close"><button onclick="App.closeAddrConsent()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-    <p class="sheet-title">경매 응찰을 위한 '주소'<br>개인정보 수집 · 이용에 동의하시나요?</p>
+    <div class="sheet-body">
+      <p class="sheet-title">경매 응찰을 위한 '주소'<br>개인정보 수집 · 이용에 동의하시나요?</p>
+    </div>
     <div class="sheet-btns">
       <button class="sheet-btn-cancel" onclick="App.addrConsentCancel()">비동의</button>
       <button class="sheet-btn-confirm" onclick="App.addrConsentConfirm()">동의</button>
@@ -541,8 +544,10 @@
 <div class="overlay hidden" id="skip-overlay" onclick="App.closeSkip()">
   <div class="bottom-sheet" onclick="event.stopPropagation()">
     <div class="sheet-close"><button onclick="App.closeSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-    <p class="sheet-title">주소 정보를 입력하지 않고 가입하시겠어요?</p>
-    <p class="sheet-sub">경매 응찰을 원하신다면 주소 정보가 필요합니다.</p>
+    <div class="sheet-body">
+      <p class="sheet-title">주소 정보를 입력하지 않고 가입하시겠어요?</p>
+      <p class="sheet-sub">경매 응찰을 원하신다면 주소 정보가 필요합니다.</p>
+    </div>
     <div class="sheet-btns">
       <button class="sheet-btn-cancel" onclick="App.skipCancel()">주소 입력하기</button>
       <button class="sheet-btn-confirm" onclick="App.skipConfirm()">가입 완료하기</button>
