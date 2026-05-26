@@ -951,6 +951,21 @@ const App = (() => {
 
   /* ── Complete ── */
   function handleComplete() {
+    if (!personalValid()) {
+      validateAll()
+      const FIELDS = [
+        { key: 'name',  check: () => state.name.trim() === '',        msg: '이름을 입력해 주세요.',              inputId: 'name-input' },
+        { key: 'birth', check: () => state.birth.length < 8,          msg: '생년월일 8자리를 입력해 주세요.',    inputId: 'birth-input' },
+        { key: 'email', check: () => !isEmailValid(state.email),      msg: '올바른 이메일 형식을 입력해 주세요.', inputId: 'email-input' },
+      ]
+      const first = FIELDS.find(f => f.check())
+      if (first) {
+        window.alert(first.msg)
+        $(`${first.key}-wrap`).scrollIntoView({ behavior: 'smooth', block: 'center' })
+        setTimeout(() => $(first.inputId).focus(), 0)
+      }
+      return
+    }
     const usedLabels = new Set(state.files.map(f => f.label).filter(Boolean))
     if (!state.isDomesticBiz && !usedLabels.has('id')) {
       $('id-skip-modal').style.display = 'flex'; return
