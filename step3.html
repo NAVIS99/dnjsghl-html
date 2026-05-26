@@ -245,6 +245,12 @@
     }
     @media (min-width: 768px) { .bottom-sheet { border-radius: 8px; } }
 
+    .doc-modal-content { padding: 0.5rem 1.25rem 1.5rem; }
+    @media (min-width: 768px) { .doc-modal-content { padding-bottom: 1.25rem; } }
+
+    .member-modal-footer { padding: 0.625rem 1.25rem; padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.625rem); }
+    @media (min-width: 768px) { .member-modal-footer { padding: 1.25rem 1.25rem; } }
+
     /* ── Tax tooltip ── */
     #tax-tooltip {
       position: fixed; z-index: 301;
@@ -317,6 +323,8 @@
         <path d="M10.5 3.5L2 12L10.5 20.5" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+    <span class="header__title">케이옥션 회원가입</span>
+    <button class="header__lang">EN</button>
   </header>
 
   <!-- ── Step Indicator ── -->
@@ -328,8 +336,8 @@
 
   <!-- ── Title ── -->
   <div class="section-title">
-    <h1 id="main-title">담당자 정보를 입력해 주세요.</h1>
-    <p id="main-sub" style="display:none;"></p>
+    <h1 id="main-title">인적 사항을 입력해 주세요.</h1>
+    <p id="main-sub" style="white-space:pre-line;">회사 정보 도용 방지 등 안전한 서비스 제공을 위하여&#10;담당자 정보를 확인하고 있습니다.</p>
   </div>
 
   <!-- ── Content ── -->
@@ -354,7 +362,7 @@
             ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('dragging')"
             ondrop="event.preventDefault();this.classList.remove('dragging');App.addFiles(event.dataTransfer.files)">
             <img src="../public/add_40.svg" width="40" height="40" alt="" id="upload-icon"/>
-            <span id="upload-label" style="font-size:16px;font-weight:500;letter-spacing:-0.128px;color:#252525;">파일 첨부</span>
+            <span id="upload-label" style="font-size:16px;font-weight:500;letter-spacing:-0.128px;color:#252525;">파일을 드래그하거나 첨부해 주세요</span>
           </div>
 
           <!-- 파일 목록 상태 -->
@@ -368,7 +376,7 @@
               </button>
               <button class="btn-upload" onclick="document.getElementById('file-input').click()">
                 <img src="../public/add_20.svg" width="20" height="20" alt=""/>
-                파일 첨부
+                파일첨부
               </button>
             </div>
           </div>
@@ -376,10 +384,10 @@
           <!-- 분류 현황 칩 -->
           <div class="status-chips" id="status-chips">
             <div class="status-chip" id="chip-business">사업자 증빙자료</div>
-            <div class="status-chip" id="chip-card">명함</div>
-            <div class="status-chip" id="chip-id">신분증 <span style="color:#868686;font-weight:400;">(선택)</span></div>
+            <div class="status-chip" id="chip-card">담당자 명함</div>
+            <div class="status-chip" id="chip-id" style="display:none;">신분증 <span style="color:#868686;font-weight:400;">(선택)</span></div>
           </div>
-          <p class="format-hint">JPG, PNG, PDF 파일만 업로드 가능합니다.</p>
+          <p class="format-hint">jpg, jpeg, png, heic 또는 pdf 파일 업로드 (검수 후 모든 서비스 이용 가능)</p>
 
           <input type="file" id="file-input" accept="image/*,.pdf" multiple style="display:none;"
             onchange="App.handleFileChange(this)"/>
@@ -424,7 +432,7 @@
         <div>
           <p class="sec-label">담당자 생년월일</p>
           <div class="field-wrap" id="birth-wrap">
-            <input class="field-input" id="birth-input" inputmode="numeric" placeholder="YYYYMMDD"
+            <input class="field-input" id="birth-input" inputmode="numeric" placeholder="예) YYYY.MM.DD"
               oninput="App.onBirthInput(this)"
               onfocus="App.setFocus('birth')" onblur="App.clearFocus('birth')"
               onkeydown="App.onBirthKeyDown(event)"/>
@@ -450,7 +458,7 @@
             <p class="sec-label" style="margin:0;">담당자 이메일</p>
             <button id="tax-btn" onclick="App.openTaxTip()"
               style="display:flex;align-items:center;gap:4px;color:#868686;font-size:13px;letter-spacing:-0.104px;">
-              세금계산서 이메일 용도
+              세금계산서 발행
               <img src="../public/infomark_g_16.svg" width="16" height="16" alt=""/>
             </button>
           </div>
@@ -522,30 +530,81 @@
 
 <!-- 증빙자료 가이드 모달 -->
 <div id="doc-guide-modal" style="display:none;" class="overlay" onclick="App.closeDocGuide()">
-  <div class="bottom-sheet" onclick="event.stopPropagation()" style="padding:20px;">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-      <button onclick="App.closeDocGuide()" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+
+    <!-- 헤더 -->
+    <div style="position:relative;display:flex;height:3.5rem;padding:0 1.25rem;align-items:center;">
+      <span style="position:absolute;left:50%;transform:translateX(-50%);color:#252525;font-size:1rem;font-weight:600;line-height:1.25rem;letter-spacing:-0.008rem;white-space:nowrap;">증빙자료 첨부 안내</span>
+      <button onclick="App.closeDocGuide()" style="margin-left:auto;width:1.5rem;height:1.5rem;display:flex;align-items:center;justify-content:center;padding:0;">
         <img src="../public/close_24.svg" width="24" height="24" alt="닫기"/>
       </button>
     </div>
-    <p style="font-size:20px;font-weight:600;letter-spacing:-0.16px;line-height:28px;margin-bottom:24px;white-space:pre-line;">사업자 증빙자료\n업로드 방법</p>
-    <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px;">
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:24px;height:24px;border-radius:50%;background:#F76E33;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px;font-weight:700;">1</div>
-        <p style="font-size:15px;color:#252525;letter-spacing:-0.12px;line-height:23px;">파일 첨부 버튼을 눌러 파일을 선택하세요.</p>
+
+    <!-- 스텝 컨텐츠 -->
+    <div class="doc-modal-content">
+
+      <!-- Step 1 -->
+      <div style="display:flex;gap:0.5rem;">
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:1.5rem;height:1.5rem;border-radius:50%;background:#252525;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;">
+            <span style="color:#fff;font-size:0.9375rem;font-weight:600;line-height:1.25rem;letter-spacing:-0.0075rem;">1</span>
+          </div>
+          <div style="position:absolute;top:1.5rem;bottom:0;width:1px;background:#252525;"></div>
+        </div>
+        <div style="flex:1;padding-bottom:1.5rem;">
+          <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0 0 0.75rem;white-space:pre-line;">사업자 확인을 위한 자료를 미리 준비하세요.</p>
+          <div style="background:#F9F9F9;border-radius:0.25rem;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem;">
+            <div>
+              <p style="color:#252525;font-size:1rem;font-weight:600;line-height:1.5rem;letter-spacing:-0.008rem;margin:0 0 0.13rem;">1) 사업자 증빙자료 사본</p>
+              <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">신뢰할 수 있는 사업자임을 증명</p>
+            </div>
+            <div>
+              <p style="color:#252525;font-size:1rem;font-weight:600;line-height:1.5rem;letter-spacing:-0.008rem;margin:0 0 0.13rem;">2) 담당자 명함 사본</p>
+              <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">가입 신청자가 사업체의 소속원임을 증명</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:24px;height:24px;border-radius:50%;background:#F76E33;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px;font-weight:700;">2</div>
-        <p style="font-size:15px;color:#252525;letter-spacing:-0.12px;line-height:23px;">각 파일에 해당하는 분류 버튼을 선택하세요.</p>
+
+      <!-- Step 2 -->
+      <div style="display:flex;gap:0.5rem;">
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:1.5rem;height:1.5rem;border-radius:50%;background:#252525;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;">
+            <span style="color:#fff;font-size:0.9375rem;font-weight:600;line-height:1.25rem;letter-spacing:-0.0075rem;">2</span>
+          </div>
+          <div style="position:absolute;top:1.5rem;bottom:0;width:1px;background:#252525;"></div>
+        </div>
+        <div style="flex:1;padding-bottom:1.5rem;">
+          <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0;white-space:pre-line;">파일첨부를 눌러 파일들을 선택한 다음
+제출해 주세요.</p>
+        </div>
       </div>
+
+      <!-- Step 3 (last, no connecting line) -->
+      <div style="display:flex;gap:0.5rem;">
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:1.5rem;height:1.5rem;border-radius:50%;background:#252525;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;">
+            <span style="color:#fff;font-size:0.9375rem;font-weight:600;line-height:1.25rem;letter-spacing:-0.0075rem;">3</span>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0 0 0.13rem;white-space:pre-line;">제출한 이미지들이 각각 어떤 자료인지
+라벨링 해주세요.</p>
+          <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">사업자 증빙자료, 명함 중 선택</p>
+        </div>
+      </div>
+
     </div>
-    <div style="display:flex;gap:8px;">
+
+    <!-- 확인 버튼 -->
+    <div class="member-modal-footer">
       <button onclick="App.closeDocGuide()"
-        onmouseenter="this.style.background='#D7D7D7'" onmouseleave="this.style.background='#EAEAEA'"
-        style="flex:1;height:52px;border-radius:6px;background:#EAEAEA;border:none;cursor:pointer;font-size:16px;font-weight:700;color:#4E4E4E;transition:background 0.15s;">
-        닫기
+        onmouseenter="this.style.background='#4E4E4E'" onmouseleave="this.style.background='#252525'"
+        style="width:100%;height:3.25rem;border-radius:0.375rem;background:#252525;color:#fff;font-size:1rem;font-weight:700;line-height:1.5rem;letter-spacing:-0.008rem;border:none;cursor:pointer;transition:background 0.15s;">
+        확인
       </button>
     </div>
+
   </div>
 </div>
 
@@ -560,7 +619,9 @@
       </button>
     </div>
     <div style="padding:0 20px 24px;">
-      <p style="font-size:20px;font-weight:600;letter-spacing:-0.16px;line-height:28px;white-space:pre-line;">신분증 없이\n가입을 완료하시겠습니까?</p>
+      <p style="font-size:20px;font-weight:600;letter-spacing:-0.16px;line-height:28px;white-space:pre-line;">신분증은 선택 사항이지만,
+경매 응찰을 하려면 반드시 필요합니다.
+이대로 제출하시겠습니까?</p>
     </div>
     <div style="display:flex;gap:8px;padding:10px 20px 20px;">
       <button onclick="App.closeIDSkip()"
@@ -581,11 +642,11 @@
 <div id="tax-tooltip" onclick="App.closeTaxTip()">
   <div class="tax-tip-line">
     <span class="tax-tip-dot"></span>
-    <span class="tax-tip-text">세금계산서 수신용 이메일로 사용됩니다.</span>
+    <span class="tax-tip-text">세금계산서 발행용 메일은 최초 담당자 이메일로 설정됩니다.</span>
   </div>
   <div class="tax-tip-line">
     <span class="tax-tip-dot"></span>
-    <span class="tax-tip-text">계정 로그인 이메일과 다를 수 있습니다.</span>
+    <span class="tax-tip-text">세금계산서 이메일 변경은 마이페이지 &gt; 회원정보에서 가능합니다.</span>
   </div>
   <div style="display:flex;justify-content:flex-end;padding-right:12px;margin-top:-4px;">
     <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
@@ -753,8 +814,8 @@ const App = (() => {
     const sub   = $('main-sub')
     title.classList.add('fade-out')
     setTimeout(() => {
-      title.textContent = '증빙자료를 업로드해 주세요.'
-      sub.textContent = '사업체 소속 확인을 위한 용도입니다.'
+      title.textContent = '증빙자료를 첨부해 주세요.'
+      sub.textContent = '회사 정보 도용 방지 등 안전한 서비스 제공을 위하여\n사업자 증빙자료를 확인하고 있습니다.'
       sub.style.display = 'block'
       title.classList.remove('fade-out')
     }, 300)
@@ -791,10 +852,10 @@ const App = (() => {
     renderFiles()
   }
 
-  const LABELS = ['사업자 증빙자료', '명함', '신분증']
-  const LABEL_KEYS = ['business', 'card', 'id']
-  const CARD_LABELS = ['사업자 증빙자료', '명함', '신분증']
-  const OPTIONAL = new Set(['id'])
+  const LABELS = ['사업자 증빙자료', '담당자 명함']      // status chip labels (domBiz)
+  const LABEL_KEYS = ['business', 'card']               // key mapping (domBiz)
+  const CARD_LABELS = ['사업자 증빙자료', '명함']         // card chip labels (shorter)
+  const OPTIONAL = new Set([])
 
   function renderFiles() {
     const empty  = $('upload-empty')
@@ -891,7 +952,7 @@ const App = (() => {
       $('bar3').style.transform = 'scaleX(0.5)'
       const title = $('main-title')
       title.classList.add('fade-out')
-      setTimeout(() => { title.textContent = '담당자 정보를 입력해 주세요.'; $('main-sub').style.display='none'; title.classList.remove('fade-out') }, 300)
+      setTimeout(() => { title.textContent = '인적 사항을 입력해 주세요.'; $('main-sub').style.display='none'; title.classList.remove('fade-out') }, 300)
     } else history.back()
   }
 
