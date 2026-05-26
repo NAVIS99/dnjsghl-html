@@ -11,7 +11,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; }
-    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; font-size:16px; color:#252525; background:#fff; -webkit-font-smoothing:antialiased; }
+    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; font-size:1rem; color:#252525; background:#fff; -webkit-font-smoothing:antialiased; }
     button { font-family:inherit; cursor:pointer; background:none; border:none; padding:0; }
     select { font-family:inherit; font-size:inherit; outline:none; -webkit-appearance:none; appearance:none; }
     input  { font-family:inherit; outline:none; -webkit-appearance:none; border:none; }
@@ -22,160 +22,160 @@
     /* ── PC Layout ── */
     #layout { display: flex; min-height: 100svh; }
     #left-panel {
-      width: 440px; flex-shrink: 0;
+      width: 27.5rem; flex-shrink: 0;
       position: sticky; top: 0; height: 100svh;
       display: none; overflow: hidden; background: #1a1a1a;
     }
     #left-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     #left-tagline {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-      height: 256px; padding: 116px 40px 80px;
+      height: 16rem; padding: 7.25rem 2.5rem 5rem;
       background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
       display: flex; align-items: flex-end;
     }
-    #left-tagline p { font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -0.192px; line-height: 32px; margin: 0; }
+    #left-tagline p { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.012rem; line-height: 2rem; margin: 0; }
     #right-content { flex: 1; display: flex; justify-content: center; }
-    #pc-footer { display: none; border-top: 1px solid #EAEAEA; padding: 16px 20px; background: #fff; }
+    #pc-footer { display: none; border-top: 1px solid #EAEAEA; padding: 1rem 1.25rem; background: #fff; }
     #pc-footer-inner { display: flex; align-items: center; justify-content: space-between; }
-    #pc-footer .copy  { font-size: 12px; color: #868686; letter-spacing: -0.096px; }
+    #pc-footer .copy  { font-size: 0.75rem; color: #868686; letter-spacing: -0.006rem; }
     #pc-footer .links { display: flex; align-items: center; }
-    #pc-footer .flink { font-size: 12px; color: #868686; letter-spacing: -0.096px; }
-    #pc-footer .fsep  { margin: 0 8px; font-size: 12px; color: #D7D7D7; }
-    @media (min-width: 1024px) {
+    #pc-footer .flink { font-size: 0.75rem; color: #868686; letter-spacing: -0.006rem; }
+    #pc-footer .fsep  { margin: 0 0.5rem; font-size: 0.75rem; color: #D7D7D7; }
+    @media (min-width: 64rem) {
       #left-panel { display: block; }
       #pc-footer  { display: block; }
-      #toast-wrap { left: 440px; }
-      .overlay    { left: 440px; }
+      #toast-wrap { left: 27.5rem; }
+      .overlay    { left: 27.5rem; }
       .footer { display: none !important; }
     }
-    #app { width: 100%; max-width: 560px; background: #fff; }
+    #app { width: 100%; max-width: 35rem; background: #fff; }
 
     /* ── Header ── */
-    .header { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 20px; background:#fff; position:sticky; top:0; z-index:10; }
+    .header { display:flex; align-items:center; justify-content:space-between; height:3.5rem; padding:0 1.25rem; background:#fff; position:sticky; top:0; z-index:10; }
     .header__logo { display:flex; align-items:center; }
-    .header__icons { display:flex; align-items:center; gap:20px; }
-    .icon-btn-24 { width:24px; height:24px; display:flex; align-items:center; justify-content:center; }
+    .header__icons { display:flex; align-items:center; gap:1.25rem; }
+    .icon-btn-24 { width:1.5rem; height:1.5rem; display:flex; align-items:center; justify-content:center; }
 
     /* ── Congrats ── */
-    .congrats-wrap { display:flex; flex-direction:column; align-items:center; padding:20px 20px 40px; }
+    .congrats-wrap { display:flex; flex-direction:column; align-items:center; padding:1.25rem 1.25rem 2.5rem; }
     .check-circle {
-      width:52px; height:52px; border-radius:50%;
+      width:3.25rem; height:3.25rem; border-radius:50%;
       background:#252525; display:flex; align-items:center; justify-content:center;
-      margin-bottom:16px;
+      margin-bottom:1rem;
       animation: checkCircleIn 0.35s ease-out 0.5s both;
     }
     @keyframes checkCircleIn { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }
     .check-path { stroke-dasharray:32; stroke-dashoffset:32; animation:drawCheck 0.4s ease-out 0.8s forwards; }
     @keyframes drawCheck { from{stroke-dashoffset:32} to{stroke-dashoffset:0} }
-    .heading1 { font-size:24px; font-weight:600; color:#252525; letter-spacing:-0.012rem; line-height:32px; text-align:center; margin:0; }
-    .heading2 { font-size:20px; font-weight:600; color:#252525; letter-spacing:-0.01rem; line-height:28px; margin:0 0 24px; }
-    .section-label { font-size:14px; font-weight:600; letter-spacing:-0.112px; margin:0 0 10px; }
+    .heading1 { font-size:1.5rem; font-weight:600; color:#252525; letter-spacing:-0.012rem; line-height:2rem; text-align:center; margin:0; }
+    .heading2 { font-size:1.25rem; font-weight:600; color:#252525; letter-spacing:-0.01rem; line-height:1.75rem; margin:0 0 1.5rem; }
+    .section-label { font-size:0.875rem; font-weight:600; letter-spacing:-0.007rem; margin:0 0 0.625rem; }
     .opt-label { font-weight:400; color:#868686; }
 
     /* ── Dividers ── */
-    .divider { height:8px; background:#F9F9F9; }
+    .divider { height:0.5rem; background:#F9F9F9; }
 
     /* ── Field wrap ── */
-    .field-wrap { border:1px solid #D7D7D7; border-radius:4px; background:#fff; transition:border-color 0.1s; }
+    .field-wrap { border:1px solid #D7D7D7; border-radius:0.25rem; background:#fff; transition:border-color 0.1s; }
     .field-wrap:hover:not(.disabled) { border-color:#A3A3A3; }
     .field-wrap:focus-within { border-color:#252525; }
     .field-wrap.disabled { background:#F9F9F9; border-color:#D7D7D7; cursor:default; }
     .field-wrap.addr-click { cursor:pointer; }
-    .field-row { height:52px; display:flex; align-items:center; padding:0 16px; gap:8px; }
-    .field-row input { flex:1; font-size:16px; color:#252525; letter-spacing:-0.128px; background:none; }
+    .field-row { height:3.25rem; display:flex; align-items:center; padding:0 1rem; gap:0.5rem; }
+    .field-row input { flex:1; font-size:1rem; color:#252525; letter-spacing:-0.008rem; background:none; }
 
     /* ── Inner button ── */
-    .inner-btn { display:flex; height:32px; padding:0 12px; align-items:center; border-radius:4px; border:1px solid #C1C1C1; background:#fff; color:#252525; font-size:14px; font-weight:500; letter-spacing:-0.112px; flex-shrink:0; white-space:nowrap; }
+    .inner-btn { display:flex; height:2rem; padding:0 0.75rem; align-items:center; border-radius:0.25rem; border:1px solid #C1C1C1; background:#fff; color:#252525; font-size:0.875rem; font-weight:500; letter-spacing:-0.007rem; flex-shrink:0; white-space:nowrap; }
     .inner-btn:hover { background:#F3F3F3; }
 
     /* ── Radio ── */
-    .radio-row { display:flex; align-items:center; gap:8px; height:40px; flex:1; cursor:pointer; }
-    .radio-dot  { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:#fff; border:2px solid #D7D7D7; transition:border-color 0.1s,border-width 0.1s; }
-    .radio-dot.checked { border:6.5px solid #F76E33; }
-    .radio-label { font-size:16px; letter-spacing:-0.128px; }
+    .radio-row { display:flex; align-items:center; gap:0.5rem; height:2.5rem; flex:1; cursor:pointer; }
+    .radio-dot  { flex-shrink:0; width:1.25rem; height:1.25rem; border-radius:50%; background:#fff; border:2px solid #D7D7D7; transition:border-color 0.1s,border-width 0.1s; }
+    .radio-dot.checked { border:0.4062rem solid #F76E33; }
+    .radio-label { font-size:1rem; letter-spacing:-0.008rem; }
 
     /* ── Checkbox ── */
-    .ocheck { flex-shrink:0; width:20px; height:20px; border-radius:4px; border:1px solid #D7D7D7; background:#fff; display:flex; align-items:center; justify-content:center; transition:background 0.1s,border-color 0.1s; cursor:pointer; }
+    .ocheck { flex-shrink:0; width:1.25rem; height:1.25rem; border-radius:0.25rem; border:1px solid #D7D7D7; background:#fff; display:flex; align-items:center; justify-content:center; transition:background 0.1s,border-color 0.1s; cursor:pointer; }
     .ocheck.checked { background:#F76E33; border-color:#F76E33; }
     .ocheck svg { display:none; }
     .ocheck.always svg { display:block; }
     .ocheck.checked svg { display:block; }
     .ocheck svg path { stroke:#C1C1C1; }
     .ocheck.checked svg path { stroke:#fff; }
-    .chevron { flex-shrink:0; margin-left:8px; }
+    .chevron { flex-shrink:0; margin-left:0.5rem; }
 
     /* ── Terms card ── */
-    .terms-box { border:1px solid #D7D7D7; border-radius:8px; overflow:hidden; }
-    .terms-all-row { display:flex; align-items:center; gap:8px; height:52px; padding:0 16px; border-bottom:1px solid #EAEAEA; cursor:pointer; }
-    .terms-all-label { font-size:16px; font-weight:600; letter-spacing:-0.128px; }
-    .terms-body { padding:20px 0; display:flex; flex-direction:column; gap:16px; }
-    .terms-item { display:flex; align-items:center; justify-content:space-between; padding:0 16px; }
-    .terms-item-left { display:flex; align-items:center; gap:8px; cursor:pointer; }
-    .terms-item-label { font-size:16px; letter-spacing:-0.128px; }
-    .terms-channels { display:flex; padding:0 16px; gap:0; }
-    .terms-chan { flex:1; display:flex; align-items:center; gap:8px; cursor:pointer; }
-    .terms-chan-label { font-size:16px; letter-spacing:-0.128px; }
-    .terms-desc-bg { background:#F9F9F9; padding:12px 16px; }
-    .terms-desc-text { font-size:13px; color:#868686; letter-spacing:-0.104px; line-height:19px; margin:0; }
+    .terms-box { border:1px solid #D7D7D7; border-radius:0.5rem; overflow:hidden; }
+    .terms-all-row { display:flex; align-items:center; gap:0.5rem; height:3.25rem; padding:0 1rem; border-bottom:1px solid #EAEAEA; cursor:pointer; }
+    .terms-all-label { font-size:1rem; font-weight:600; letter-spacing:-0.008rem; }
+    .terms-body { padding:1.25rem 0; display:flex; flex-direction:column; gap:1rem; }
+    .terms-item { display:flex; align-items:center; justify-content:space-between; padding:0 1rem; }
+    .terms-item-left { display:flex; align-items:center; gap:0.5rem; cursor:pointer; }
+    .terms-item-label { font-size:1rem; letter-spacing:-0.008rem; }
+    .terms-channels { display:flex; padding:0 1rem; gap:0; }
+    .terms-chan { flex:1; display:flex; align-items:center; gap:0.5rem; cursor:pointer; }
+    .terms-chan-label { font-size:1rem; letter-spacing:-0.008rem; }
+    .terms-desc-bg { background:#F9F9F9; padding:0.75rem 1rem; }
+    .terms-desc-text { font-size:0.8125rem; color:#868686; letter-spacing:-0.0065rem; line-height:1.1875rem; margin:0; }
 
     /* ── Save button ── */
-    .save-btn { display:flex; height:52px; width:100%; align-items:center; justify-content:center; border-radius:6px; margin-top:24px; font-size:16px; font-weight:600; letter-spacing:-0.008rem; line-height:24px; cursor:pointer; transition:background 0.15s; }
+    .save-btn { display:flex; height:3.25rem; width:100%; align-items:center; justify-content:center; border-radius:0.375rem; margin-top:1.5rem; font-size:1rem; font-weight:600; letter-spacing:-0.008rem; line-height:1.5rem; cursor:pointer; transition:background 0.15s; }
     .save-btn.active { background:#252525; color:#fff; border:none; }
     .save-btn.active:hover { background:#4E4E4E; }
     .save-btn.inactive { background:#C1C1C1; color:#fff; border:1px solid #C1C1C1; cursor:default; }
 
     /* ── Select ── */
     .select-wrap { position:relative; }
-    .select-wrap select { width:100%; height:52px; padding:0 16px; font-size:16px; color:#252525; letter-spacing:-0.128px; background:#fff; }
-    .select-wrap select.field-wrap { border:1px solid #D7D7D7; border-radius:4px; }
+    .select-wrap select { width:100%; height:3.25rem; padding:0 1rem; font-size:1rem; color:#252525; letter-spacing:-0.008rem; background:#fff; }
+    .select-wrap select.field-wrap { border:1px solid #D7D7D7; border-radius:0.25rem; }
     .select-wrap select:focus { border-color:#252525; }
-    .select-chevron { position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; }
+    .select-chevron { position:absolute; right:1rem; top:50%; transform:translateY(-50%); pointer-events:none; }
 
     /* ── Auction cards ── */
-    .auction-card { border:1px solid #D7D7D7; border-radius:8px; display:flex; align-items:stretch; overflow:hidden; }
-    .auction-body { display:flex; flex-direction:column; gap:6px; padding:20px 16px; flex:1; min-width:0; }
-    .auction-title-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .auction-title { font-size:16px; font-weight:600; letter-spacing:-0.128px; }
-    .auction-badge { display:flex; align-items:center; padding:0 8px; height:24px; border-radius:6px; font-size:13px; font-weight:500; line-height:19px; flex-shrink:0; }
-    .auction-dday-row { display:flex; align-items:center; gap:4px; }
-    .auction-end { font-size:14px; letter-spacing:-0.112px; }
-    .auction-dday { font-size:14px; color:#F76E33; letter-spacing:-0.112px; }
-    .auction-accent { width:10px; flex-shrink:0; }
+    .auction-card { border:1px solid #D7D7D7; border-radius:0.5rem; display:flex; align-items:stretch; overflow:hidden; }
+    .auction-body { display:flex; flex-direction:column; gap:0.375rem; padding:1.25rem 1rem; flex:1; min-width:0; }
+    .auction-title-row { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .auction-title { font-size:1rem; font-weight:600; letter-spacing:-0.008rem; }
+    .auction-badge { display:flex; align-items:center; padding:0 0.5rem; height:1.5rem; border-radius:0.375rem; font-size:0.8125rem; font-weight:500; line-height:1.1875rem; flex-shrink:0; }
+    .auction-dday-row { display:flex; align-items:center; gap:0.25rem; }
+    .auction-end { font-size:0.875rem; letter-spacing:-0.007rem; }
+    .auction-dday { font-size:0.875rem; color:#F76E33; letter-spacing:-0.007rem; }
+    .auction-accent { width:0.625rem; flex-shrink:0; }
 
     /* ── Home button ── */
-    .home-btn { display:flex; height:52px; width:100%; align-items:center; justify-content:center; border-radius:6px; background:#252525; color:#fff; border:none; font-size:16px; font-weight:600; letter-spacing:-0.128px; cursor:pointer; transition:background 0.15s; }
+    .home-btn { display:flex; height:3.25rem; width:100%; align-items:center; justify-content:center; border-radius:0.375rem; background:#252525; color:#fff; border:none; font-size:1rem; font-weight:600; letter-spacing:-0.008rem; cursor:pointer; transition:background 0.15s; }
     .home-btn:hover { background:#4E4E4E; }
 
     /* ── Bottom sheet ── */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
-    .bottom-sheet { width:100%; max-width:560px; background:#fff; border-radius:20px 20px 0 0; box-shadow:0px -2px 5px rgba(0,0,0,0.16); padding-bottom:env(safe-area-inset-bottom,16px); }
-    @media(min-width:768px){ .overlay{align-items:center;padding:0 20px} .bottom-sheet{max-width:440px;border-radius:8px;border:1px solid #EAEAEA;box-shadow:0 2px 10px rgba(0,0,0,0.08);padding-bottom:0} }
-    .sheet-close { display:flex; justify-content:flex-end; padding:16px 20px 0; }
-    .sheet-body  { padding:0 20px 24px; }
-    .sheet-title { font-size:20px; font-weight:600; letter-spacing:-0.1px; line-height:28px; white-space:pre-line; }
-    .sheet-btns  { display:flex; gap:8px; padding:10px 20px; }
-    @media(min-width:768px){ .sheet-btns{padding:20px} }
-    .sheet-cancel  { flex:1; height:52px; border-radius:6px; background:#EAEAEA; border:none; color:#4E4E4E; font-size:16px; font-weight:700; cursor:pointer; }
+    .bottom-sheet { width:100%; max-width:35rem; background:#fff; border-radius:1.25rem 1.25rem 0 0; box-shadow:0rem -2px 0.3125rem rgba(0,0,0,0.16); padding-bottom:env(safe-area-inset-bottom,1rem); }
+    @media(min-width:48rem){ .overlay{align-items:center;padding:0 1.25rem} .bottom-sheet{max-width:27.5rem;border-radius:0.5rem;border:1px solid #EAEAEA;box-shadow:0 2px 0.625rem rgba(0,0,0,0.08);padding-bottom:0} }
+    .sheet-close { display:flex; justify-content:flex-end; padding:1rem 1.25rem 0; }
+    .sheet-body  { padding:0 1.25rem 1.5rem; }
+    .sheet-title { font-size:1.25rem; font-weight:600; letter-spacing:-0.0063rem; line-height:1.75rem; white-space:pre-line; }
+    .sheet-btns  { display:flex; gap:0.5rem; padding:0.625rem 1.25rem; }
+    @media(min-width:48rem){ .sheet-btns{padding:1.25rem} }
+    .sheet-cancel  { flex:1; height:3.25rem; border-radius:0.375rem; background:#EAEAEA; border:none; color:#4E4E4E; font-size:1rem; font-weight:700; cursor:pointer; }
     .sheet-cancel:hover { background:#D7D7D7; }
-    .sheet-confirm { flex:1; height:52px; border-radius:6px; background:#252525; border:none; color:#fff; font-size:16px; font-weight:700; cursor:pointer; }
+    .sheet-confirm { flex:1; height:3.25rem; border-radius:0.375rem; background:#252525; border:none; color:#fff; font-size:1rem; font-weight:700; cursor:pointer; }
     .sheet-confirm:hover { background:#4E4E4E; }
 
     /* ── Toast ── */
-    #toast-wrap { position:fixed; bottom:32px; left:0; right:0; display:flex; justify-content:center; z-index:50; padding:0 20px; pointer-events:none; }
-    .toast { max-width:35rem; width:100%; padding:13px 20px; display:flex; justify-content:center; align-items:center; border-radius:500px; background:rgba(106,106,106,0.9); color:#fff; font-size:15px; font-weight:600; line-height:20px; letter-spacing:-0.06px; }
-    @keyframes toastSlideUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes toastSlideDown { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(16px)} }
+    #toast-wrap { position:fixed; bottom:2rem; left:0; right:0; display:flex; justify-content:center; z-index:50; padding:0 1.25rem; pointer-events:none; }
+    .toast { max-width:35rem; width:100%; padding:0.8125rem 1.25rem; display:flex; justify-content:center; align-items:center; border-radius:31.25rem; background:rgba(106,106,106,0.9); color:#fff; font-size:0.9375rem; font-weight:600; line-height:1.25rem; letter-spacing:-0.0037rem; }
+    @keyframes toastSlideUp   { from{opacity:0;transform:translateY(1rem)} to{opacity:1;transform:translateY(0)} }
+    @keyframes toastSlideDown { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(1rem)} }
     .toast-enter { animation:toastSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
     .toast-leave { animation:toastSlideDown 0.3s ease-in forwards; }
 
     /* ── Footer ── */
-    .footer { border-top:1px solid #EAEAEA; padding:12px 20px; display:flex; flex-direction:column; align-items:center; gap:6px; }
-    .footer-copy { font-size:12px; color:#868686; letter-spacing:-0.096px; line-height:18px; text-align:center; }
-    .footer-links { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; }
-    .footer-link  { font-size:12px; color:#868686; letter-spacing:-0.096px; line-height:18px; }
-    .footer-sep   { width:1px; height:12px; background:#D7D7D7; display:inline-block; }
+    .footer { border-top:1px solid #EAEAEA; padding:0.75rem 1.25rem; display:flex; flex-direction:column; align-items:center; gap:0.375rem; }
+    .footer-copy { font-size:0.75rem; color:#868686; letter-spacing:-0.006rem; line-height:1.125rem; text-align:center; }
+    .footer-links { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
+    .footer-link  { font-size:0.75rem; color:#868686; letter-spacing:-0.006rem; line-height:1.125rem; }
+    .footer-sep   { width:1px; height:0.75rem; background:#D7D7D7; display:inline-block; }
 
-    @keyframes slideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(0.5rem)} to{opacity:1;transform:translateY(0)} }
     .section-new { animation:slideUp 0.4s ease-out 0.3s both; }
     .hidden { display:none !important; }
   </style>
@@ -219,12 +219,12 @@
   <div class="divider"></div>
 
   <!-- 추가 정보 -->
-  <div style="padding:40px 20px;" class="section-new">
+  <div style="padding:2.5rem 1.25rem;" class="section-new">
     <h3 class="heading2" style="margin-bottom:0;">추가 정보를 입력하고</h3>
     <h3 class="heading2">맞춤 컨텐츠 추천을 받아보세요.</h3>
 
     <!-- 성별 -->
-    <div style="margin-bottom:24px;">
+    <div style="margin-bottom:1.5rem;">
       <p class="section-label">성별 <span class="opt-label">(선택)</span></p>
       <div style="display:flex;">
         <div class="radio-row" onclick="App.selectGender('여성')" id="gender-female">
@@ -243,10 +243,10 @@
     </div>
 
     <!-- 직업 -->
-    <div style="margin-bottom:24px;">
+    <div style="margin-bottom:1.5rem;">
       <p class="section-label">직업 <span class="opt-label">(선택)</span></p>
       <div class="select-wrap">
-        <select class="field-wrap" style="width:100%;height:52px;padding:0 16px;font-size:16px;color:#252525;letter-spacing:-0.128px;" onchange="App.selectJob(this.value)">
+        <select class="field-wrap" style="width:100%;height:3.25rem;padding:0 1rem;font-size:1rem;color:#252525;letter-spacing:-0.008rem;" onchange="App.selectJob(this.value)">
           <option value="">직업 선택</option>
           <option value="학생">학생</option>
           <option value="직장인">직장인</option>
@@ -260,7 +260,7 @@
     </div>
 
     <!-- 광고성 정보 수신 동의 (1단계 미동의 시 표시) -->
-    <div style="margin-bottom:24px;" id="opt-terms-section">
+    <div style="margin-bottom:1.5rem;" id="opt-terms-section">
       <p class="section-label">광고성 정보 수신 동의 <span class="opt-label">(선택)</span></p>
       <div class="terms-box">
         <div class="terms-all-row" onclick="App.toggleOptAll()">
@@ -299,26 +299,26 @@
   <!-- 주소 (2단계에서 미입력 시 표시) -->
   <div id="addr-section">
     <div class="divider"></div>
-    <div style="padding:40px 20px;">
+    <div style="padding:2.5rem 1.25rem;">
       <h3 class="heading2" style="margin-bottom:0;">주소 정보를 입력하면</h3>
       <h3 class="heading2">경매 응찰에 참여하실 수 있습니다.</h3>
       <p class="section-label">주소 <span class="opt-label">(선택)</span></p>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
         <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
           <div class="field-row">
-            <span id="zip-text" style="flex:1;font-size:16px;letter-spacing:-0.128px;color:#868686;">우편번호</span>
+            <span id="zip-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:#868686;">우편번호</span>
             <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
           </div>
         </div>
         <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
           <div class="field-row">
-            <span id="road-text" style="flex:1;font-size:16px;letter-spacing:-0.128px;color:#868686;">도로명 주소</span>
+            <span id="road-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:#868686;">도로명 주소</span>
           </div>
         </div>
         <div class="field-wrap disabled" id="detail-wrap">
           <div class="field-row">
             <input type="text" id="detail-input" placeholder="상세 주소 입력" readonly
-              style="flex:1;font-size:16px;color:#252525;letter-spacing:-0.128px;background:none;"
+              style="flex:1;font-size:1rem;color:#252525;letter-spacing:-0.008rem;background:none;"
               onfocus="App.onDetailFocus(event)"
               oninput="App.onDetailInput(this)"/>
           </div>
@@ -331,9 +331,9 @@
   <div class="divider"></div>
 
   <!-- 진행 중 경매 -->
-  <div style="padding:40px 20px;">
+  <div style="padding:2.5rem 1.25rem;">
     <h3 class="heading2">진행중 경매를 확인해 보세요.</h3>
-    <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
       <div class="auction-card">
         <div class="auction-body">
           <div class="auction-title-row">
@@ -378,7 +378,7 @@
 
   <div class="divider"></div>
 
-  <div style="padding:32px 20px 80px;">
+  <div style="padding:2rem 1.25rem 5rem;">
     <button class="home-btn" onclick="location.href='step1.html'">홈으로 이동</button>
   </div>
 
