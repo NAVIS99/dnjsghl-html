@@ -59,6 +59,8 @@
       background: #fff; position: sticky; top: 0; z-index: 10;
     }
     .header__back { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
+    .header__title { flex: 1; text-align: center; font-size: 16px; font-weight: 600; letter-spacing: -0.128px; }
+    .header__lang { font-size: 14px; font-weight: 500; letter-spacing: -0.112px; border-bottom: 1.5px solid #252525; padding-bottom: 2px; line-height: 1; }
 
     /* ── Step Indicator ── */
     .step-indicator { display: flex; gap: 6px; padding: 0 20px; background: #fff; }
@@ -240,7 +242,7 @@
     }
     @media (min-width: 768px) { .overlay { align-items: center; } }
     .bottom-sheet {
-      background: #fff; width: 100%; max-width: 560px;
+      background: #fff; width: 100%; max-width: 27.5rem;
       border-radius: 20px 20px 0 0;
     }
     @media (min-width: 768px) { .bottom-sheet { border-radius: 8px; } }
@@ -255,9 +257,11 @@
     #tax-tooltip {
       position: fixed; z-index: 301;
       background: #fff; border: 1px solid #4E4E4E; border-radius: 8px;
-      padding: 16px; display: none; flex-direction: column; gap: 6px;
+      padding: 14px 16px 14px; display: none; flex-direction: column; gap: 6px;
       filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.08));
+      overflow: visible;
     }
+    #tax-tail { position: absolute; bottom: -8px; right: 14px; width: 12px; height: 8px; display: block; }
     .tax-tip-line { display: flex; gap: 6px; align-items: flex-start; }
     .tax-tip-dot { display: block; flex-shrink: 0; width: 3.5px; height: 3.5px; border-radius: 50%; background: #C1C1C1; margin-top: 8px; }
     .tax-tip-text { font-size: 14px; color: #252525; letter-spacing: -0.112px; line-height: 20px; flex: 1; }
@@ -367,17 +371,19 @@
 
           <!-- 파일 목록 상태 -->
           <div id="upload-filled" style="display:none;">
-            <div class="file-list-wrap" id="file-list"></div>
-            <!-- 초기화 + 파일첨부 버튼 -->
-            <div style="display:flex;gap:8px;margin-top:12px;">
-              <button class="btn-reset" onclick="App.resetFiles()">
-                <img src="../public/refresh_20.svg" width="20" height="20" alt=""/>
-                초기화
-              </button>
-              <button class="btn-upload" onclick="document.getElementById('file-input').click()">
-                <img src="../public/add_20.svg" width="20" height="20" alt=""/>
-                파일첨부
-              </button>
+            <!-- 초기화 + 파일첨부 버튼이 gray 영역 안에 포함 -->
+            <div style="background:#F3F3F3;margin:0 -20px;padding:20px;display:flex;flex-direction:column;gap:8px;">
+              <div id="file-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-reset" onclick="App.resetFiles()">
+                  <img src="../public/refresh_20.svg" width="20" height="20" alt=""/>
+                  초기화
+                </button>
+                <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                  <img src="../public/add_20.svg" width="20" height="20" alt=""/>
+                  파일첨부
+                </button>
+              </div>
             </div>
           </div>
 
@@ -385,7 +391,7 @@
           <div class="status-chips" id="status-chips">
             <div class="status-chip" id="chip-business">사업자 증빙자료</div>
             <div class="status-chip" id="chip-card">담당자 명함</div>
-            <div class="status-chip" id="chip-id" style="display:none;">신분증 <span style="color:#868686;font-weight:400;">(선택)</span></div>
+            <div class="status-chip" id="chip-id">신분증 <span style="color:#868686;font-weight:400;">(선택)</span></div>
           </div>
           <p class="format-hint">jpg, jpeg, png, heic 또는 pdf 파일 업로드 (검수 후 모든 서비스 이용 가능)</p>
 
@@ -408,7 +414,7 @@
         <div>
           <p class="sec-label">담당자 이름</p>
           <div class="field-wrap" id="name-wrap">
-            <input class="field-input" id="name-input" placeholder="이름 입력"
+            <input class="field-input" id="name-input" placeholder="담당자 이름 입력"
               oninput="App.onNameInput(this)"
               onfocus="App.setFocus('name')" onblur="App.clearFocus('name')"
               onkeydown="App.onNameKeyDown(event)"/>
@@ -552,7 +558,8 @@
           <div style="position:absolute;top:1.5rem;bottom:0;width:1px;background:#252525;"></div>
         </div>
         <div style="flex:1;padding-bottom:1.5rem;">
-          <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0 0 0.75rem;white-space:pre-line;">사업자 확인을 위한 자료를 미리 준비하세요.</p>
+          <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0 0 0.75rem;white-space:pre-line;">사업자 및 신분 확인을 위한 자료를
+미리 준비하세요.</p>
           <div style="background:#F9F9F9;border-radius:0.25rem;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem;">
             <div>
               <p style="color:#252525;font-size:1rem;font-weight:600;line-height:1.5rem;letter-spacing:-0.008rem;margin:0 0 0.13rem;">1) 사업자 증빙자료 사본</p>
@@ -561,6 +568,10 @@
             <div>
               <p style="color:#252525;font-size:1rem;font-weight:600;line-height:1.5rem;letter-spacing:-0.008rem;margin:0 0 0.13rem;">2) 담당자 명함 사본</p>
               <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">가입 신청자가 사업체의 소속원임을 증명</p>
+            </div>
+            <div>
+              <p style="color:#252525;font-size:1rem;font-weight:600;line-height:1.5rem;letter-spacing:-0.008rem;margin:0 0 0.13rem;">3) 여권 등 신분증 사본 (마스킹 필수)</p>
+              <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">가입 신청자 신원 증명</p>
             </div>
           </div>
         </div>
@@ -590,7 +601,7 @@
         <div style="flex:1;">
           <p style="color:#252525;font-size:1.125rem;font-weight:600;line-height:1.625rem;letter-spacing:-0.009rem;margin:0 0 0.13rem;white-space:pre-line;">제출한 이미지들이 각각 어떤 자료인지
 라벨링 해주세요.</p>
-          <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">사업자 증빙자료, 명함 중 선택</p>
+          <p style="color:#6A6A6A;font-size:0.875rem;font-weight:400;line-height:1.25rem;letter-spacing:-0.007rem;margin:0;">사업자 증빙자료, 명함, 신분증 중 선택</p>
         </div>
       </div>
 
@@ -648,12 +659,11 @@
     <span class="tax-tip-dot"></span>
     <span class="tax-tip-text">세금계산서 이메일 변경은 마이페이지 &gt; 회원정보에서 가능합니다.</span>
   </div>
-  <div style="display:flex;justify-content:flex-end;padding-right:12px;margin-top:-4px;">
-    <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
-      <path d="M0 0 L12 0 L6 9 Z" fill="white"/>
-      <path d="M0 0 L6 9 L12 0" stroke="#4E4E4E" stroke-width="1" fill="none" stroke-linejoin="round"/>
-    </svg>
-  </div>
+  <!-- 아래 방향 꼬리 — JS가 right 값 조정 -->
+  <svg id="tax-tail" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 L12 0 L6 8 Z" fill="white"/>
+    <path d="M0 0.5 L6 8 L12 0.5" stroke="#4E4E4E" stroke-width="1" fill="none" stroke-linejoin="round"/>
+  </svg>
 </div>
 
 <!-- 이메일 자동완성 -->
@@ -677,7 +687,7 @@ const App = (() => {
     emailSuggestions: [], emailSugIdx: -1,
     files: [],                  // [{id, src, label}]
     docGuideShown: false,
-    isDomesticBiz: true,        // 해외 사업자면 false로 변경 가능
+    isDomesticBiz: false,       // false = 해외 사업자 (3 labels), true = 국내 (2 labels)
   }
 
   /* ── 유효성 ── */
@@ -781,16 +791,38 @@ const App = (() => {
   }
   window.addEventListener('scroll', () => { state.emailSuggestions=[]; renderEmailDropdown() }, { passive: true, capture: true })
 
+  /* ── Validation ── */
+  function showFieldError(wrapId, errId, msg) {
+    $(wrapId).classList.toggle('error', !!msg)
+    $(errId).textContent = msg
+    $(errId).classList.toggle('hidden', !msg)
+  }
+  function validateName()  { showFieldError('name-wrap',  'name-err',  state.name.trim()==='' ? '이름을 입력해 주세요.' : '') }
+  function validateBirth() { showFieldError('birth-wrap', 'birth-err', state.birth.length>0 && state.birth.length<8 ? '생년월일 8자리를 입력해 주세요.' : '') }
+  function validateEmail() { showFieldError('email-wrap', 'email-err', state.email && !isEmailValid(state.email) ? '올바른 이메일 형식을 입력해 주세요.' : '') }
+  function validateAll() {
+    showFieldError('name-wrap',  'name-err',  state.name.trim()===''          ? '이름을 입력해 주세요.'              : '')
+    showFieldError('birth-wrap', 'birth-err', state.birth.length<8            ? '생년월일 8자리를 입력해 주세요.'    : '')
+    showFieldError('email-wrap', 'email-err', !isEmailValid(state.email)      ? '올바른 이메일 형식을 입력해 주세요.' : '')
+  }
+
   /* ── Focus ── */
   function setFocus(field) {
     state.focusedField = field
     if (field === 'birth') { $('birth-input').value = state.birth }
+    // 포커스 시 에러 상태 해제
+    if (field === 'name')  { $('name-wrap').classList.remove('error');  $('name-err').classList.add('hidden') }
+    if (field === 'birth') { $('birth-wrap').classList.remove('error'); $('birth-err').classList.add('hidden') }
+    if (field === 'email') { $('email-wrap').classList.remove('error'); $('email-err').classList.add('hidden') }
     renderAllIcons()
   }
   function clearFocus(field) {
     if (state.focusedField !== field) return
     state.focusedField = null
     if (field === 'birth') { $('birth-input').value = fmtBirth(state.birth) }
+    if (field === 'name')  validateName()
+    if (field === 'birth') validateBirth()
+    if (field === 'email') validateEmail()
     setTimeout(() => { state.emailSuggestions=[]; renderEmailDropdown() }, 150)
     renderAllIcons()
   }
@@ -807,7 +839,7 @@ const App = (() => {
   }
 
   function goToDocuments() {
-    if (!personalValid()) return
+    if (!personalValid()) { validateAll(); return }
     state.phase = 'documents'
     // 타이틀 전환
     const title = $('main-title')
@@ -852,10 +884,11 @@ const App = (() => {
     renderFiles()
   }
 
-  const LABELS = ['사업자 증빙자료', '담당자 명함']      // status chip labels (domBiz)
-  const LABEL_KEYS = ['business', 'card']               // key mapping (domBiz)
-  const CARD_LABELS = ['사업자 증빙자료', '명함']         // card chip labels (shorter)
-  const OPTIONAL = new Set([])
+  // 해외 사업자: 3 labels, 신분증 선택
+  const LABELS      = ['사업자 증빙자료', '담당자 명함', '신분증']
+  const LABEL_KEYS  = ['business', 'card', 'id']
+  const CARD_LABELS = ['사업자 증빙자료', '명함', '신분증']
+  const OPTIONAL    = new Set(['id'])
 
   function renderFiles() {
     const empty  = $('upload-empty')
@@ -933,13 +966,19 @@ const App = (() => {
 
   /* ── Tax Tooltip ── */
   function openTaxTip() {
-    const btn   = $('tax-btn')
-    const wrap  = $('email-wrap')
-    const tip   = $('tax-tooltip')
-    const maxW  = Math.min(400, wrap.getBoundingClientRect().width)
+    const btn  = $('tax-btn')
+    const wrap = $('email-wrap')
+    const tip  = $('tax-tooltip')
+    const tail = $('tax-tail')
     const btnR  = btn.getBoundingClientRect()
     const wrapR = wrap.getBoundingClientRect()
-    tip.style.cssText = `display:flex;bottom:${window.innerHeight - btnR.top + 6}px;left:${wrapR.right - maxW}px;width:${maxW}px;`
+    const maxW  = Math.min(400, wrapR.width)
+    const tipLeft = wrapR.right - maxW
+    tip.style.cssText = `display:flex;bottom:${window.innerHeight - btnR.top + 8}px;left:${tipLeft}px;width:${maxW}px;`
+    // 꼬리 수평 위치: 버튼 중심에 정렬
+    const btnCenterX  = btnR.left + btnR.width / 2
+    const tailRightPx = (tipLeft + maxW) - btnCenterX - 6
+    tail.style.right  = Math.max(8, Math.min(maxW - 20, tailRightPx)) + 'px'
   }
   function closeTaxTip() { $('tax-tooltip').style.display = 'none' }
 
