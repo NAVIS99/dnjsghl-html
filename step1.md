@@ -75,6 +75,44 @@ termsAndMember ──(회원유형 선택 + 필수약관 4개 동의)──▶ a
 
 ---
 
+## 회원별 준비 사항 모달 (MemberInfoModal)
+
+- 트리거: 하단 "회원별 준비 사항" 버튼 클릭
+- 모바일: 바텀시트 / 태블릿(768px+): 중앙 모달
+
+### 탭 구성
+
+| 탭 | 항목 수 |
+|----|---------|
+| 국내 개인 | 2개 |
+| 국내 사업자 | 4개 |
+| 해외 개인 | 2개 |
+| 해외 사업자 | 4개 |
+
+### 높이 처리
+
+탭 전환 시 높이 변동 없이 **가장 긴 탭(4개 항목) 기준 높이 고정**.  
+구현: 모든 탭 패널을 `display: grid` + `grid-area: 1/1`로 겹쳐 렌더링, 비활성 탭은 `opacity: 0` + `pointer-events: none` + `transition: opacity 0.15s`
+
+### 탭 스타일
+
+- 활성: `font-weight: 700`, `color: #252525`, `border-bottom: 2px solid #252525`
+- 비활성: `font-weight: 600`, `color: #C1C1C1`, `border-bottom: 2px solid transparent`
+- 전환: `transition: color 0.15s, border-color 0.15s`
+
+### 항목 구조
+
+```
+[아이콘 원형 48×48] [타이틀 + 뱃지]
+                    [설명 텍스트 #6A6A6A, 14px]
+```
+
+- 아이콘 박스: `border-radius: 100px`, `border: 1px solid #F3F3F3`, `background: #F9F9F9`
+- 필수 뱃지: `border: 1px solid #FBB89B`, `color: #F76E33`
+- 선택 뱃지: `border: 1px solid #D7D7D7`, `color: #868686`
+
+---
+
 ## 약관 동의
 
 ### 필수 약관 4개

@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>K Auction 회원가입 – 3단계 (사업자)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+      font-size: 16px; color: #252525;
+      background: #fff; -webkit-font-smoothing: antialiased;
+    }
+    input  { outline: none; -webkit-appearance: none; font-family: inherit; font-size: inherit; border: none; background: none; padding: 0; margin: 0; }
+    input::placeholder { color: #868686; }
+    button { font-family: inherit; cursor: pointer; background: none; border: none; padding: 0; margin: 0; font-size: inherit; }
+    p { margin: 0; }
+    img { display: block; }
+
+    /* ── PC Layout ── */
+    #layout { display: flex; min-height: 100svh; }
+    #left-panel {
+      width: 440px; flex-shrink: 0;
+      position: sticky; top: 0; height: 100svh;
+      display: none; overflow: hidden; background: #1a1a1a;
+    }
+    #left-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    #left-tagline {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+      height: 256px; padding: 116px 40px 80px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+      display: flex; align-items: flex-end;
+    }
+    #left-tagline p { font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -0.192px; line-height: 32px; margin: 0; }
+    #right-content { flex: 1; display: flex; justify-content: center; }
+    #pc-footer { display: none; border-top: 1px solid #EAEAEA; padding: 16px 20px; background: #fff; }
+    #pc-footer-inner { display: flex; align-items: center; justify-content: space-between; }
+    #pc-footer .copy { font-size: 12px; color: #868686; letter-spacing: -0.096px; line-height: 18px; }
+    #pc-footer .links { display: flex; align-items: center; gap: 0; }
+    #pc-footer .flink { font-size: 12px; color: #868686; letter-spacing: -0.096px; }
+    #pc-footer .fsep  { margin: 0 8px; font-size: 12px; color: #D7D7D7; }
+    @media (min-width: 1024px) {
+      #left-panel { display: block; }
+      #pc-footer  { display: block; }
+      #toast-wrap { left: 440px; }
+      .footer { display: none !important; }
+    }
+
+    /* ── App ── */
+    #app { display: flex; flex-direction: column; min-height: 100svh; width: 100%; max-width: 560px; background: #fff; }
+
+    /* ── Header ── */
+    .header {
+      display: flex; align-items: center; height: 56px; padding: 0 20px;
+      background: #fff; position: sticky; top: 0; z-index: 10;
+    }
+    .header__back { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
+
+    /* ── Step Indicator ── */
+    .step-indicator { display: flex; gap: 6px; padding: 0 20px; background: #fff; }
+    .step-bar-wrap { flex: 1; height: 10px; display: flex; align-items: center; }
+    .step-bar-track { width: 100%; height: 3px; border-radius: 500px; background: #EAEAEA; position: relative; overflow: hidden; }
+    .step-bar-fill {
+      position: absolute; inset: 0; background: #F76E33;
+      border-radius: 500px; transform-origin: left center;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Title ── */
+    .section-title { padding: 32px 20px 0; display: flex; flex-direction: column; gap: 8px; }
+    .section-title h1 {
+      font-size: 24px; font-weight: 600; color: #252525;
+      letter-spacing: -0.192px; line-height: 32px; margin: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .section-title p { font-size: 15px; color: #6A6A6A; letter-spacing: -0.12px; line-height: 23px; margin: 0; }
+    .fade-out { opacity: 0 !important; transform: translateY(4px) !important; }
+
+    /* ── Section reveal ── */
+    .section-reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.38s ease-in-out; }
+    .section-reveal.open { grid-template-rows: 1fr; }
+    .section-reveal-inner { min-height: 0; overflow: hidden; }
+
+    /* ── Animations ── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .section-new  { animation: slideUp 0.4s ease-out 0.3s both; }
+    .section-fade { animation: fadeIn 0.32s ease-out 0.35s both; }
+
+    /* ── Field ── */
+    .sec-label { font-size: 14px; font-weight: 600; letter-spacing: -0.112px; margin: 0 0 10px; }
+    .field-wrap {
+      height: 52px; display: flex; align-items: center; padding: 0 16px; gap: 8px;
+      border: 1px solid #D7D7D7; border-radius: 6px; background: #fff;
+      transition: border-color 0.1s;
+    }
+    .field-wrap:focus-within { border-color: #252525; }
+    .field-wrap.error { border-color: #E51B27; }
+    .field-row { display: flex; align-items: center; flex: 1; gap: 8px; overflow: hidden; }
+    .field-input { flex: 1; font-size: 16px; color: #252525; letter-spacing: -0.128px; background: none; min-width: 0; }
+    .icon-btn { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .enter-icon-wrap { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .inner-btn {
+      display: flex; height: 32px; padding: 0 12px;
+      align-items: center; border-radius: 4px;
+      border: 1px solid #C1C1C1; background: #fff;
+      color: #252525; font-size: 14px; font-weight: 500;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .err-text { font-size: 13px; color: #E51B27; margin: 8px 0 0; letter-spacing: -0.104px; }
+    .hidden { display: none !important; }
+
+    /* ── CTA Button ── */
+    .btn-main {
+      width: 100%; height: 52px; border-radius: 6px;
+      background: #252525; color: #fff; border: none; cursor: pointer;
+      font-size: 16px; font-weight: 700; letter-spacing: -0.128px; line-height: 24px;
+      transition: background 0.15s;
+    }
+    .btn-main:hover:not(:disabled) { background: #4E4E4E; }
+    .btn-main:disabled { background: #C1C1C1; border: 1px solid #C1C1C1; cursor: default; }
+    .btn-sticky {
+      position: sticky; bottom: 0; padding: 0 20px;
+    }
+    .btn-sticky.is-sticky { background: #fff; padding-top: 10px; padding-bottom: 10px; }
+    .btn-sticky:not(.is-sticky) { padding-top: 28px; padding-bottom: 28px; background: transparent; }
+
+    /* ── Upload area ── */
+    .upload-empty {
+      display: flex; height: 160px; padding: 0 16px;
+      flex-direction: column; justify-content: center; align-items: center; gap: 8px;
+      align-self: stretch; cursor: pointer; border-radius: 4px;
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23D7D7D7' stroke-width='1' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color: #F9F9F9;
+      transition: background-color 0.15s;
+    }
+    .upload-empty.dragging {
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23F76E33' stroke-width='1' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color: #FCF2EE;
+    }
+
+    /* ── File card list ── */
+    .file-list-wrap {
+      display: flex; padding: 20px;
+      flex-direction: column; align-items: flex-start; gap: 8px;
+      background: #F3F3F3;
+      margin: 0 -20px;
+    }
+    .file-card {
+      display: flex; height: 140px; align-items: flex-start; gap: 16px;
+      align-self: stretch;
+      border-radius: 8px; border: 1px solid #EAEAEA;
+      background: #fff; box-shadow: 0 2px 10px 0 rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    @media (min-width: 768px) { .file-card { height: 100px; } }
+    .file-thumb-wrap { display: flex; padding: 8px 0 8px 8px; align-items: center; align-self: stretch; }
+    .file-thumb {
+      position: relative; width: 140px; min-width: 140px; align-self: stretch;
+      border-radius: 4px; border: 1px solid #F3F3F3; background: #F3F3F3; overflow: hidden;
+    }
+    .file-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .file-right {
+      display: flex; padding: 16px 16px 12px 0;
+      flex-direction: column; justify-content: space-between;
+      align-items: flex-end; flex: 1; align-self: stretch;
+    }
+    .label-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; align-self: stretch; }
+    .label-chip {
+      display: flex; height: 36px; padding: 0 16px;
+      justify-content: center; align-items: center; gap: 4px;
+      border-radius: 500px; border: none;
+      font-size: 14px; font-weight: 600; letter-spacing: -0.112px; cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .label-chip.default { background: #EAEAEA; color: #4E4E4E; }
+    .label-chip.default:hover { background: #D7D7D7; }
+    .label-chip.selected { background: #F76E33; color: #fff; }
+    .label-chip.disabled { background: #F9F9F9; color: #C1C1C1; border: 1px solid #E2E2E2; cursor: default; }
+    .file-actions { display: flex; gap: 16px; align-items: center; }
+    .file-action-btn { font-size: 13px; color: #252525; letter-spacing: -0.104px; display: flex; align-items: center; gap: 4px; }
+
+    /* ── Reset & Upload buttons ── */
+    .btn-reset {
+      display: flex; height: 52px; padding: 0 16px;
+      justify-content: center; align-items: center; gap: 8px;
+      border-radius: 4px; border: 1px solid #C1C1C1; background: #fff;
+      color: #252525; font-size: 16px; font-weight: 500;
+      letter-spacing: -0.128px; cursor: pointer; transition: border-color 0.15s;
+    }
+    .btn-reset:hover { border-color: #6A6A6A; }
+    .btn-upload {
+      display: flex; flex: 1; height: 52px; padding: 0 16px;
+      justify-content: center; align-items: center; gap: 8px;
+      border-radius: 4px; border: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23C1C1C1' stroke-width='1.5' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color: #fff;
+      color: #252525; font-size: 16px; font-weight: 500;
+      letter-spacing: -0.128px; transition: background-image 0.15s;
+    }
+    .btn-upload:hover {
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%236A6A6A' stroke-width='1.5' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+    }
+
+    /* ── Status chips ── */
+    .status-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .status-chip {
+      display: flex; height: 28px; padding: 0 10px; align-items: center; gap: 6px;
+      border-radius: 6px; border: 1px solid #D7D7D7; background: #fff;
+      color: #4E4E4E; font-size: 14px; font-weight: 500; letter-spacing: -0.112px;
+    }
+    .status-chip.done { border-color: rgba(49,164,39,0.30); color: #31A427; }
+    .format-hint { font-size: 13px; color: #868686; letter-spacing: -0.104px; line-height: 19px; margin-top: 10px; }
+
+    /* ── Email autocomplete ── */
+    #email-dropdown {
+      position: fixed; z-index: 200;
+      background: #fff; border: 1px solid #D7D7D7; border-radius: 4px;
+      overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+      display: none;
+    }
+    .email-option {
+      width: 100%; text-align: left; padding: 0 16px; height: 48px;
+      display: flex; align-items: center; font-size: 15px;
+      color: #252525; letter-spacing: -0.12px; cursor: pointer;
+    }
+    .email-option:hover, .email-option.active { background: #F3F3F3; }
+
+    /* ── Overlay / Bottom-sheet ── */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    @media (min-width: 768px) { .overlay { align-items: center; } }
+    .bottom-sheet {
+      background: #fff; width: 100%; max-width: 560px;
+      border-radius: 20px 20px 0 0;
+    }
+    @media (min-width: 768px) { .bottom-sheet { border-radius: 8px; } }
+
+    /* ── Tax tooltip ── */
+    #tax-tooltip {
+      position: fixed; z-index: 301;
+      background: #fff; border: 1px solid #4E4E4E; border-radius: 8px;
+      padding: 16px; display: none; flex-direction: column; gap: 6px;
+      filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.08));
+    }
+    .tax-tip-line { display: flex; gap: 6px; align-items: flex-start; }
+    .tax-tip-dot { display: block; flex-shrink: 0; width: 3.5px; height: 3.5px; border-radius: 50%; background: #C1C1C1; margin-top: 8px; }
+    .tax-tip-text { font-size: 14px; color: #252525; letter-spacing: -0.112px; line-height: 20px; flex: 1; }
+
+    /* ── Toast ── */
+    #toast-wrap {
+      position: fixed; bottom: 32px; left: 0; right: 0;
+      display: flex; justify-content: center; z-index: 50; padding: 0 20px;
+      pointer-events: none;
+    }
+    .toast {
+      max-width: 35rem; width: 100%; padding: 13px 20px;
+      display: flex; justify-content: center; align-items: center;
+      border-radius: 500px; background: rgba(106,106,106,0.9);
+      color: #fff; text-align: center;
+      font-size: 15px; font-weight: 600; line-height: 20px; letter-spacing: -0.06px;
+    }
+    @keyframes toastSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastSlideDown {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(16px); }
+    }
+    .toast-enter { animation: toastSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .toast-leave { animation: toastSlideDown 0.3s ease-in forwards; }
+
+    /* ── Footer ── */
+    .logo-area { display: flex; justify-content: center; padding: 60px 20px 80px; }
+    .footer {
+      border-top: 1px solid #EAEAEA; padding: 12px 20px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .footer__copy { font-size: 12px; color: #868686; letter-spacing: -0.096px; line-height: 18px; text-align: center; }
+    .footer__links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .footer__link { font-size: 12px; color: #868686; letter-spacing: -0.096px; line-height: 18px; }
+    .footer__sep  { width: 1px; height: 12px; background: #D7D7D7; }
+  </style>
+</head>
+<body>
+<div id="layout">
+
+<!-- ── 좌측 패널 (PC only) ── -->
+<div id="left-panel">
+  <img src="../src/assets/images/banner.jpg" alt="auction artwork"/>
+  <div id="left-tagline">
+    <div>
+      <p>작품을 사고 팔 땐,</p>
+      <p>미술품 경매 회사 케이옥션</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── 우측 콘텐츠 ── -->
+<div id="right-content">
+<div id="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <button class="header__back" onclick="App.goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M10.5 3.5L2 12L10.5 20.5" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ── Step Indicator ── -->
+  <div class="step-indicator">
+    <button class="step-bar-wrap"><div class="step-bar-track"><div class="step-bar-fill" style="transform:scaleX(1)"></div></div></button>
+    <button class="step-bar-wrap"><div class="step-bar-track"><div class="step-bar-fill" style="transform:scaleX(1)"></div></div></button>
+    <button class="step-bar-wrap"><div class="step-bar-track"><div class="step-bar-fill" id="bar3" style="transform:scaleX(0.5)"></div></div></button>
+  </div>
+
+  <!-- ── Title ── -->
+  <div class="section-title">
+    <h1 id="main-title">담당자 정보를 입력해 주세요.</h1>
+    <p id="main-sub" style="display:none;"></p>
+  </div>
+
+  <!-- ── Content ── -->
+  <div style="flex:1;display:flex;flex-direction:column;margin-top:20px;">
+
+    <!-- ── 증빙자료 섹션 (phase: documents) ── -->
+    <div class="section-reveal" id="doc-section">
+      <div class="section-reveal-inner">
+        <div class="section-fade" id="doc-content" style="padding:12px 20px;">
+          <!-- 레이블 + 인포마크 -->
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+            <span class="sec-label" style="margin-bottom:0;">증빙자료</span>
+            <button onclick="App.openDocGuide()" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0;">
+              <img src="../public/infomark_g_16.svg" width="16" height="16" alt=""/>
+            </button>
+          </div>
+
+          <!-- 빈 상태 업로드 영역 -->
+          <div id="upload-empty" class="upload-empty"
+            onclick="document.getElementById('file-input').click()"
+            ondragover="event.preventDefault();this.classList.add('dragging')"
+            ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('dragging')"
+            ondrop="event.preventDefault();this.classList.remove('dragging');App.addFiles(event.dataTransfer.files)">
+            <img src="../public/add_40.svg" width="40" height="40" alt="" id="upload-icon"/>
+            <span id="upload-label" style="font-size:16px;font-weight:500;letter-spacing:-0.128px;color:#252525;">파일 첨부</span>
+          </div>
+
+          <!-- 파일 목록 상태 -->
+          <div id="upload-filled" style="display:none;">
+            <div class="file-list-wrap" id="file-list"></div>
+            <!-- 초기화 + 파일첨부 버튼 -->
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <button class="btn-reset" onclick="App.resetFiles()">
+                <img src="../public/refresh_20.svg" width="20" height="20" alt=""/>
+                초기화
+              </button>
+              <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                <img src="../public/add_20.svg" width="20" height="20" alt=""/>
+                파일 첨부
+              </button>
+            </div>
+          </div>
+
+          <!-- 분류 현황 칩 -->
+          <div class="status-chips" id="status-chips">
+            <div class="status-chip" id="chip-business">사업자 증빙자료</div>
+            <div class="status-chip" id="chip-card">명함</div>
+            <div class="status-chip" id="chip-id">신분증 <span style="color:#868686;font-weight:400;">(선택)</span></div>
+          </div>
+          <p class="format-hint">JPG, PNG, PDF 파일만 업로드 가능합니다.</p>
+
+          <input type="file" id="file-input" accept="image/*,.pdf" multiple style="display:none;"
+            onchange="App.handleFileChange(this)"/>
+        </div>
+
+        <!-- 가입 완료 버튼 -->
+        <div class="btn-sticky section-fade" id="btn-complete-wrap" style="padding:28px 20px;">
+          <button class="btn-main" id="btn-complete" onclick="App.handleComplete()" disabled>가입 완료</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 담당자 인적사항 섹션 (phase: personal) ── -->
+    <div class="section-new" style="padding:12px 20px;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- 담당자 이름 -->
+        <div>
+          <p class="sec-label">담당자 이름</p>
+          <div class="field-wrap" id="name-wrap">
+            <input class="field-input" id="name-input" placeholder="이름 입력"
+              oninput="App.onNameInput(this)"
+              onfocus="App.setFocus('name')" onblur="App.clearFocus('name')"
+              onkeydown="App.onNameKeyDown(event)"/>
+            <div class="icon-btn hidden" id="name-clear"
+              onmousedown="event.preventDefault();App.clearName()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect width="16" height="16" rx="8" fill="#C1C1C1"/>
+                <path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="enter-icon-wrap hidden" id="name-enter">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <p class="err-text hidden" id="name-err"></p>
+        </div>
+
+        <!-- 담당자 생년월일 -->
+        <div>
+          <p class="sec-label">담당자 생년월일</p>
+          <div class="field-wrap" id="birth-wrap">
+            <input class="field-input" id="birth-input" inputmode="numeric" placeholder="YYYYMMDD"
+              oninput="App.onBirthInput(this)"
+              onfocus="App.setFocus('birth')" onblur="App.clearFocus('birth')"
+              onkeydown="App.onBirthKeyDown(event)"/>
+            <div class="icon-btn hidden" id="birth-clear"
+              onmousedown="event.preventDefault();App.clearBirth()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect width="16" height="16" rx="8" fill="#C1C1C1"/>
+                <path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="enter-icon-wrap hidden" id="birth-enter">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <p class="err-text hidden" id="birth-err"></p>
+        </div>
+
+        <!-- 담당자 이메일 -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <p class="sec-label" style="margin:0;">담당자 이메일</p>
+            <button id="tax-btn" onclick="App.openTaxTip()"
+              style="display:flex;align-items:center;gap:4px;color:#868686;font-size:13px;letter-spacing:-0.104px;">
+              세금계산서 이메일 용도
+              <img src="../public/infomark_g_16.svg" width="16" height="16" alt=""/>
+            </button>
+          </div>
+          <div class="field-wrap" id="email-wrap">
+            <input class="field-input" type="email" id="email-input" placeholder="이메일 주소 입력"
+              oninput="App.onEmailInput(this)"
+              onfocus="App.setFocus('email')" onblur="App.clearFocus('email')"
+              onkeydown="App.onEmailKeyDown(event)"/>
+            <div class="icon-btn hidden" id="email-clear"
+              onmousedown="event.preventDefault();App.clearEmail()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect width="16" height="16" rx="8" fill="#C1C1C1"/>
+                <path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="enter-icon-wrap hidden" id="email-enter">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <p class="err-text hidden" id="email-err"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 다음 버튼 (personal phase) -->
+    <div class="btn-sticky section-new" id="btn-next-wrap" style="padding:28px 20px;">
+      <button class="btn-main" id="btn-next" onclick="App.goToDocuments()" disabled>다음</button>
+    </div>
+
+    <div style="height:68px;"></div>
+
+    <!-- Footer -->
+    <div class="logo-area">
+      <svg width="148" height="24" viewBox="0 0 110 18" fill="none">
+        <path d="M108.851 5.56364C108.136 4.90909 107.312 4.63636 106.323 4.63636C105.554 4.63636 104.84 4.85455 104.07 5.23636C103.356 5.61818 102.642 6.32727 102.037 7.25455V4.90909H98.6305V17.3455H102.037V9.49091C102.642 8.61818 103.136 8.01818 103.686 7.69091C104.18 7.36364 104.675 7.25455 105.114 7.25455C105.389 7.25455 105.609 7.30909 105.829 7.41818C106.048 7.52727 106.213 7.74545 106.323 7.96364C106.433 8.18182 106.543 8.67273 106.543 9.32727V17.2909H109.95V8.56364C109.895 7.2 109.565 6.21818 108.851 5.56364ZM91.2126 14.2364C90.7181 15.0545 90.0038 15.4909 89.0697 15.4909C88.1356 15.4909 87.4213 15.1091 86.9267 14.2364C86.4322 13.4182 86.2124 12.3818 86.2124 11.0727C86.2124 9.81818 86.4322 8.78182 86.9267 7.96364C87.4213 7.14545 88.1356 6.70909 89.0697 6.70909C90.0038 6.70909 90.7181 7.14545 91.2126 7.96364C91.7072 8.78182 91.9269 9.81818 91.9269 11.0727C91.9269 12.3818 91.7072 13.4182 91.2126 14.2364ZM95.4985 11.1273C95.4985 9.87273 95.2238 8.78182 94.7293 7.74545C94.2347 6.70909 93.4655 5.94545 92.5314 5.45455C91.5423 4.90909 90.3884 4.63636 89.0147 4.63636C87.6411 4.63636 86.4872 4.90909 85.4981 5.45455C84.5091 6 83.7947 6.76364 83.3002 7.74545C82.8057 8.78182 82.5309 9.87273 82.5309 11.1273C82.5309 12.3818 82.8057 13.4727 83.3002 14.5091C83.7947 15.5455 84.564 16.3091 85.4981 16.8C86.4872 17.3455 87.6411 17.5636 88.9598 17.5636C90.3335 17.5636 91.4874 17.2909 92.4215 16.8C93.4105 16.2545 94.1248 15.4909 94.6194 14.5091C95.2787 13.4727 95.4985 12.3273 95.4985 11.1273ZM76.1571 17.2909H79.5638V4.90909H76.1571V17.2909ZM76.1571 2.78182H79.5638V0H76.1571V2.78182ZM73.135 17.2364V15.2182C72.7503 15.3273 72.3657 15.3818 72.091 15.3818C71.4865 15.3818 70.992 15.2182 70.7173 14.8909C70.3876 14.5636 70.2227 13.9636 70.2227 13.0909V7.03636H72.9152V4.90909H70.2227V2.4L66.816 2.78182V4.90909H65.3874V6.98182H66.816V13.5273C66.816 14.5636 66.9808 15.3273 67.2556 15.8727C67.5853 16.4182 68.0248 16.8 68.6293 17.1273C69.2337 17.4545 70.1128 17.6182 71.2118 17.6182C71.7063 17.6182 72.3107 17.5091 73.135 17.2364ZM58.464 14.8909C57.9145 14.5636 57.4749 14.0727 57.2002 13.3636C56.8705 12.6545 56.7606 11.8909 56.7606 11.0727C56.7606 10.0364 57.0354 9.05454 57.5299 8.18182C58.0794 7.30909 58.9036 6.87273 60.0575 6.87273C60.8817 6.87273 61.9257 7.09091 63.2994 7.58182V5.12727C61.9806 4.8 60.8267 4.63636 59.8377 4.63636C57.6398 4.63636 55.9914 5.23636 54.8375 6.43636C53.7385 7.63636 53.1341 9.16364 53.1341 11.1273C53.1341 12.9273 53.6836 14.5091 54.7276 15.7636C55.7716 17.0182 57.3651 17.6727 59.508 17.6727C60.7168 17.6727 61.9806 17.5091 63.3543 17.1273V14.7273C62.3103 15.1636 61.2663 15.3818 60.2773 15.3818C59.6179 15.3818 59.0135 15.2182 58.464 14.8909ZM42.3644 17.6182C43.1337 17.6182 43.9029 17.4 44.6173 17.0182C45.3316 16.6364 46.0459 15.9273 46.6503 15V17.3455H50.0021V4.90909H46.5954V12.7091C45.991 13.5818 45.4964 14.1818 44.9469 14.5091C44.4524 14.8364 43.9579 14.9455 43.5183 14.9455C43.2436 14.9455 43.0238 14.8909 42.804 14.7818C42.5842 14.6727 42.4194 14.4545 42.3095 14.2364C42.1996 14.0182 42.1446 13.5273 42.1446 12.8727V4.90909H38.7379V13.6909C38.7379 15.0545 39.0676 16.0364 39.7819 16.6909C40.5512 17.2909 41.3754 17.6182 42.3644 17.6182ZM25.056 10.6364L27.6935 3.92727L30.276 10.6364H25.056ZM26.4297 0.545455L19.836 17.2909H22.3636L24.1219 12.8182H31.1002L32.8585 17.2909H36.4851L29.9463 0.545455H26.4297ZM6.86842 8.07273L12.5829 0.545455H9.67074L3.40674 8.67273V0.545455H0V17.2909H3.40674V9.05455L9.61579 17.2909H13.9017L6.86842 8.07273Z" fill="black"/>
+      </svg>
+    </div>
+    <footer class="footer">
+      <p class="footer__copy">© <span class="copy-year"></span> K Auction. All Rights Reserved.</p>
+      <div class="footer__links">
+        <span class="footer__link">경매약관</span><span class="footer__sep"></span>
+        <span class="footer__link">온라인경매약관</span><span class="footer__sep"></span>
+        <span class="footer__link">개인정보처리방침</span><span class="footer__sep"></span>
+        <span class="footer__link">내부정보관리규정</span><span class="footer__sep"></span>
+        <span class="footer__link">윤리경영</span>
+      </div>
+    </footer>
+  </div>
+
+</div><!-- /app -->
+</div><!-- /right-content -->
+</div><!-- /layout -->
+
+<!-- PC Footer -->
+<div id="pc-footer">
+  <div id="pc-footer-inner">
+    <span class="copy">© <span class="copy-year"></span> K Auction. All Rights Reserved.</span>
+    <div class="links">
+      <span class="flink">경매약관</span><span class="fsep">|</span>
+      <span class="flink">온라인경매약관</span><span class="fsep">|</span>
+      <span class="flink">개인정보처리방침</span><span class="fsep">|</span>
+      <span class="flink">내부정보관리규정</span><span class="fsep">|</span>
+      <span class="flink">윤리경영</span>
+    </div>
+  </div>
+</div>
+
+<!-- 증빙자료 가이드 모달 -->
+<div id="doc-guide-modal" style="display:none;" class="overlay" onclick="App.closeDocGuide()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()" style="padding:20px;">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button onclick="App.closeDocGuide()" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;">
+        <img src="../public/close_24.svg" width="24" height="24" alt="닫기"/>
+      </button>
+    </div>
+    <p style="font-size:20px;font-weight:600;letter-spacing:-0.16px;line-height:28px;margin-bottom:24px;white-space:pre-line;">사업자 증빙자료\n업로드 방법</p>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:24px;height:24px;border-radius:50%;background:#F76E33;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px;font-weight:700;">1</div>
+        <p style="font-size:15px;color:#252525;letter-spacing:-0.12px;line-height:23px;">파일 첨부 버튼을 눌러 파일을 선택하세요.</p>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:24px;height:24px;border-radius:50%;background:#F76E33;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px;font-weight:700;">2</div>
+        <p style="font-size:15px;color:#252525;letter-spacing:-0.12px;line-height:23px;">각 파일에 해당하는 분류 버튼을 선택하세요.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="App.closeDocGuide()"
+        onmouseenter="this.style.background='#D7D7D7'" onmouseleave="this.style.background='#EAEAEA'"
+        style="flex:1;height:52px;border-radius:6px;background:#EAEAEA;border:none;cursor:pointer;font-size:16px;font-weight:700;color:#4E4E4E;transition:background 0.15s;">
+        닫기
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 신분증 스킵 모달 (해외 사업자) -->
+<div id="id-skip-modal" style="display:none;" class="overlay" onclick="App.closeIDSkip()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:flex-end;padding:16px 20px 0;">
+      <button onclick="App.closeIDSkip()" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div style="padding:0 20px 24px;">
+      <p style="font-size:20px;font-weight:600;letter-spacing:-0.16px;line-height:28px;white-space:pre-line;">신분증 없이\n가입을 완료하시겠습니까?</p>
+    </div>
+    <div style="display:flex;gap:8px;padding:10px 20px 20px;">
+      <button onclick="App.closeIDSkip()"
+        onmouseenter="this.style.background='#D7D7D7'" onmouseleave="this.style.background='#EAEAEA'"
+        style="flex:1;height:52px;border-radius:6px;background:#EAEAEA;border:none;cursor:pointer;font-size:16px;font-weight:700;color:#4E4E4E;transition:background 0.15s;">
+        취소
+      </button>
+      <button onclick="App.confirmIDSkip()"
+        onmouseenter="this.style.background='#4E4E4E'" onmouseleave="this.style.background='#252525'"
+        style="flex:1;height:52px;border-radius:6px;background:#252525;border:none;cursor:pointer;font-size:16px;font-weight:700;color:#fff;transition:background 0.15s;">
+        가입 완료
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 세금계산서 툴팁 -->
+<div id="tax-tooltip" onclick="App.closeTaxTip()">
+  <div class="tax-tip-line">
+    <span class="tax-tip-dot"></span>
+    <span class="tax-tip-text">세금계산서 수신용 이메일로 사용됩니다.</span>
+  </div>
+  <div class="tax-tip-line">
+    <span class="tax-tip-dot"></span>
+    <span class="tax-tip-text">계정 로그인 이메일과 다를 수 있습니다.</span>
+  </div>
+  <div style="display:flex;justify-content:flex-end;padding-right:12px;margin-top:-4px;">
+    <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+      <path d="M0 0 L12 0 L6 9 Z" fill="white"/>
+      <path d="M0 0 L6 9 L12 0" stroke="#4E4E4E" stroke-width="1" fill="none" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- 이메일 자동완성 -->
+<div id="email-dropdown"></div>
+
+<!-- Toast -->
+<div id="toast-wrap" style="display:none;">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<script>
+const App = (() => {
+  const $ = id => document.getElementById(id)
+  const EMAIL_DOMAINS = ['@naver.com','@daum.com','@gmail.com','@outlook.com','@hotmail.com','@icloud.com']
+  const isEmailValid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+
+  let state = {
+    phase: 'personal',          // 'personal' | 'documents'
+    name: '', birth: '', email: '',
+    focusedField: null,
+    emailSuggestions: [], emailSugIdx: -1,
+    files: [],                  // [{id, src, label}]
+    docGuideShown: false,
+    isDomesticBiz: true,        // 해외 사업자면 false로 변경 가능
+  }
+
+  /* ── 유효성 ── */
+  function fmtBirth(b) {
+    if (b.length <= 4) return b
+    if (b.length <= 6) return `${b.slice(0,4)}.${b.slice(4)}`
+    return `${b.slice(0,4)}.${b.slice(4,6)}.${b.slice(6)}`
+  }
+  function personalValid() {
+    return state.name.trim() !== '' && state.birth.length >= 8 && isEmailValid(state.email)
+  }
+  function docValid() {
+    const used = new Set(state.files.map(f => f.label).filter(Boolean))
+    return used.has('business') && used.has('card')
+  }
+
+  /* ── Field: 이름 ── */
+  function onNameInput(el) {
+    state.name = el.value
+    renderNameIcons()
+    renderNextBtn()
+  }
+  function clearName() { state.name = ''; $('name-input').value = ''; renderNameIcons(); renderNextBtn() }
+  function renderNameIcons() {
+    const focused = state.focusedField === 'name'
+    $('name-clear').classList.toggle('hidden', !(focused && state.name))
+    $('name-enter').classList.toggle('hidden', !focused)
+  }
+  function onNameKeyDown(e) {
+    if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); $('birth-input').focus() }
+  }
+
+  /* ── Field: 생년월일 ── */
+  function onBirthInput(el) {
+    state.birth = el.value.replace(/[^0-9]/g,'').slice(0,8)
+    el.value = state.focusedField === 'birth' ? state.birth : fmtBirth(state.birth)
+    renderBirthIcons()
+    renderNextBtn()
+  }
+  function clearBirth() { state.birth = ''; $('birth-input').value = ''; renderBirthIcons(); renderNextBtn() }
+  function renderBirthIcons() {
+    const focused = state.focusedField === 'birth'
+    $('birth-clear').classList.toggle('hidden', !(focused && state.birth))
+    $('birth-enter').classList.toggle('hidden', !focused)
+  }
+  function onBirthKeyDown(e) {
+    if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); $('email-input').focus() }
+  }
+
+  /* ── Field: 이메일 ── */
+  function onEmailInput(el) {
+    state.email = el.value
+    const atIdx = state.email.indexOf('@')
+    if (atIdx >= 0) {
+      const after = state.email.slice(atIdx)
+      state.emailSuggestions = EMAIL_DOMAINS.filter(d => d.startsWith(after) && d !== after)
+    } else state.emailSuggestions = []
+    state.emailSugIdx = -1
+    renderEmailIcons()
+    renderEmailDropdown()
+    renderNextBtn()
+  }
+  function clearEmail() {
+    state.email = ''; $('email-input').value = ''
+    state.emailSuggestions = []; renderEmailDropdown()
+    renderEmailIcons(); renderNextBtn()
+  }
+  function renderEmailIcons() {
+    const focused = state.focusedField === 'email'
+    $('email-clear').classList.toggle('hidden', !(focused && state.email))
+    $('email-enter').classList.toggle('hidden', !focused)
+  }
+  function onEmailKeyDown(e) {
+    if (state.emailSuggestions.length > 0) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); state.emailSugIdx = Math.min(state.emailSugIdx+1, state.emailSuggestions.length-1); renderEmailDropdown(); return }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); state.emailSugIdx = Math.max(state.emailSugIdx-1, -1); renderEmailDropdown(); return }
+      if (e.key === 'Enter' && state.emailSugIdx >= 0) { e.preventDefault(); applyEmailDomain(state.emailSuggestions[state.emailSugIdx]); return }
+      if (e.key === 'Escape')    { e.preventDefault(); state.emailSuggestions=[]; renderEmailDropdown(); return }
+    }
+    if (e.key === 'Enter') { e.preventDefault(); goToDocuments() }
+  }
+  function applyEmailDomain(domain) {
+    const local = state.email.slice(0, state.email.indexOf('@'))
+    state.email = local + domain
+    $('email-input').value = state.email
+    state.emailSuggestions = []; state.emailSugIdx = -1
+    renderEmailDropdown(); renderEmailIcons(); renderNextBtn()
+  }
+  function renderEmailDropdown() {
+    const dd   = $('email-dropdown')
+    const wrap = $('email-wrap')
+    if (!state.emailSuggestions.length) { dd.style.display = 'none'; return }
+    const rect = wrap.getBoundingClientRect()
+    dd.style.cssText = `display:block;top:${rect.bottom+8+window.scrollY}px;left:${rect.left}px;width:${rect.width}px;`
+    const local = state.email.slice(0, state.email.indexOf('@'))
+    dd.innerHTML = state.emailSuggestions.map((d,i) => `
+      <button class="email-option ${i===state.emailSugIdx?'active':''}"
+        onmousedown="event.preventDefault();App.applyEmailDomain('${d}')">
+        ${local+d}
+      </button>`).join('')
+  }
+  window.addEventListener('scroll', () => { state.emailSuggestions=[]; renderEmailDropdown() }, { passive: true, capture: true })
+
+  /* ── Focus ── */
+  function setFocus(field) {
+    state.focusedField = field
+    if (field === 'birth') { $('birth-input').value = state.birth }
+    renderAllIcons()
+  }
+  function clearFocus(field) {
+    if (state.focusedField !== field) return
+    state.focusedField = null
+    if (field === 'birth') { $('birth-input').value = fmtBirth(state.birth) }
+    setTimeout(() => { state.emailSuggestions=[]; renderEmailDropdown() }, 150)
+    renderAllIcons()
+  }
+  function renderAllIcons() { renderNameIcons(); renderBirthIcons(); renderEmailIcons() }
+
+  /* ── Phase transition ── */
+  function renderNextBtn() {
+    const btn = $('btn-next')
+    if (personalValid()) {
+      btn.disabled = false
+    } else {
+      btn.disabled = true
+    }
+  }
+
+  function goToDocuments() {
+    if (!personalValid()) return
+    state.phase = 'documents'
+    // 타이틀 전환
+    const title = $('main-title')
+    const sub   = $('main-sub')
+    title.classList.add('fade-out')
+    setTimeout(() => {
+      title.textContent = '증빙자료를 업로드해 주세요.'
+      sub.textContent = '사업체 소속 확인을 위한 용도입니다.'
+      sub.style.display = 'block'
+      title.classList.remove('fade-out')
+    }, 300)
+    // 스텝바
+    $('bar3').style.transform = 'scaleX(1)'
+    // 증빙자료 섹션 오픈
+    $('doc-section').classList.add('open')
+    $('btn-next-wrap').style.display = 'none'
+    window.scrollTo(0, 0)
+    if (!state.docGuideShown) { state.docGuideShown = true; setTimeout(() => openDocGuide(), 300) }
+  }
+
+  /* ── Files ── */
+  function addFiles(fileList) {
+    Array.from(fileList).forEach(file => {
+      state.files.push({ id: Math.random().toString(36).slice(2), src: URL.createObjectURL(file), label: null })
+    })
+    renderFiles()
+  }
+  function handleFileChange(input) {
+    if (input.files.length) addFiles(input.files)
+    input.value = ''
+  }
+  function resetFiles() {
+    state.files = state.files.map(f => ({ ...f, label: null }))
+    renderFiles()
+  }
+  function removeFile(id) {
+    state.files = state.files.filter(f => f.id !== id)
+    renderFiles()
+  }
+  function setLabel(fileId, key) {
+    state.files = state.files.map(f => f.id !== fileId ? f : { ...f, label: f.label === key ? null : key })
+    renderFiles()
+  }
+
+  const LABELS = ['사업자 증빙자료', '명함', '신분증']
+  const LABEL_KEYS = ['business', 'card', 'id']
+  const CARD_LABELS = ['사업자 증빙자료', '명함', '신분증']
+  const OPTIONAL = new Set(['id'])
+
+  function renderFiles() {
+    const empty  = $('upload-empty')
+    const filled = $('upload-filled')
+    const list   = $('file-list')
+    const usedLabels = new Set(state.files.map(f => f.label).filter(Boolean))
+
+    if (state.files.length === 0) {
+      empty.style.display = ''
+      filled.style.display = 'none'
+    } else {
+      empty.style.display = 'none'
+      filled.style.display = ''
+      list.innerHTML = state.files.map(file => {
+        const chips = LABEL_KEYS.map((key, i) => {
+          const isSelected = file.label === key
+          const isDisabled = !isSelected && usedLabels.has(key)
+          const cls = isSelected ? 'selected' : isDisabled ? 'disabled' : 'default'
+          const checkIcon = isSelected ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''
+          const onclick = isDisabled ? '' : `onclick="App.setLabel('${file.id}','${key}')"`
+          return `<button class="label-chip ${cls}" ${onclick}>${checkIcon}${CARD_LABELS[i]}</button>`
+        }).join('')
+        const maskBtn = file.label === 'id' ? `<button class="file-action-btn"><img src="../public/pencil_16.svg" width="16" height="16" alt=""/>마스킹</button>` : ''
+        return `
+          <div class="file-card">
+            <div class="file-thumb-wrap">
+              <div class="file-thumb"><img src="${file.src}" alt=""/></div>
+            </div>
+            <div class="file-right">
+              <div class="label-chips">${chips}</div>
+              <div class="file-actions">
+                ${maskBtn}
+                <button class="file-action-btn" onclick="App.removeFile('${file.id}')">삭제</button>
+              </div>
+            </div>
+          </div>`
+      }).join('')
+    }
+
+    // 분류 현황 칩
+    LABEL_KEYS.forEach((key, i) => {
+      const chip = $(`chip-${key}`)
+      if (!chip) return
+      if (usedLabels.has(key)) {
+        chip.classList.add('done')
+        if (!chip.querySelector('svg')) {
+          chip.insertAdjacentHTML('afterbegin', `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6.6L4.1 9.5L11 2.5" stroke="#31A427" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`)
+        }
+      } else {
+        chip.classList.remove('done')
+        const icon = chip.querySelector('svg')
+        if (icon) icon.remove()
+      }
+    })
+
+    // 가입완료 버튼
+    const btn = $('btn-complete')
+    btn.disabled = !docValid()
+  }
+
+  /* ── Complete ── */
+  function handleComplete() {
+    const usedLabels = new Set(state.files.map(f => f.label).filter(Boolean))
+    if (!state.isDomesticBiz && !usedLabels.has('id')) {
+      $('id-skip-modal').style.display = 'flex'; return
+    }
+    window.location.href = 'complete.html'
+  }
+  function confirmIDSkip() { $('id-skip-modal').style.display = 'none'; window.location.href = 'complete.html' }
+  function closeIDSkip() { $('id-skip-modal').style.display = 'none' }
+
+  /* ── Doc Guide Modal ── */
+  function openDocGuide() { $('doc-guide-modal').style.display = 'flex'; document.body.style.overflow = 'hidden' }
+  function closeDocGuide() { $('doc-guide-modal').style.display = 'none'; document.body.style.overflow = '' }
+
+  /* ── Tax Tooltip ── */
+  function openTaxTip() {
+    const btn   = $('tax-btn')
+    const wrap  = $('email-wrap')
+    const tip   = $('tax-tooltip')
+    const maxW  = Math.min(400, wrap.getBoundingClientRect().width)
+    const btnR  = btn.getBoundingClientRect()
+    const wrapR = wrap.getBoundingClientRect()
+    tip.style.cssText = `display:flex;bottom:${window.innerHeight - btnR.top + 6}px;left:${wrapR.right - maxW}px;width:${maxW}px;`
+  }
+  function closeTaxTip() { $('tax-tooltip').style.display = 'none' }
+
+  /* ── Back ── */
+  function goBack() {
+    if (state.phase === 'documents') {
+      state.phase = 'personal'
+      $('doc-section').classList.remove('open')
+      $('btn-next-wrap').style.display = ''
+      $('bar3').style.transform = 'scaleX(0.5)'
+      const title = $('main-title')
+      title.classList.add('fade-out')
+      setTimeout(() => { title.textContent = '담당자 정보를 입력해 주세요.'; $('main-sub').style.display='none'; title.classList.remove('fade-out') }, 300)
+    } else history.back()
+  }
+
+  /* ── Init ── */
+  renderNextBtn()
+
+  return {
+    onNameInput, clearName, onBirthInput, clearBirth, onEmailInput, clearEmail,
+    onEmailKeyDown, applyEmailDomain, setFocus, clearFocus,
+    onNameKeyDown, onBirthKeyDown,
+    goToDocuments, addFiles, handleFileChange, resetFiles, removeFile, setLabel,
+    handleComplete, confirmIDSkip, closeIDSkip,
+    openDocGuide, closeDocGuide, openTaxTip, closeTaxTip,
+    goBack,
+  }
+})()
+</script>
+<script>document.querySelectorAll('.copy-year').forEach(el => el.textContent = new Date().getFullYear())</script>
+</body>
+</html>

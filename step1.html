@@ -319,6 +319,58 @@
     .hidden { display: none !important; }
     .text-orange { color: #F76E33; }
     .text-gray { color: #868686; }
+
+    /* ── Member Info Modal ── */
+    .mi-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    @media (min-width: 768px) {
+      .mi-overlay { align-items: center; }
+    }
+    .mi-sheet {
+      background: #fff; width: 100%; max-width: 560px;
+      border-radius: 20px 20px 0 0;
+    }
+    @media (min-width: 768px) {
+      .mi-sheet { border-radius: 8px; }
+    }
+    .mi-tabs {
+      display: flex; border-bottom: 1px solid #EAEAEA;
+      padding: 0 20px; gap: 20px; margin-top: 8px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .mi-tabs::-webkit-scrollbar { display: none; }
+    .mi-tab {
+      padding-bottom: 6px; border-bottom: 2px solid transparent;
+      color: #C1C1C1; font-size: 16px; font-weight: 600;
+      letter-spacing: -0.128px; white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s; cursor: pointer;
+    }
+    .mi-tab.active { border-bottom-color: #252525; color: #252525; font-weight: 700; }
+    .mi-content { display: grid; padding: 20px; }
+    .mi-panel {
+      grid-area: 1/1; display: flex; flex-direction: column; gap: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.15s;
+    }
+    .mi-panel.active { opacity: 1; pointer-events: auto; }
+    .mi-item { display: flex; align-items: center; gap: 16px; }
+    .mi-icon {
+      width: 48px; height: 48px; flex-shrink: 0;
+      border-radius: 100px; border: 1px solid #F3F3F3; background: #F9F9F9;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mi-badge-req {
+      display: inline-flex; height: 22px; padding: 0 6px; align-items: center;
+      border-radius: 4px; border: 1px solid #FBB89B; background: #fff;
+      color: #F76E33; font-size: 12px; font-weight: 500; letter-spacing: -0.096px; white-space: nowrap;
+    }
+    .mi-badge-opt {
+      display: inline-flex; height: 22px; padding: 0 6px; align-items: center;
+      border-radius: 4px; border: 1px solid #D7D7D7;
+      color: #868686; font-size: 12px; font-weight: 500; letter-spacing: -0.096px; white-space: nowrap;
+    }
+    .mi-footer { padding: 10px 20px 20px; }
   </style>
 </head>
 <body>
@@ -526,7 +578,12 @@
     <div style="padding:20px 20px;" class="section-new">
 
       <!-- 회원 유형 -->
-      <p class="sec-label">회원 유형</p>
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+        <p class="sec-label" style="margin-bottom:0;">회원 유형</p>
+        <button onclick="App.openMemberInfo()" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;">
+          <img src="../public/qmark_g_16.svg" width="16" height="16" alt="회원 유형 안내"/>
+        </button>
+      </div>
       <div class="member-grid">
         <button class="member-btn" onclick="App.selectMember(0)" id="member-0">
           <div class="radio" id="radio-0"></div>
@@ -660,6 +717,169 @@
       <span class="flink">개인정보처리방침</span><span class="fsep">|</span>
       <span class="flink">내부정보관리규정</span><span class="fsep">|</span>
       <span class="flink">윤리경영</span>
+    </div>
+  </div>
+</div>
+
+<!-- 회원별 준비 사항 모달 -->
+<div id="mi-modal" style="display:none;" class="mi-overlay" onclick="App.closeMemberInfo()">
+  <div class="mi-sheet" onclick="event.stopPropagation()">
+    <!-- 헤더 -->
+    <div style="position:relative;display:flex;height:56px;padding:0 20px;align-items:center;">
+      <span style="position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:600;letter-spacing:-0.128px;white-space:nowrap;">회원별 준비 사항</span>
+      <button onclick="App.closeMemberInfo()" style="margin-left:auto;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;">
+        <img src="../public/close_24.svg" width="24" height="24" alt="닫기"/>
+      </button>
+    </div>
+    <!-- 탭 -->
+    <div class="mi-tabs" id="mi-tabs">
+      <button class="mi-tab active" onclick="App.selectMITab(0)">국내 개인</button>
+      <button class="mi-tab" onclick="App.selectMITab(1)">국내 사업자</button>
+      <button class="mi-tab" onclick="App.selectMITab(2)">해외 개인</button>
+      <button class="mi-tab" onclick="App.selectMITab(3)">해외 사업자</button>
+    </div>
+    <!-- 콘텐츠: 모든 패널 grid-area:1/1 으로 겹쳐 최대 높이 고정 -->
+    <div class="mi-content">
+      <!-- 국내 개인 (2항목) -->
+      <div class="mi-panel active" id="mi-panel-0">
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/telecom_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">통신사 인증</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/place_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">주소</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+      </div>
+      <!-- 국내 사업자 (4항목) -->
+      <div class="mi-panel" id="mi-panel-1">
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/building_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">사업자 증빙자료</span>
+              <span class="mi-badge-req">필수</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">사업체 소속 확인을 위한 용도</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/businesscard_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">담당자 명함</span>
+              <span class="mi-badge-req">필수</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">사업체 소속 확인을 위한 용도</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/telecom_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">통신사 인증</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/place_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">사업장 주소</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+      </div>
+      <!-- 해외 개인 (2항목) -->
+      <div class="mi-panel" id="mi-panel-2">
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/identify_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">신분증</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/place_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">주소</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+      </div>
+      <!-- 해외 사업자 (4항목) -->
+      <div class="mi-panel" id="mi-panel-3">
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/building_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">사업자 증빙자료</span>
+              <span class="mi-badge-req">필수</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">사업체 소속 확인을 위한 용도</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/businesscard_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">담당자 명함</span>
+              <span class="mi-badge-req">필수</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">사업체 소속 확인을 위한 용도</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/identify_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">신분증</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+        <div class="mi-item">
+          <div class="mi-icon"><img src="../public/place_24.svg" width="24" height="24" alt=""/></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:16px;font-weight:600;letter-spacing:-0.128px;">사업장 주소</span>
+              <span class="mi-badge-opt">선택</span>
+            </div>
+            <p style="font-size:14px;color:#6A6A6A;letter-spacing:-0.112px;line-height:20px;margin:0;">응찰을 원하는 경우 반드시 필요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 확인 버튼 -->
+    <div class="mi-footer">
+      <button onclick="App.closeMemberInfo()"
+        onmouseenter="this.style.background='#4E4E4E'" onmouseleave="this.style.background='#252525'"
+        style="width:100%;height:52px;border-radius:6px;background:#252525;color:#fff;font-size:16px;font-weight:700;letter-spacing:-0.128px;border:none;cursor:pointer;transition:background 0.15s;">
+        확인
+      </button>
     </div>
   </div>
 </div>
@@ -1216,6 +1436,29 @@ const App = (() => {
   $('auth-method-select').classList.remove('hidden')
   $('auth-method-select').style.display = ''
 
+  /* ── 회원별 준비 사항 모달 ── */
+  let miActiveTab = 0
+  function openMemberInfo() {
+    miActiveTab = state.member !== null ? state.member : 0
+    renderMITabs()
+    $('mi-modal').style.display = 'flex'
+    document.body.style.overflow = 'hidden'
+  }
+  function closeMemberInfo() {
+    $('mi-modal').style.display = 'none'
+    document.body.style.overflow = ''
+  }
+  function selectMITab(i) {
+    miActiveTab = i
+    renderMITabs()
+  }
+  function renderMITabs() {
+    const tabs   = document.querySelectorAll('.mi-tab')
+    const panels = document.querySelectorAll('.mi-panel')
+    tabs.forEach((t, i)   => i === miActiveTab ? t.classList.add('active')   : t.classList.remove('active'))
+    panels.forEach((p, i) => i === miActiveTab ? p.classList.add('active')   : p.classList.remove('active'))
+  }
+
   return {
     selectMember, toggleReq, toggleOptAll, toggleChan, toggleAll,
     selectAuth, resetAuth,
@@ -1225,6 +1468,7 @@ const App = (() => {
     onEmailInput, clearEmail, onEmailKeyDown, applyEmailDomain,
     sendEmailOtp, reInputEmail, resendEmailOtp, verifyEmailOtp,
     onEmailOtpInput, onEmailOtpKeyDown,
+    openMemberInfo, closeMemberInfo, selectMITab,
   }
 })()
 </script>
