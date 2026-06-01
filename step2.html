@@ -8,225 +8,67 @@
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <link rel="stylesheet" href="tokens.css"/>
+  <link rel="stylesheet" href="typography.css"/>
+  <link rel="stylesheet" href="common.css"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; padding: 0; }
-    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; font-size:1rem; color:#252525; background:#fff; -webkit-font-smoothing:antialiased; }
-    input  { outline:none; -webkit-appearance:none; font-family:inherit; font-size:inherit; border:none; background:none; padding:0; margin:0; }
-    input::placeholder { color:#868686; }
-    button { font-family:inherit; cursor:pointer; background:none; border:none; padding:0; margin:0; }
-    p { margin:0; }
     select { font-family:inherit; font-size:inherit; outline:none; -webkit-appearance:none; appearance:none; }
-    img    { display:block; }
 
-    /* ── PC Layout ── */
-    #layout { display: flex; min-height: 100svh; }
-    #left-panel {
-      width: 27.5rem; flex-shrink: 0;
-      position: sticky; top: 0; height: 100svh;
-      display: none; overflow: hidden; background: #1a1a1a;
-    }
-    #left-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    #left-tagline {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-      height: 16rem; padding: 7.25rem 2.5rem 5rem;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
-      display: flex; align-items: flex-end;
-    }
-    #left-tagline p { font-size: 1.5rem; font-weight: 600; color: #fff; letter-spacing: -0.012rem; line-height: 2rem; margin: 0; }
-    #right-content { flex: 1; display: flex; justify-content: center; }
-    #pc-footer { display: none; border-top: 1px solid #EAEAEA; padding: 1rem 1.25rem; background: #fff; }
-    #pc-footer-inner { display: flex; align-items: center; justify-content: space-between; }
-    #pc-footer .copy  { font-size: 0.75rem; color: #868686; letter-spacing: -0.006rem; }
-    #pc-footer .links { display: flex; align-items: center; }
-    #pc-footer .flink { font-size: 0.75rem; color: #868686; letter-spacing: -0.006rem; }
-    #pc-footer .fsep  { margin: 0 0.5rem; font-size: 0.75rem; color: #D7D7D7; }
-    @media (min-width: 64rem) {
-      #left-panel { display: block; }
-      #pc-footer  { display: block; }
-      #toast-wrap { left: 27.5rem; }
-      #email-dropdown { position: fixed; }
-      .overlay { left: 27.5rem; }
-      .footer { display: none !important; }
-    }
-    /* ── App ── */
-    #app { display:flex; flex-direction:column; min-height:100svh; width:100%; max-width:35rem; background:#fff; }
-
-    /* ── Header ── */
-    .header { display:flex; align-items:center; height:3.5rem; padding:0 1.25rem; background:#fff; position:sticky; top:0; z-index:10; }
-    .header__back { width:1.5rem; height:1.5rem; display:flex; align-items:center; justify-content:center; margin-right:0.25rem; flex-shrink:0; }
-    .header__title { flex:1; text-align:center; font-size:1rem; font-weight:600; letter-spacing:-0.008rem; }
-    .header__lang  { font-size:0.875rem; font-weight:500; letter-spacing:-0.007rem; border-bottom:1.5px solid #252525; padding-bottom:2px; line-height:1; }
-
-    /* ── Step Indicator ── */
-    .step-indicator { display:flex; gap:0.375rem; padding:0 1.25rem; background:#fff; }
-    .step-bar-wrap  { flex:1; height:0.625rem; display:flex; align-items:center; background:none; border:none; cursor:pointer; padding:0; }
-    .step-bar-track { width:100%; height:0.1875rem; border-radius:31.25rem; background:#EAEAEA; position:relative; overflow:hidden; }
-    .step-bar-fill  { position:absolute; inset:0; background:#F76E33; border-radius:31.25rem; transform-origin:left center; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
-
-    /* ── Title ── */
-    .page-title {
-      padding: 2rem 1.25rem 1.25rem;
-      font-size:1.5rem; font-weight:600; color:#252525;
-      letter-spacing:-0.012rem; line-height:2rem; margin:0;
-      white-space:pre-line;
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
+    /* ── Fade state ── */
     .fade-out { opacity:0; transform:translateY(0.25rem); }
 
     /* ── Content ── */
     .flex-1 { flex:1; display:flex; flex-direction:column; }
 
-    /* ── Section reveal (grid trick) ── */
-    .section-reveal { display:grid; grid-template-rows:0fr; transition:grid-template-rows 0.38s ease-in-out; }
-    .section-reveal.open { grid-template-rows:1fr; }
-    .section-reveal-inner { min-height:0; overflow:hidden; }
-
-    /* ── Section label ── */
-    .sec-label { font-size:0.875rem; font-weight:600; letter-spacing:-0.007rem; margin:0 0 0.625rem; }
-
     /* ── Field wrap ── */
-    .field-wrap { border:1px solid #D7D7D7; border-radius:0.25rem; background:#fff; transition:border-color 0.1s; }
-    .field-wrap:hover:not(.disabled) { border-color:#A3A3A3; }
-    .field-wrap:focus-within:not(.disabled) { border-color:#252525; }
-    .field-wrap.error { border-color:#E51B27 !important; }
-    .field-wrap.disabled { background:#F9F9F9; border-color:#D7D7D7 !important; cursor:default; pointer-events:none; }
-    .field-row { height:3.25rem; display:flex; align-items:center; padding:0 1rem; gap:0.5rem; }
-    .field-row input { flex:1; font-size:1rem; color:#252525; letter-spacing:-0.008rem; min-width:0; }
+    .field-row input { flex:1; font-size:1rem; color:var(--text-default); letter-spacing:-0.008rem; min-width:0; }
 
     /* ── Icons ── */
-    .icon-btn       { flex-shrink:0; display:flex; align-items:center; justify-content:center; width:1.25rem; height:1.25rem; cursor:pointer; }
-    .enter-icon-wrap { flex-shrink:0; display:flex; align-items:center; justify-content:center; width:1.25rem; height:1.25rem; }
-    .show-hide-btn   { flex-shrink:0; padding:0.25rem; display:flex; align-items:center; justify-content:center; }
+    .icon-btn        { flex-shrink:0; display:flex; align-items:center; justify-content:center; width:1.25rem; height:1.25rem; cursor:pointer; }
+    .show-hide-btn   { flex-shrink:0; padding:0; display:flex; align-items:center; justify-content:center; }
 
-    /* ── Hint / error ── */
+    /* ── Hint / success ── */
     .hint-row { display:flex; align-items:center; gap:0.375rem; margin-top:0.625rem; }
-    .hint-text { font-size:0.8125rem; letter-spacing:-0.0065rem; line-height:1.1875rem; margin:0; }
-    .err-text  { font-size:0.8125rem; color:#E51B27; margin:0.625rem 0 0; letter-spacing:-0.0065rem; }
-    .suc-text  { font-size:0.8125rem; color:#31A427; margin:0.625rem 0 0; letter-spacing:-0.0065rem; }
-    .c-gray   { color:#868686; }
-    .c-error  { color:#E51B27; }
-    .c-success { color:#31A427; }
-
-    /* ── Inner small button ── */
-    .inner-btn {
-      display:flex; height:2rem; padding:0 0.75rem; align-items:center; justify-content:center;
-      border-radius:0.25rem; border:1px solid #C1C1C1; background:#fff;
-      color:#252525; font-size:0.875rem; font-weight:500; letter-spacing:-0.007rem; flex-shrink:0; white-space:nowrap;
-    }
-    .inner-btn:hover { background:#F3F3F3; }
+    .hint-text { margin:0; }
+    .suc-text  { color:var(--text-success); margin:0.625rem 0 0; }
+    .c-gray    { color:var(--text-secondary); }
+    .c-error   { color:var(--text-error); }
+    .c-success { color:var(--text-success); }
 
     /* ── Success mark ── */
     .success-mark { flex-shrink:0; display:flex; }
 
     /* ── Sticky CTA button ── */
-    .inline-btn-wrap {
-      position:sticky; bottom:0; padding:0 1.25rem;
-      background:transparent;
-      transition:background 0.1s;
-    }
-    .inline-btn-wrap.sticky { background:#fff; padding-top:0.625rem; padding-bottom:0.625rem; }
-    .btn-main {
-      display:flex; height:3.25rem; padding:0 1rem; align-items:center; justify-content:center; gap:0.375rem;
-      width:100%; border-radius:0.375rem; background:#252525; color:#fff; border:none;
-      font-size:1rem; font-weight:700; letter-spacing:-0.008rem;
-      cursor:pointer; transition:background 0.15s;
-    }
-    .btn-main:hover:not(:disabled) { background:#4E4E4E; }
-    .btn-main:disabled { background:#C1C1C1; border:1px solid #C1C1C1; cursor:default; }
+    .inline-btn-wrap { position:sticky; bottom:0; padding:0 1.25rem; background:var(--surface-white); }
 
-    /* ── Address ── */
-    .addr-clickable { cursor:pointer; }
-
-    /* ── Bottom sheet ── */
-    .overlay {
-      position:fixed; inset:0; background:rgba(0,0,0,0.5);
-      z-index:200; display:flex; align-items:flex-end; justify-content:center;
-    }
-    .bottom-sheet {
-      width:100%; max-width:35rem; background:#fff;
-      border-radius:1.25rem 1.25rem 0 0;
-      box-shadow:0rem -2px 0.3125rem rgba(0,0,0,0.16);
-      padding-bottom:env(safe-area-inset-bottom,1rem);
-    }
-    @media(min-width:48rem){
-      .overlay { align-items:center; padding:0 1.25rem; }
-      .bottom-sheet { max-width:27.5rem; border-radius:0.5rem; border:1px solid #EAEAEA; box-shadow:0 2px 0.625rem rgba(0,0,0,0.08); padding-bottom:0; }
-    }
-    .sheet-close   { display:flex; justify-content:flex-end; padding:1rem 1.25rem 0; }
-    .sheet-body    { padding:0 1.25rem 1.5rem; }
-    .sheet-title   { font-size:1.25rem; font-weight:600; letter-spacing:-0.0063rem; line-height:1.75rem; white-space:pre-line; }
-    .sheet-sub     { font-size:0.875rem; color:#868686; margin-top:0.5rem; line-height:1.375rem; letter-spacing:-0.007rem; }
-    .sheet-btns    { display:flex; gap:0.5rem; padding:0.625rem 1.25rem; }
-    @media(min-width:48rem){ .sheet-btns { padding:1.25rem; } }
-    .sheet-btn-cancel {
-      flex:1; height:3.25rem; display:flex; align-items:center; justify-content:center;
-      border-radius:0.375rem; background:#EAEAEA; border:none;
-      color:#4E4E4E; font-size:1rem; font-weight:700; letter-spacing:-0.008rem; cursor:pointer;
-    }
-    .sheet-btn-cancel:hover { background:#D7D7D7; }
-    .sheet-btn-confirm {
-      flex:1; height:3.25rem; display:flex; align-items:center; justify-content:center;
-      border-radius:0.375rem; background:#252525; border:none;
-      color:#fff; font-size:1rem; font-weight:700; letter-spacing:-0.008rem; cursor:pointer;
-    }
-    .sheet-btn-confirm:hover { background:#4E4E4E; }
-
-    /* ── Email dropdown ── */
-    #email-dropdown {
-      position:fixed; z-index:200; background:#fff; border:1px solid #D7D7D7;
-      border-radius:0.25rem; overflow:hidden; box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.1); display:none;
-    }
-    .email-option {
-      width:100%; text-align:left; padding:0 1rem; height:3rem;
-      display:flex; align-items:center; font-size:0.9375rem; color:#252525; letter-spacing:-0.0075rem;
-      cursor:pointer; background:none; border:none; font-family:inherit;
-    }
-    .email-option:hover, .email-option.active { background:#F3F3F3; }
-
-    /* ── Animations ── */
-    @keyframes slideUp { from{opacity:0;transform:translateY(0.5rem)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
-    .section-new  { animation:slideUp 0.4s ease-out 0.3s both; }
-    .section-fade { animation:fadeIn 0.32s ease-out 0.35s both; }
-
-    @keyframes toastSlideUp   { from{opacity:0;transform:translateY(1rem)} to{opacity:1;transform:translateY(0)} }
-    @keyframes toastSlideDown { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(1rem)} }
-    .toast-enter { animation:toastSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-    .toast-leave { animation:toastSlideDown 0.3s ease-in forwards; }
-
-    /* ── Footer ── */
-    .footer {
-      border-top:1px solid #EAEAEA; padding:0.75rem 1.25rem;
-      display:flex; flex-direction:column; align-items:center; gap:0.375rem; margin-top:auto;
-    }
-    .footer__copy  { font-size:0.75rem; color:#868686; letter-spacing:-0.006rem; line-height:1.125rem; text-align:center; }
-    .footer__links { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
-    .footer__link  { font-size:0.75rem; color:#868686; letter-spacing:-0.006rem; line-height:1.125rem; }
-    .footer__sep   { width:1px; height:0.75rem; background:#D7D7D7; display:inline-block; }
-
-    /* ── Toast ── */
-    #toast-wrap {
-      position:fixed; bottom:2rem; left:0; right:0;
-      display:flex; justify-content:center; z-index:50; padding:0 1.25rem;
-      pointer-events:none;
-    }
-    .toast {
-      max-width:35rem; width:100%; padding:0.8125rem 1.25rem;
-      display:flex; justify-content:center; align-items:center;
-      border-radius:31.25rem; background:rgba(106,106,106,0.9);
-      color:#fff; font-size:0.9375rem; font-weight:600; line-height:1.25rem; letter-spacing:-0.0037rem;
-    }
-
-    .hidden { display:none !important; }
     .spacer-68 { height:4.25rem; }
+    .label-desktop { display: none; }
+    @media (min-width: 48rem) {
+      .label-mobile  { display: none; }
+      .label-desktop { display: inline; }
+    }
+
+    /* ── ID Upload ── */
+    .upload-empty {
+      display:flex; height:10rem; padding:0 1rem;
+      flex-direction:column; justify-content:center; align-items:center; gap:0.5rem;
+      cursor:pointer; border-radius:0.25rem;
+      background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23D7D7D7' stroke-width='1' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color:var(--surface-gray-lighter2);
+    }
+    .upload-empty.dragging {
+      background-image:url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23F76E33' stroke-width='1' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color:#FCF2EE;
+    }
+    .upload-empty.dragging #id-upload-icon { filter: invert(55%) sepia(70%) saturate(800%) hue-rotate(342deg) brightness(102%) contrast(97%); }
+    .upload-empty.dragging #id-upload-label { color: var(--text-primary) !important; }
   </style>
 </head>
 <body>
 <div id="layout">
 
 <div id="left-panel">
-  <img src="../src/assets/images/banner.jpg" alt="auction artwork"/>
+  <img src="./public/banner.jpg" alt="auction artwork"/>
   <div id="left-tagline">
     <div><p>작품을 사고 팔 땐,</p><p>미술품 경매 회사 케이옥션</p></div>
   </div>
@@ -248,50 +90,183 @@
 
   <!-- ── Step Indicator ── -->
   <div class="step-indicator">
-    <button class="step-bar-wrap" onclick="App.clickStep(1)">
+    <button class="step-bar-wrap">
       <div class="step-bar-track"><div class="step-bar-fill" id="bar1" style="transform:scaleX(1)"></div></div>
     </button>
-    <button class="step-bar-wrap" onclick="App.clickStep(2)">
+    <button class="step-bar-wrap">
       <div class="step-bar-track"><div class="step-bar-fill" id="bar2" style="transform:scaleX(0)"></div></div>
+    </button>
+    <button class="step-bar-wrap hidden" id="bar3-wrap">
+      <div class="step-bar-track"><div class="step-bar-fill" id="bar3" style="transform:scaleX(0)"></div></div>
     </button>
   </div>
 
   <!-- ── Title ── -->
-  <h1 class="page-title" id="page-title">계정 정보를 입력해 주세요.</h1>
+  <h1 class="page-title title-fade" id="page-title">계정 정보를 입력해 주세요.</h1>
+  <p class="page-sub hidden" id="page-sub"></p>
 
   <!-- ── All sections ── -->
-  <div class="flex-1" id="sections-wrap">
+  <div class="flex-1" id="sections-wrap" style="margin-top:1.25rem;">
+
+    <!-- [BIZ-ADDR] 사업장 주소 (biz phase 2) -->
+    <div class="section-reveal hidden" id="biz-addr-section">
+      <div class="section-reveal-inner">
+        <div class="section-pad section-fade">
+          <p class="sec-label">사업장 주소</p>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <!-- 국가 (해외 사업자만 표시) -->
+            <div class="select-wrap hidden" id="biz-country-field">
+              <select class="field-wrap placeholder" id="biz-country-select" style="padding-right:2.5rem;"
+                onchange="App.onBizCountryChange(this)">
+                <option value="" disabled selected>국가 선택</option>
+                <option value="US">🇺🇸 미국 (United States)</option>
+                <option value="JP">🇯🇵 일본 (Japan)</option>
+                <option value="CN">🇨🇳 중국 (China)</option>
+                <option value="GB">🇬🇧 영국 (United Kingdom)</option>
+                <option value="DE">🇩🇪 독일 (Germany)</option>
+                <option value="FR">🇫🇷 프랑스 (France)</option>
+                <option value="AU">🇦🇺 호주 (Australia)</option>
+                <option value="CA">🇨🇦 캐나다 (Canada)</option>
+                <option value="HK">🇭🇰 홍콩 (Hong Kong)</option>
+                <option value="SG">🇸🇬 싱가포르 (Singapore)</option>
+                <option value="NL">🇳🇱 네덜란드 (Netherlands)</option>
+                <option value="CH">🇨🇭 스위스 (Switzerland)</option>
+                <option value="IT">🇮🇹 이탈리아 (Italy)</option>
+                <option value="AE">🇦🇪 아랍에미리트 (UAE)</option>
+                <option value="TW">🇹🇼 대만 (Taiwan)</option>
+              </select>
+              <svg class="select-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7L10 14L17 7" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <!-- 우편번호 (KR: 주소검색 / 해외: 직접입력) -->
+            <div class="addr-plain field-wrap" id="biz-zip-search-row" onclick="App.openBizAddr()" >
+              <span id="biz-zip-text" style="color:#868686;">우편번호</span>
+              <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openBizAddr()">주소검색</button>
+            </div>
+            <div class="field-wrap hidden" id="biz-zip-input-wrap">
+              <div class="field-row">
+                <input type="text" id="biz-zip-input" placeholder="우편번호 입력"
+                  oninput="App.onBizZipInput(this)"
+                  onfocus="App.setFocus('bizZip')" onblur="App.clearFocus('bizZip')"/>
+                <div id="bizZip-clear" class="icon-btn hidden" onmousedown="App.clearField('bizZip',event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+              </div>
+            </div>
+            <!-- 도로명 주소 (KR: 주소검색 결과 / 해외: 직접입력) -->
+            <div class="addr-plain field-wrap" id="biz-road-search-row" onclick="App.openBizAddr()" >
+              <span id="biz-road-text" style="color:#868686;">도로명 주소</span>
+            </div>
+            <div class="field-wrap hidden" id="biz-road-input-wrap">
+              <div class="field-row">
+                <input type="text" id="biz-road-input" placeholder="주소 입력"
+                  oninput="App.onBizRoadInput(this)"
+                  onfocus="App.setFocus('bizAddress')" onblur="App.clearFocus('bizAddress')"/>
+                <div id="bizAddress-clear" class="icon-btn hidden" onmousedown="App.clearField('bizAddress',event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+              </div>
+            </div>
+            <!-- 상세 주소 -->
+            <div class="field-wrap" id="biz-detail-wrap">
+              <div class="field-row">
+                <input type="text" id="biz-detail-input" placeholder="상세 주소 입력"
+                  onfocus="App.onBizDetailFocus(event)"
+                  onblur="App.onBizDetailBlur()"
+                  oninput="App.onBizDetailInput(this)"
+                  style="flex:1;font-size:1rem;color:#252525;letter-spacing:-0.008rem;"/>
+                <div id="biz-detail-enter" class="enter-icon-wrap hidden">
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- biz-addr CTA -->
+    <div class="inline-btn-wrap section-fade hidden" id="btn-biz-addr-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
+      <button class="btn-main" id="btn-biz-addr" onclick="App.handleNext()">다음</button>
+    </div>
 
     <!-- [3] 주소 그룹 (phase >= 2) -->
     <div class="section-reveal" id="addr-section">
       <div class="section-reveal-inner">
-        <div style="padding:0.75rem 1.25rem;" class="section-fade">
+        <div class="section-pad section-fade">
+          <!-- 주소 개인정보 동의 체크박스 -->
+          <div id="addr-consent-check-row"
+            onclick="App.toggleAddrConsentCheck()"
+            style="display:flex;align-items:center;gap:0.625rem;padding:0.75rem 1rem;border-radius:0.5rem;background:#F9F9F9;margin-bottom:0.75rem;cursor:pointer;">
+            <div id="addr-consent-checkbox" style="width:1.25rem;height:1.25rem;flex-shrink:0;border-radius:0.25rem;border:1px solid #D7D7D7;background:#fff;display:flex;align-items:center;justify-content:center;transition:background 0.1s,border-color 0.1s;">
+              <svg id="addr-consent-check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none" style="opacity:0;">
+                <path d="M1 5L4 8L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="ty-body1">'주소'에 대한 개인정보 수집 이용에 동의</span>
+          </div>
           <p class="sec-label">주소 <span style="font-weight:400;color:#868686;">(선택)</span></p>
           <div style="display:flex;flex-direction:column;gap:0.5rem;">
-            <!-- 우편번호 -->
-            <div class="field-wrap addr-clickable" onclick="App.openAddr()" id="zip-wrap">
+            <!-- 국가 (해외 개인만 표시) -->
+            <div class="select-wrap hidden" id="addr-country-field">
+              <select class="field-wrap placeholder" id="addr-country-select" style="padding-right:2.5rem;"
+                onmousedown="App.onOverseasCountryMousedown(event)"
+                onchange="App.onAddrCountryChange(this)">
+                <option value="" disabled selected>국가 선택</option>
+                <option value="US">🇺🇸 미국 (United States)</option>
+                <option value="JP">🇯🇵 일본 (Japan)</option>
+                <option value="CN">🇨🇳 중국 (China)</option>
+                <option value="GB">🇬🇧 영국 (United Kingdom)</option>
+                <option value="DE">🇩🇪 독일 (Germany)</option>
+                <option value="FR">🇫🇷 프랑스 (France)</option>
+                <option value="AU">🇦🇺 호주 (Australia)</option>
+                <option value="CA">🇨🇦 캐나다 (Canada)</option>
+                <option value="HK">🇭🇰 홍콩 (Hong Kong)</option>
+                <option value="SG">🇸🇬 싱가포르 (Singapore)</option>
+                <option value="NL">🇳🇱 네덜란드 (Netherlands)</option>
+                <option value="CH">🇨🇭 스위스 (Switzerland)</option>
+                <option value="IT">🇮🇹 이탈리아 (Italy)</option>
+                <option value="AE">🇦🇪 아랍에미리트 (UAE)</option>
+                <option value="TW">🇹🇼 대만 (Taiwan)</option>
+              </select>
+              <svg class="select-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7L10 14L17 7" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <!-- 우편번호 (KR: 주소검색 / 해외: 직접입력) -->
+            <div class="addr-plain field-wrap" onclick="App.openAddr()" id="addr-zip-search-row">
+              <span id="zip-text" style="color:#868686;">우편번호</span>
+              <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
+            </div>
+            <div class="field-wrap hidden" id="addr-zip-input-wrap">
               <div class="field-row">
-                <span id="zip-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:#868686;">우편번호</span>
-                <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
+                <input type="text" id="addr-zip-input" placeholder="우편번호 입력"
+                  onfocus="App.onOverseasZipFocus(event)"
+                  oninput="App.onAddrFieldInput('addrZip', this)"
+                  onkeydown="App.onOverseasZipEnter(event)"
+                  style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
               </div>
             </div>
-            <!-- 도로명 주소 -->
-            <div class="field-wrap addr-clickable" onclick="App.openAddr()">
+            <!-- 도로명 주소 (KR: 주소검색 결과 / 해외: 직접입력) -->
+            <div class="addr-plain field-wrap" onclick="App.openAddr()" id="addr-road-search-row">
+              <span id="road-text" style="color:#868686;">도로명 주소</span>
+            </div>
+            <div class="field-wrap hidden" id="addr-road-input-wrap">
               <div class="field-row">
-                <span id="road-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:#868686;">도로명 주소</span>
+                <input type="text" id="addr-road-input" placeholder="주소 입력"
+                  onfocus="App.onOverseasRoadFocus(event)"
+                  oninput="App.onAddrFieldInput('addrRoad', this)"
+                  onkeydown="App.onOverseasAddrEnter('detail-input', event)"
+                  style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
               </div>
             </div>
             <!-- 상세 주소 -->
             <div class="field-wrap" id="detail-wrap">
-              <div class="field-row" style="padding:0 1rem;gap:0.5rem;">
+              <div class="field-row">
                 <input type="text" id="detail-input" placeholder="상세 주소 입력"
                   onfocus="App.onDetailFocus(event)"
                   onblur="App.onDetailBlur()"
                   oninput="App.onDetailInput(this)"
                   onkeydown="App.onDetailKeyDown(event)"
-                  style="flex:1;font-size:1rem;color:#252525;letter-spacing:-0.008rem;"/>
+                  style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
                 <div id="detail-enter" class="enter-icon-wrap hidden">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                 </div>
               </div>
             </div>
@@ -301,14 +276,184 @@
     </div>
     <!-- addr CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-addr-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-addr" onclick="App.handleNext()">가입 완료</button>
+      <button class="btn-main" id="btn-addr" onclick="App.handleNext()">가입정보 제출하기</button>
+    </div>
+
+    <!-- [BIZ-INFO] 사업자 정보 (biz phase 1) -->
+    <div class="section-reveal hidden" id="biz-info-section">
+      <div class="section-reveal-inner">
+        <div class="section-pad section-fade">
+          <div class="field-group">
+
+            <!-- 사업자등록번호 -->
+            <div id="field-biz-reg-num">
+              <p class="sec-label">사업자등록번호</p>
+              <div class="field-wrap" id="biz-reg-wrap">
+                <div class="field-row">
+                  <input type="text" inputmode="numeric" id="biz-reg-input" placeholder="사업자등록번호 입력" maxlength="12"
+                    oninput="App.onBizRegInput(this)"
+                    onkeydown="App.onFieldEnter('bizRegNum',event)"
+                    onfocus="App.setFocus('bizRegNum');App.unformatBizRegOnFocus(this)"
+                    onblur="App.clearFocus('bizRegNum');App.formatBizRegOnBlur(this)"/>
+                  <div id="bizRegNum-clear" class="icon-btn hidden" onmousedown="App.clearField('bizRegNum',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+              <p id="biz-reg-err" class="err-text ty-caption1 hidden"></p>
+            </div>
+
+            <!-- 상호명 -->
+            <div id="field-company-name">
+              <p class="sec-label">상호명</p>
+              <div class="field-wrap" id="company-name-wrap">
+                <div class="field-row">
+                  <input type="text" id="company-name-input" placeholder="상호명 입력"
+                    oninput="App.onBizFieldInput('companyName',this)"
+                    onkeydown="App.onFieldEnter('companyName',event)"
+                    onfocus="App.setFocus('companyName')" onblur="App.clearFocus('companyName')"/>
+                  <div id="companyName-clear" class="icon-btn hidden" onmousedown="App.clearField('companyName',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 대표자 -->
+            <div id="field-ceo">
+              <p class="sec-label">대표자</p>
+              <div class="field-wrap" id="ceo-wrap">
+                <div class="field-row">
+                  <input type="text" id="ceo-input" placeholder="대표자 입력"
+                    oninput="App.onBizFieldInput('ceo',this)"
+                    onkeydown="App.onFieldEnter('ceo',event)"
+                    onfocus="App.setFocus('ceo')" onblur="App.clearFocus('ceo')"/>
+                  <div id="ceo-clear" class="icon-btn hidden" onmousedown="App.clearField('ceo',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 대표 전화 -->
+            <div id="field-ceo-phone">
+              <p class="sec-label">대표 전화</p>
+              <div class="field-wrap" id="ceo-phone-wrap">
+                <div class="field-row">
+                  <input type="tel" id="ceo-phone-input" placeholder="대표 전화 입력"
+                    oninput="App.onCeoPhoneInput(this)"
+                    onkeydown="App.onFieldEnter('ceoPhone',event)"
+                    onfocus="App.setFocus('ceoPhone');App.unformatCeoPhoneOnFocus(this)"
+                    onblur="App.clearFocus('ceoPhone');App.formatCeoPhoneOnBlur(this)"/>
+                  <div id="ceoPhone-clear" class="icon-btn hidden" onmousedown="App.clearField('ceoPhone',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 업종 -->
+            <div id="field-biz-type">
+              <p class="sec-label">업종</p>
+              <div class="field-wrap" id="biz-type-wrap">
+                <div class="field-row">
+                  <input type="text" id="biz-type-input" placeholder="업종 입력"
+                    oninput="App.onBizFieldInput('bizType',this)"
+                    onkeydown="App.onFieldEnter('bizType',event)"
+                    onfocus="App.setFocus('bizType')" onblur="App.clearFocus('bizType')"/>
+                  <div id="bizType-clear" class="icon-btn hidden" onmousedown="App.clearField('bizType',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 업태 -->
+            <div id="field-biz-category">
+              <p class="sec-label">업태</p>
+              <div class="field-wrap" id="biz-category-wrap">
+                <div class="field-row">
+                  <input type="text" id="biz-category-input" placeholder="업태 입력"
+                    oninput="App.onBizFieldInput('bizCategory',this)"
+                    onkeydown="App.onFieldEnter('bizCategory',event)"
+                    onfocus="App.setFocus('bizCategory')" onblur="App.clearFocus('bizCategory')"/>
+                  <div id="bizCategory-clear" class="icon-btn hidden" onmousedown="App.clearField('bizCategory',event)">
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- biz-info CTA -->
+    <div class="inline-btn-wrap section-fade hidden" id="btn-biz-info-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
+      <button class="btn-main" id="btn-biz-info" onclick="App.handleNext()" disabled>다음</button>
+    </div>
+
+    <!-- [ID-UPLOAD] 신분증 첨부 (해외 개인만) -->
+    <div class="section-reveal hidden" id="id-upload-section">
+      <div class="section-reveal-inner">
+        <div class="section-pad section-fade" style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.25rem;margin-bottom:0.625rem;">
+              <span class="sec-label" style="margin:0;">증빙자료</span>
+              <button onclick="App.openIdGuide()" style="width:1rem;height:1rem;display:flex;align-items:center;justify-content:center;padding:0;">
+                <img src="./public/infomark_g_16.svg" width="16" height="16" alt="안내"/>
+              </button>
+              <span class="ty-label3" style="color:var(--text-secondary);font-weight:400;">(선택)</span>
+            </div>
+            <div id="id-upload-empty" class="upload-empty"
+              onclick="document.getElementById('id-file-input').click()"
+              ondragover="event.preventDefault();this.classList.add('dragging')"
+              ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('dragging')"
+              ondrop="event.preventDefault();this.classList.remove('dragging');App.onIdFileDrop(event.dataTransfer.files)">
+              <img id="id-upload-icon" src="./public/add_40.svg" width="40" height="40" alt=""/>
+              <span id="id-upload-label" style="font-size:1rem;font-weight:500;letter-spacing:-0.008rem;color:var(--text-default);transition:color 0.15s;">
+                <span class="label-mobile">파일첨부</span>
+                <span class="label-desktop">파일을 드래그하거나 첨부해 주세요</span>
+              </span>
+            </div>
+            <input type="file" id="id-file-input" accept="image/*,.pdf" style="display:none;" onchange="App.onIdFileSelect(this.files)"/>
+            <div id="id-file-card" class="hidden">
+              <div class="file-list-wrap">
+                <div class="file-card">
+                  <div class="file-thumb-wrap">
+                    <div class="file-thumb">
+                      <img id="id-file-preview" src="" alt=""/>
+                    </div>
+                  </div>
+                  <div class="file-right">
+                    <div class="label-chips">
+                      <button class="label-chip selected"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>신분증</button>
+                    </div>
+                    <div class="file-actions">
+                      <button class="file-action-btn" onclick="App.maskIdFile()">
+                        <img src="./public/pencil_16.svg" width="16" height="16" alt=""/>
+                        마스킹
+                      </button>
+                      <button class="file-action-btn" onclick="App.removeIdFile()">삭제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="ty-caption1" style="color:var(--text-secondary);margin:0;">jpg, jpeg, png, heic 또는 pdf 파일 업로드 (검수 후 모든 서비스 이용 가능)</p>
+        </div>
+      </div>
+    </div>
+    <div class="inline-btn-wrap section-fade hidden" id="btn-id-upload-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
+      <button class="btn-main" id="btn-id-upload" onclick="App.handleNext()">다음</button>
     </div>
 
     <!-- [2] 인적 사항 그룹 (phase >= 1) -->
     <div class="section-reveal" id="personal-section">
       <div class="section-reveal-inner">
-        <div style="padding:0.75rem 1.25rem;" class="section-fade">
-          <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <div class="section-pad section-fade">
+          <div class="field-group">
 
             <!-- 이름 -->
             <div id="field-name">
@@ -320,14 +465,14 @@
                     onkeydown="App.onFieldEnter('name',event)"
                     onfocus="App.setFocus('name')" onblur="App.clearFocus('name')"/>
                   <div id="name-clear" class="icon-btn hidden" onmousedown="App.clearField('name',event)">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
                   </div>
                   <div id="name-enter" class="enter-icon-wrap hidden">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                   </div>
                 </div>
               </div>
-              <p id="name-err" class="err-text hidden"></p>
+              <p id="name-err" class="err-text ty-caption1 hidden"></p>
             </div>
 
             <!-- 생년월일 -->
@@ -335,19 +480,19 @@
               <p class="sec-label">생년월일</p>
               <div class="field-wrap" id="birth-wrap">
                 <div class="field-row">
-                  <input type="text" inputmode="numeric" id="birth-input" placeholder="생년월일 8자리 입력" maxlength="10"
+                  <input type="text" inputmode="numeric" id="birth-input" placeholder="예) YYYY.MM.DD" maxlength="10"
                     oninput="App.onBirthInput(this)"
                     onkeydown="App.onFieldEnter('birthdate',event)"
                     onfocus="App.setFocus('birthdate')" onblur="App.clearFocus('birthdate')"/>
                   <div id="birthdate-clear" class="icon-btn hidden" onmousedown="App.clearField('birthdate',event)">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
                   </div>
                   <div id="birthdate-enter" class="enter-icon-wrap hidden">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                   </div>
                 </div>
               </div>
-              <p id="birth-err" class="err-text hidden"></p>
+              <p id="birth-err" class="err-text ty-caption1 hidden"></p>
             </div>
 
             <!-- 이메일 (이메일 인증이 아닌 경우) -->
@@ -360,14 +505,14 @@
                     onkeydown="App.onEmailKeyDown(event)"
                     onfocus="App.setFocus('email')" onblur="App.onEmailBlur(event)"/>
                   <div id="email-clear" class="icon-btn hidden" onmousedown="App.clearField('email',event)">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
                   </div>
                   <div id="email-enter" class="enter-icon-wrap hidden">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                   </div>
                 </div>
               </div>
-              <p id="email-err" class="err-text hidden"></p>
+              <p id="email-err" class="err-text ty-caption1 hidden"></p>
             </div>
 
           </div>
@@ -375,12 +520,14 @@
       </div>
     </div>
     <!-- personal CTA -->
-    <div class="inline-btn-wrap section-new hidden" id="btn-personal-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
+    <div class="inline-btn-wrap section-fade hidden" id="btn-personal-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
       <button class="btn-main" id="btn-personal" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
+    <!-- [ID-UPLOAD] 신분증 첨부 (해외 개인만) -->
     <!-- [1] 계정 정보 그룹 (항상 표시) -->
-    <div style="padding:0.75rem 1.25rem;" class="section-new">
+    <div id="account-section">
+    <div class="section-pad acct-fade-in">
       <div style="display:flex;flex-direction:column;gap:1.5rem;">
 
         <!-- 아이디 -->
@@ -393,10 +540,10 @@
                 onkeydown="App.onFieldEnter('id',event)"
                 onfocus="App.setFocus('id')" onblur="App.clearFocus('id')"/>
               <div id="id-clear" class="icon-btn hidden" onmousedown="App.clearField('id',event)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
               </div>
               <div id="id-enter" class="enter-icon-wrap hidden">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
               </div>
             </div>
           </div>
@@ -404,9 +551,9 @@
             <svg width="12" height="10" viewBox="0 0 12 10" fill="none" id="id-check-icon">
               <path d="M1 5L4.5 8.5L11 1" stroke="#868686" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p class="hint-text c-gray" id="id-hint">영문, 숫자 2가지 조합 5자리 이상 12자리 이하</p>
+            <p class="hint-text ty-caption1 c-gray" id="id-hint">영문, 숫자 2가지 조합 5자리 이상 12자리 이하</p>
           </div>
-          <p id="id-err" class="err-text hidden"></p>
+          <p id="id-err" class="err-text ty-caption1 hidden"></p>
         </div>
 
         <!-- 비밀번호 -->
@@ -418,11 +565,11 @@
                 oninput="App.onPwInput(this)"
                 onkeydown="App.onFieldEnter('password',event)"
                 onfocus="App.setFocus('password')" onblur="App.clearFocus('password')"/>
-              <div id="pw-clear" class="icon-btn hidden" onmousedown="App.clearField('password',event)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <div id="password-clear" class="icon-btn hidden" onmousedown="App.clearField('password',event)">
+                <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
               </div>
-              <div id="pw-enter" class="enter-icon-wrap hidden">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div id="password-enter" class="enter-icon-wrap hidden">
+                <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
               </div>
               <button tabindex="-1" class="show-hide-btn" onclick="App.togglePw()" id="pw-eye">
                 <!-- hide icon (default) -->
@@ -438,9 +585,9 @@
           </div>
           <div class="hint-row">
             <svg width="12" height="10" viewBox="0 0 12 10" fill="none" id="pw-check-icon"><path d="M1 5L4.5 8.5L11 1" stroke="#868686" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <p class="hint-text c-gray" id="pw-hint">숫자 2자리 이상</p>
+            <p class="hint-text ty-caption1 c-gray" id="pw-hint">숫자 2자리 이상</p>
           </div>
-          <p id="pw-err" class="err-text hidden"></p>
+          <p id="pw-err" class="err-text ty-caption1 hidden"></p>
         </div>
 
         <!-- 비밀번호 확인 -->
@@ -453,10 +600,10 @@
                 onkeydown="App.onFieldEnter('confirmPw',event)"
                 onfocus="App.setFocus('confirmPw')" onblur="App.clearFocus('confirmPw')"/>
               <div id="confirmPw-clear" class="icon-btn hidden" onmousedown="App.clearField('confirmPw',event)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
               </div>
               <div id="confirmPw-enter" class="enter-icon-wrap hidden">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
               </div>
               <button tabindex="-1" class="show-hide-btn" onclick="App.toggleCpw()" id="cpw-eye">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" id="cpw-eye-hide">
@@ -481,20 +628,32 @@
                 onkeydown="App.onFieldEnter('phone',event)"
                 onfocus="App.setFocus('phone')" onblur="App.clearFocus('phone')"/>
               <div id="phone-clear" class="icon-btn hidden" onmousedown="App.clearField('phone',event)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="8" fill="#C1C1C1"/><path d="M5.25 5.25L10.75 10.75M10.75 5.25L5.25 10.75" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
               </div>
               <div id="phone-enter" class="enter-icon-wrap hidden">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 10L9.5 10C11.709 10 13.5 8.209 13.5 6V2M5.25 14L1.5 10L5.25 6" stroke="#868686" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
               </div>
             </div>
           </div>
-          <p id="phone-err" class="err-text hidden"></p>
+          <p id="phone-err" class="err-text ty-caption1 hidden"></p>
+        </div>
+
+        <!-- 이메일 인증 표시 (step1 이메일 인증 + 개인회원) -->
+        <div id="field-email-authed" class="hidden">
+          <p class="sec-label">이메일</p>
+          <div class="field-wrap disabled" style="background:var(--surface-gray-lighter2);">
+            <div class="field-row">
+              <span id="email-authed-value" class="ty-body1" style="flex:1;color:var(--text-default);"></span>
+              <img src="./public/textfield_success.svg" width="20" height="20" alt="" style="flex-shrink:0;"/>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
+    </div><!-- /account-section -->
     <!-- account CTA -->
-    <div class="inline-btn-wrap section-new" id="btn-account-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
+    <div class="inline-btn-wrap acct-fade-in" id="btn-account-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
       <button class="btn-main" id="btn-account" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
@@ -541,6 +700,52 @@
     </div>
   </div>
 </div>
+<!-- 신분증 첨부 안내 -->
+<div class="overlay hidden" id="id-guide-modal" onclick="App.closeIdGuide()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">증빙자료 첨부 안내</span>
+      <button class="modal-close" onclick="App.closeIdGuide()">
+        <img src="./public/close_24.svg" width="24" height="24" alt="닫기"/>
+      </button>
+    </div>
+    <div class="doc-modal-content">
+
+      <!-- Step 1 -->
+      <div class="guide-step">
+        <div class="guide-num-col">
+          <div class="guide-num"><span>1</span></div>
+          <div class="guide-line"></div>
+        </div>
+        <div class="guide-body">
+          <p class="guide-title">신분증을 미리 준비하세요.</p>
+          <div class="guide-infobox">
+            <div>
+              <p class="guide-info-title ty-body1-sb">여권 등 신분증 사본 (마스킹 필수)<span class="badge-opt">선택</span></p>
+              <p class="guide-info-desc ty-label3">가입 신청자 신원 증명, 응찰을 원하는 경우 반드시 필요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 (last) -->
+      <div class="guide-step">
+        <div class="guide-num-col">
+          <div class="guide-num"><span>2</span></div>
+        </div>
+        <div class="guide-body last">
+          <p class="guide-title">파일첨부를 눌러 파일을 선택한 다음
+제출해 주세요.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="sheet-btns">
+      <button class="sheet-btn-confirm" onclick="App.closeIdGuide()">확인</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="skip-overlay" onclick="App.closeSkip()">
   <div class="bottom-sheet" onclick="event.stopPropagation()">
     <div class="sheet-close"><button onclick="App.closeSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
@@ -550,7 +755,7 @@
     </div>
     <div class="sheet-btns">
       <button class="sheet-btn-cancel" onclick="App.skipCancel()">주소 입력하기</button>
-      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">가입 완료하기</button>
+      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">가입정보 제출하기</button>
     </div>
   </div>
 </div>
@@ -563,6 +768,7 @@
   <div class="toast" id="toast-msg"></div>
 </div>
 
+<script src="common.js"></script>
 <script>
 const App = (() => {
   const $ = (id) => document.getElementById(id)
@@ -570,74 +776,112 @@ const App = (() => {
   const hide = (id) => { const el=$(id); if(el){el.classList.add('hidden');} }
 
   /* ── State ── */
-  let form = { id:'', password:'', confirmPw:'', phone:'', name:'', birthdate:'', email:'', zip:'', address:'', detail:'' }
-  let err  = {}
+  let form = {
+    id:'', password:'', confirmPw:'', phone:'',
+    name:'', birthdate:'', email:'',
+    zip:'', address:'', detail:'',
+    bizRegNum:'', companyName:'', ceo:'', ceoPhone:'', bizType:'', bizCategory:'',
+    bizCountry:'KR', bizZip:'', bizAddress:'', bizDetail:''
+  }
   let focusedField = null
-  let phase = 'account'   // 'account' | 'personal' | 'address'
+  let phase = 'account'
+  let isBusiness = false, isOverseasBiz = false, isOverseasPersonal = false
   let showPw = false, showCPw = false
   let addrConsentGranted = false
+  let addrConsentChecked = false
   let pendingAddrAction  = null
   let skipShown = false
   let emailSuggestions = [], emailSugIdx = -1
 
-  const EMAIL_DOMAINS = ['@naver.com','@daum.com','@gmail.com','@outlook.com','@hotmail.com','@icloud.com']
-
-  /* ── Toast ── */
-  let toastT1, toastT2
-  function showToast(msg) {
-    const wrap=$('toast-wrap'), el=$('toast-msg')
-    el.textContent=msg; el.className='toast toast-enter'; wrap.style.display='flex'
-    clearTimeout(toastT1); clearTimeout(toastT2)
-    toastT1=setTimeout(()=>{el.className='toast toast-leave'},2700)
-    toastT2=setTimeout(()=>{wrap.style.display='none'},3100)
-  }
-
   /* ── Validations ── */
   const isIdValid  = (v) => /^[a-zA-Z0-9]{5,12}$/.test(v)
   const isPwValid  = (v) => (v.match(/[0-9]/g)||[]).length >= 2
-  const isEmailV   = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  function formatPhone(p) {
+    const d = p.replace(/[^0-9]/g,'')
+    if (d.length <= 3) return d
+    if (d.length <= 7) return d.slice(0,3)+'-'+d.slice(3)
+    return d.slice(0,3)+'-'+d.slice(3,7)+'-'+d.slice(7)
+  }
   const isPhoneV   = (v) => v.startsWith('010') && v.replace(/[^0-9]/g,'').length === 11
 
-  const accountValid = () =>
-    isIdValid(form.id) && isPwValid(form.password) &&
-    form.password === form.confirmPw && isPhoneV(form.phone)
-  const personalValid = () =>
-    form.name.trim() !== '' && form.birthdate.length >= 8 && isEmailV(form.email)
+  const accountValid  = () => isIdValid(form.id) && isPwValid(form.password) && form.password === form.confirmPw && isPhoneV(form.phone)
+  const personalValid = () => form.name.trim() !== '' && form.birthdate.length >= 8 && isEmailValid(form.email)
+  const bizInfoValid  = () =>
+    form.bizRegNum.replace(/[^0-9]/g,'').length === 10 &&
+    form.companyName.trim() !== '' && form.ceo.trim() !== '' &&
+    form.ceoPhone.trim() !== '' && form.bizType.trim() !== '' && form.bizCategory.trim() !== ''
 
   /* ── Step bar ── */
   function updateStepBar() {
-    const map = { account: 1/3, personal: 2/3, address: 1 }
+    const map = isBusiness
+      ? { account:1/3, bizInfo:2/3, bizAddr:1 }
+      : isOverseasPersonal
+        ? { account:1/4, personal:2/4, idUpload:3/4, address:1 }
+        : { account:1/3, personal:2/3, address:1 }
     $('bar2').style.transform = `scaleX(${map[phase]||1/3})`
   }
 
   /* ── Title dissolve ── */
-  const TITLES = { account:'계정 정보를 입력해 주세요.', personal:'인적 사항을 입력해 주세요.', address:'경매 응찰을 원하신다면\n주소 정보를 입력해 주세요.' }
+  const TITLES = {
+    account:  '계정 정보를 입력해 주세요.',
+    personal: '인적 사항을 입력해 주세요.',
+    idUpload: '경매 응찰을 원하신다면\n신분증을 첨부해 주세요.',
+    address:  '경매 응찰을 원하신다면\n주소 정보를 입력해 주세요.',
+    bizInfo:  '사업자 정보를 입력해 주세요.',
+    bizAddr:  '사업장 주소를 입력해 주세요.',
+  }
+  const SUBS = {}
   function updateTitle() {
-    const el = $('page-title')
-    el.classList.add('fade-out')
-    setTimeout(() => { el.textContent = TITLES[phase]; el.classList.remove('fade-out') }, 300)
+    const el  = $('page-title')
+    const sub = $('page-sub')
+    el.classList.remove('title-fade')
+    el.style.opacity  = '0'; el.style.transform  = 'translateY(0.25rem)'
+    sub.style.opacity = '0'; sub.style.transform = 'translateY(0.25rem)'
+    setTimeout(() => {
+      el.textContent = TITLES[phase] || ''
+      el.style.opacity = '1'; el.style.transform = 'translateY(0)'
+      const subText = SUBS[phase] || ''
+      if (subText) {
+        sub.textContent = subText; sub.classList.remove('hidden')
+        void sub.offsetHeight
+        sub.style.opacity = '1'; sub.style.transform = 'translateY(0)'
+      } else {
+        sub.classList.add('hidden')
+        sub.style.opacity = ''; sub.style.transform = ''
+      }
+    }, 300)
   }
 
   /* ── CTA button state ── */
   function updateBtn() {
-    if (phase === 'account') {
-      const ok = accountValid()
-      const btn = $('btn-account'); btn.disabled = !ok
-    } else if (phase === 'personal') {
-      const ok = personalValid()
-      const btn = $('btn-personal'); btn.disabled = !ok
-    }
+    if (phase === 'account')  { $('btn-account').disabled  = !accountValid() }
+    if (phase === 'personal') { $('btn-personal').disabled = !personalValid() }
+    if (phase === 'bizInfo')  { $('btn-biz-info').disabled = !bizInfoValid() }
   }
 
   /* ── Focus / icon helpers ── */
   function setFocus(field) {
-    focusedField = field
-    updateClearEnter(field)
+    focusedField = field; updateClearEnter(field)
+    if (field === 'phone') {
+      const inp = $('phone-input')
+      if (inp && !inp.hasAttribute('readonly')) inp.value = form.phone
+    }
   }
   function clearFocus(field) {
     focusedField = null
     hide(field+'-clear'); hide(field+'-enter')
     if (field === 'email') setTimeout(()=>{ emailSuggestions=[]; renderEmailDrop() }, 150)
+    if (field === 'birthdate') {
+      const inp = $('birth-input')
+      if (inp && form.birthdate) {
+        const r = form.birthdate
+        inp.value = fmtBirth(r)
+      }
+    }
+    if (field === 'phone') {
+      const inp = $('phone-input')
+      if (inp && form.phone && !inp.hasAttribute('readonly')) inp.value = formatPhone(form.phone)
+    }
   }
   function updateClearEnter(field) {
     const val = form[field] || ''
@@ -647,7 +891,14 @@ const App = (() => {
   function clearField(field, e) {
     if (e) e.preventDefault()
     form[field] = ''
-    const input = $(field === 'id' ? 'id-input' : field === 'password' ? 'pw-input' : field === 'confirmPw' ? 'cpw-input' : field+'-input')
+    const idMap = {
+      id:'id-input', password:'pw-input', confirmPw:'cpw-input', phone:'phone-input',
+      name:'name-input', birthdate:'birth-input', email:'email-input', detail:'detail-input',
+      bizRegNum:'biz-reg-input', companyName:'company-name-input', ceo:'ceo-input',
+      ceoPhone:'ceo-phone-input', bizType:'biz-type-input', bizCategory:'biz-category-input',
+      bizZip:'biz-zip-input', bizAddress:'biz-road-input'
+    }
+    const input = $(idMap[field])
     if (input) input.value = ''
     hide(field+'-clear')
     if (field === 'email') { emailSuggestions=[]; renderEmailDrop() }
@@ -655,12 +906,14 @@ const App = (() => {
     if (field === 'id')        updateIdHint()
     if (field === 'password')  updatePwHint()
     if (field === 'confirmPw') updateCpwMsg()
+    if (field === 'bizRegNum') updateBizRegHint()
   }
 
   /* ── ID ── */
   function onIdInput(el) {
     form.id = el.value
     focusedField==='id' ? (form.id?show('id-clear'):hide('id-clear')) : null
+    if (isIdValid(form.id)) { $('id-wrap').classList.remove('error'); hide('id-err') }
     updateIdHint(); updateBtn()
   }
   function updateIdHint() {
@@ -668,13 +921,14 @@ const App = (() => {
     const icon = $('id-check-icon'), hint = $('id-hint')
     const color = ok ? '#31A427' : (v ? '#E51B27' : '#868686')
     icon.querySelector('path').setAttribute('stroke', color)
-    hint.className = 'hint-text ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
+    hint.className = 'hint-text ty-caption1 ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
   }
 
   /* ── Password ── */
   function onPwInput(el) {
     form.password = el.value
-    focusedField==='password' ? (form.password?show('pw-clear'):hide('pw-clear')) : null
+    focusedField==='password' ? (form.password?show('password-clear'):hide('password-clear')) : null
+    if (isPwValid(form.password)) $('pw-wrap').classList.remove('error')
     updatePwHint(); updateCpwMsg(); updateBtn()
   }
   function togglePw() {
@@ -688,13 +942,14 @@ const App = (() => {
     const icon = $('pw-check-icon'), hint = $('pw-hint')
     const color = ok ? '#31A427' : (v ? '#E51B27' : '#868686')
     icon.querySelector('path').setAttribute('stroke', color)
-    hint.className = 'hint-text ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
+    hint.className = 'hint-text ty-caption1 ' + (ok ? 'c-success' : (v ? 'c-error' : 'c-gray'))
   }
 
   /* ── Confirm PW ── */
   function onCpwInput(el) {
     form.confirmPw = el.value
     focusedField==='confirmPw' ? (form.confirmPw?show('confirmPw-clear'):hide('confirmPw-clear')) : null
+    if (form.confirmPw && form.password === form.confirmPw) $('cpw-wrap').classList.remove('error')
     updateCpwMsg(); updateBtn()
   }
   function toggleCpw() {
@@ -707,8 +962,8 @@ const App = (() => {
     const msg = $('cpw-msg')
     if (!form.confirmPw) { msg.className = 'hidden'; return }
     const match = form.confirmPw === form.password
-    msg.textContent  = match ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'
-    msg.className    = match ? 'suc-text' : 'err-text'
+    msg.textContent = match ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'
+    msg.className   = match ? 'suc-text ty-caption1' : 'err-text ty-caption1'
   }
 
   /* ── Phone ── */
@@ -716,6 +971,7 @@ const App = (() => {
     form.phone = el.value.replace(/[^0-9]/g,'').slice(0,11)
     el.value   = form.phone
     focusedField==='phone' ? (form.phone?show('phone-clear'):hide('phone-clear')) : null
+    if (isPhoneV(form.phone)) { $('phone-wrap').classList.remove('error'); hide('phone-err') }
     updateBtn()
   }
 
@@ -724,6 +980,7 @@ const App = (() => {
     form.name = el.value.replace(/[0-9\-!@#$%^&*()_+=\[\]{};':"|,.<>\/?`~]/g,'')
     el.value  = form.name
     focusedField==='name' ? (form.name?show('name-clear'):hide('name-clear')) : null
+    if (form.name.trim()) { $('name-wrap').classList.remove('error'); hide('name-err') }
     updateBtn()
   }
 
@@ -731,35 +988,28 @@ const App = (() => {
   function onBirthInput(el) {
     const raw = el.value.replace(/[^0-9]/g,'').slice(0,8)
     form.birthdate = raw
-    // Format display: YYYY.MM.DD
     if (focusedField === 'birthdate') {
       el.value = raw
     } else {
       el.value = raw.length<=4 ? raw : raw.length<=6 ? raw.slice(0,4)+'.'+raw.slice(4) : raw.slice(0,4)+'.'+raw.slice(4,6)+'.'+raw.slice(6)
     }
     focusedField==='birthdate' ? (form.birthdate?show('birthdate-clear'):hide('birthdate-clear')) : null
+    if (form.birthdate.length >= 8) { $('birth-wrap').classList.remove('error'); hide('birth-err') }
     updateBtn()
   }
 
   /* ── Email ── */
   function onEmailInput(el) {
-    form.email = el.value
-    hide('email-err')
+    form.email = el.value; hide('email-err')
     focusedField==='email' ? (form.email?show('email-clear'):hide('email-clear')) : null
-    const atIdx = form.email.indexOf('@')
-    if (atIdx >= 0) {
-      const after = form.email.slice(atIdx)
-      emailSuggestions = EMAIL_DOMAINS.filter(d=>d.startsWith(after)&&d!==after)
-    } else { emailSuggestions = [] }
+    emailSuggestions = getEmailSuggestions(form.email)
     emailSugIdx = -1; renderEmailDrop(); updateBtn()
   }
   function onEmailBlur(e) {
-    focusedField = null
-    hide('email-clear'); hide('email-enter')
+    focusedField = null; hide('email-clear'); hide('email-enter')
     setTimeout(()=>{ emailSuggestions=[]; renderEmailDrop() },150)
-    if (form.email && !isEmailV(form.email)) {
-      $('email-err').textContent = '올바른 이메일 형식을 입력해 주세요.'
-      show('email-err')
+    if (form.email && !isEmailValid(form.email)) {
+      $('email-err').textContent = '올바른 이메일 형식을 입력해 주세요.'; show('email-err')
     }
   }
   function onEmailKeyDown(e) {
@@ -773,10 +1023,8 @@ const App = (() => {
   }
   function applyDomain(domain) {
     const local = form.email.slice(0, Math.max(form.email.indexOf('@'),0)||form.email.length)
-    form.email = local + domain
-    $('email-input').value = form.email
-    emailSuggestions=[]; emailSugIdx=-1; renderEmailDrop()
-    hide('email-err'); updateBtn()
+    form.email = local + domain; $('email-input').value = form.email
+    emailSuggestions=[]; emailSugIdx=-1; renderEmailDrop(); hide('email-err'); updateBtn()
   }
   function renderEmailDrop() {
     const dd = $('email-dropdown'), wrap = $('email-wrap')
@@ -788,11 +1036,98 @@ const App = (() => {
       <button class="email-option${i===emailSugIdx?' active':''}" onmousedown="event.preventDefault();App.applyDomain('${d}')">${local+d}</button>`).join('')
   }
 
-  /* ── Address ── */
+  /* ── Biz fields ── */
+  function onBizRegInput(el) {
+    const raw = el.value.replace(/[^0-9]/g,'').slice(0,10)
+    form.bizRegNum = raw
+    el.value = raw
+    if (form.bizRegNum.length === 10) { $('biz-reg-wrap').classList.remove('error'); hide('biz-reg-err') }
+    updateBizRegHint(); updateBtn()
+  }
+  function formatBizRegOnBlur(el) {
+    const raw = form.bizRegNum
+    let fmt = raw
+    if (raw.length > 5) fmt = raw.slice(0,3)+'-'+raw.slice(3,5)+'-'+raw.slice(5)
+    else if (raw.length > 3) fmt = raw.slice(0,3)+'-'+raw.slice(3)
+    el.value = fmt
+  }
+  function unformatBizRegOnFocus(el) { el.value = form.bizRegNum }
+  function updateBizRegHint() {
+    const ok = form.bizRegNum.replace(/[^0-9]/g,'').length === 10
+    if ($('biz-reg-err') && !ok && form.bizRegNum) { /* keep err if user typed wrong */ }
+  }
+  function onBizFieldInput(field, el) {
+    form[field] = el.value
+    const wrapId = { companyName:'company-name-wrap', ceo:'ceo-wrap', ceoPhone:'ceo-phone-wrap', bizType:'biz-type-wrap', bizCategory:'biz-category-wrap' }[field]
+    if (wrapId && form[field]) $(wrapId)?.classList.remove('error')
+    focusedField===field ? (form[field]?show(field+'-clear'):hide(field+'-clear')) : null
+    updateBtn()
+  }
+  function onCeoPhoneInput(el) {
+    let raw = el.value.replace(/[^0-9]/g,'').slice(0,11)
+    form.ceoPhone = raw
+    el.value = raw
+    focusedField==='ceoPhone' ? (form.ceoPhone?show('ceoPhone-clear'):hide('ceoPhone-clear')) : null
+    if (form.ceoPhone) $('ceo-phone-wrap')?.classList.remove('error')
+    updateBtn()
+  }
+  function formatCeoPhoneOnBlur(el) {
+    const raw = form.ceoPhone
+    let fmt = raw
+    if (raw.startsWith('02')) {
+      if (raw.length > 6) fmt = raw.slice(0,2)+'-'+raw.slice(2,6)+'-'+raw.slice(6)
+      else if (raw.length > 2) fmt = raw.slice(0,2)+'-'+raw.slice(2)
+    } else {
+      if (raw.length > 7) fmt = raw.slice(0,3)+'-'+raw.slice(3,7)+'-'+raw.slice(7)
+      else if (raw.length > 3) fmt = raw.slice(0,3)+'-'+raw.slice(3)
+    }
+    el.value = fmt
+  }
+  function unformatCeoPhoneOnFocus(el) { el.value = form.ceoPhone }
+  function onBizCountryChange(el)  { form.bizCountry  = el.value; el.classList.toggle('placeholder', !el.value) }
+  function openIdGuide()  { show('id-guide-modal'); document.body.style.overflow='hidden' }
+  function closeIdGuide() { hide('id-guide-modal'); document.body.style.overflow='' }
+
+  function onAddrCountryChange(el) { form.addrCountry = el.value; el.classList.toggle('placeholder', !el.value); updateBtn() }
+  function onAddrFieldInput(field, el) { form[field] = el.value; updateBtn() }
+
+  let idFile = null
+  function _showIdFile(file) {
+    idFile = file
+    const reader = new FileReader()
+    reader.onload = e => { $('id-file-preview').src = e.target.result }
+    reader.readAsDataURL(file)
+    hide('id-upload-empty'); show('id-file-card')
+  }
+  function onIdFileSelect(files) { if (files[0]) _showIdFile(files[0]) }
+  function onIdFileDrop(files)   { if (files[0]) _showIdFile(files[0]) }
+  function removeIdFile()  { idFile = null; $('id-file-input').value=''; $('id-file-preview').src=''; show('id-upload-empty'); hide('id-file-card') }
+  function maskIdFile()    { alert('마스킹 기능은 실제 구현 시 처리됩니다.') }
+  function openBizAddr() {
+    if (!window.daum?.Postcode) { alert('주소검색 API 로드 중입니다.'); return }
+    new window.daum.Postcode({ oncomplete(d) {
+      form.bizZip     = d.zonecode
+      form.bizAddress = d.roadAddress || d.jibunAddress
+      $('biz-zip-text').textContent  = form.bizZip;     $('biz-zip-text').style.color  = '#252525'
+      $('biz-road-text').textContent = form.bizAddress; $('biz-road-text').style.color = '#252525'
+      $('biz-detail-wrap').classList.remove('disabled')
+      $('biz-detail-input').removeAttribute('readonly')
+      setTimeout(()=>$('biz-detail-input').focus(),100)
+    }}).open()
+  }
+  function onBizZipInput(el)  { form.bizZip = el.value; focusedField==='bizZip'?(form.bizZip?show('bizZip-clear'):hide('bizZip-clear')):null }
+  function onBizRoadInput(el) { form.bizAddress = el.value; focusedField==='bizAddress'?(form.bizAddress?show('bizAddress-clear'):hide('bizAddress-clear')):null }
+  function onBizDetailFocus(e) {
+    if (!isOverseasBiz && !form.bizAddress) { e.target.blur(); openBizAddr(); return }
+    setFocus('bizDetail')
+  }
+  function onBizDetailBlur()  { focusedField=null; hide('biz-detail-enter') }
+  function onBizDetailInput(el) { form.bizDetail = el.value; show('biz-detail-enter') }
+
+  /* ── Address (personal) ── */
   function openAddr() {
     if (addrConsentGranted) { _openPostcode(); return }
-    pendingAddrAction = _openPostcode
-    show('addr-consent-overlay')
+    pendingAddrAction = _openPostcode; show('addr-consent-overlay')
   }
   function _openPostcode() {
     if (!window.daum?.Postcode) { alert('주소검색 API 로드 중입니다.'); return }
@@ -806,16 +1141,87 @@ const App = (() => {
       setTimeout(()=>$('detail-input').focus(),100)
     }}).open()
   }
-  function addrConsentConfirm() { addrConsentGranted=true; hide('addr-consent-overlay'); setTimeout(()=>pendingAddrAction?.(),0); pendingAddrAction=null }
+  function toggleAddrConsentCheck() {
+    addrConsentChecked = !addrConsentChecked
+    addrConsentGranted = addrConsentChecked
+    const box  = $('addr-consent-checkbox')
+    const icon = $('addr-consent-check-icon')
+    if (addrConsentChecked) {
+      box.style.background = '#F76E33'; box.style.borderColor = '#F76E33'
+      icon.style.opacity = '1'
+    } else {
+      box.style.background = '#fff'; box.style.borderColor = '#D7D7D7'
+      icon.style.opacity = '0'
+    }
+  }
+  function addrConsentConfirm() {
+    addrConsentGranted = true
+    hide('addr-consent-overlay')
+    // 바텀시트로 동의한 경우 체크박스도 체크 상태로 동기화
+    if (!addrConsentChecked) {
+      addrConsentChecked = true
+      const box  = $('addr-consent-checkbox')
+      const icon = $('addr-consent-check-icon')
+      if (box)  { box.style.background = '#F76E33'; box.style.borderColor = '#F76E33' }
+      if (icon) icon.style.opacity = '1'
+    }
+    const a = pendingAddrAction; pendingAddrAction = null
+    setTimeout(() => a?.(), 0)
+  }
   function addrConsentCancel()  { hide('addr-consent-overlay'); pendingAddrAction=null }
   function closeAddrConsent()   { addrConsentCancel() }
-
   function onDetailFocus(e) {
+    if (isOverseasPersonal) {
+      if (!addrConsentGranted) {
+        e.target.blur()
+        pendingAddrAction = () => $('detail-input').focus()
+        show('addr-consent-overlay')
+        return
+      }
+      setFocus('detail'); return
+    }
     if (!form.address) { e.target.blur(); openAddr(); return }
     setFocus('detail')
   }
-  function onDetailBlur()  { focusedField=null; hide('detail-enter') }
-  function onDetailInput(el) { form.detail = el.value; show('detail-enter') }
+  function openOverseasZipInput() {
+    if (!addrConsentGranted) { pendingAddrAction = openOverseasZipInput; show('addr-consent-overlay'); return }
+    hide('addr-zip-search-row'); show('addr-zip-input-wrap')
+    setTimeout(() => $('addr-zip-input').focus(), 50)
+  }
+  function openOverseasRoadInput() {
+    if (!addrConsentGranted) { pendingAddrAction = openOverseasRoadInput; show('addr-consent-overlay'); return }
+    hide('addr-road-search-row'); show('addr-road-input-wrap')
+    setTimeout(() => $('addr-road-input').focus(), 50)
+  }
+  function onOverseasZipEnter(e) {
+    if (e.key === 'Enter') { e.preventDefault(); openOverseasRoadInput() }
+  }
+  function onOverseasCountryMousedown(e) {
+    if (isOverseasPersonal && !addrConsentGranted) {
+      e.preventDefault()
+      pendingAddrAction = () => $('addr-country-select').focus()
+      show('addr-consent-overlay')
+    }
+  }
+  function onOverseasZipFocus(e) {
+    if (isOverseasPersonal && !addrConsentGranted) {
+      e.target.blur()
+      pendingAddrAction = () => $('addr-zip-input').focus()
+      show('addr-consent-overlay')
+    }
+  }
+  function onOverseasRoadFocus(e) {
+    if (isOverseasPersonal && !addrConsentGranted) {
+      e.target.blur()
+      pendingAddrAction = () => $('addr-road-input').focus()
+      show('addr-consent-overlay')
+    }
+  }
+  function onOverseasAddrEnter(nextId, e) {
+    if (e.key === 'Enter') { e.preventDefault(); $(nextId)?.focus() }
+  }
+  function onDetailBlur()   { focusedField=null; hide('detail-enter') }
+  function onDetailInput(el){ form.detail = el.value; show('detail-enter') }
 
   /* ── Skip ── */
   function skipConfirm() { hide('skip-overlay'); goComplete() }
@@ -827,43 +1233,71 @@ const App = (() => {
     account:  ['id','password','confirmPw','phone'],
     personal: ['name','birthdate','email'],
     address:  ['detail'],
+    bizInfo:  ['bizRegNum','companyName','ceo','ceoPhone','bizType','bizCategory'],
+    bizAddr:  ['bizDetail'],
   }
-  const FIELD_INPUT_IDS = { id:'id-input', password:'pw-input', confirmPw:'cpw-input', phone:'phone-input', name:'name-input', birthdate:'birth-input', email:'email-input', detail:'detail-input' }
-  const isFieldEmpty = (f) => {
-    if (f==='id')        return !isIdValid(form.id)
-    if (f==='password')  return !isPwValid(form.password)
-    if (f==='confirmPw') return !form.confirmPw||form.password!==form.confirmPw
-    if (f==='phone')     return !isPhoneV(form.phone)
-    if (f==='name')      return !form.name.trim()
-    if (f==='birthdate') return form.birthdate.length<8
-    if (f==='email')     return !isEmailV(form.email)
-    return false
+  const FIELD_INPUT_IDS = {
+    id:'id-input', password:'pw-input', confirmPw:'cpw-input', phone:'phone-input',
+    name:'name-input', birthdate:'birth-input', email:'email-input', detail:'detail-input',
+    bizRegNum:'biz-reg-input', companyName:'company-name-input', ceo:'ceo-input',
+    ceoPhone:'ceo-phone-input', bizType:'biz-type-input', bizCategory:'biz-category-input',
+    bizDetail:'biz-detail-input'
   }
   function onFieldEnter(fieldName, e) {
     if (e.key !== 'Enter') return
     e.preventDefault()
-    const group  = phase === 'account' ? 'account' : phase === 'personal' ? 'personal' : 'address'
-    const fields = GROUP_FIELDS[group]
-    const idx    = fields.indexOf(fieldName)
-    const isLast = idx === fields.length - 1
-    if (isLast) { handleNext(); return }
-    const next = fields[idx+1]
-    if (isFieldEmpty(next)) $(FIELD_INPUT_IDS[next])?.focus()
-    else {
-      const firstEmpty = fields.find(isFieldEmpty)
-      if (firstEmpty) $(FIELD_INPUT_IDS[firstEmpty])?.focus()
-      else handleNext()
+    const fields = GROUP_FIELDS[phase] || []
+    const idx = fields.indexOf(fieldName)
+    if (idx < 0) return
+    for (let j = idx + 1; j < fields.length; j++) {
+      const nextInput = $(FIELD_INPUT_IDS[fields[j]])
+      if (!nextInput) continue
+      const wrap = nextInput.closest('.field-wrap')
+      if (wrap?.classList.contains('disabled')) continue
+      if (!form[fields[j]]) { setTimeout(() => nextInput.focus(), 0); return }
     }
+    handleNext()
   }
   function onDetailKeyDown(e) { onFieldEnter('detail', e) }
+
+  /* ── Validate with alert ── */
+  function validateAccountWithAlert() {
+    if (!isIdValid(form.id))     { $('id-wrap').classList.add('error'); show('id-err'); $('id-err').textContent='영문, 숫자 조합 5자리 이상 12자리 이하로 입력해 주세요.'; alert('아이디를 확인해 주세요.'); $('id-input').focus(); return false }
+    if (!isPwValid(form.password)){ $('pw-wrap').classList.add('error'); alert('비밀번호를 확인해 주세요. 숫자 2자리 이상 포함해 주세요.'); $('pw-input').focus(); return false }
+    if (!form.confirmPw||form.password!==form.confirmPw){ $('cpw-wrap').classList.add('error'); alert('비밀번호가 일치하지 않습니다.'); $('cpw-input').focus(); return false }
+    if (!isPhoneV(form.phone))   { $('phone-wrap').classList.add('error'); show('phone-err'); $('phone-err').textContent='010으로 시작하는 11자리를 입력해 주세요.'; alert('휴대폰 번호를 확인해 주세요.'); $('phone-input').focus(); return false }
+    return true
+  }
+  function validatePersonalWithAlert() {
+    if (!form.name.trim())       { $('name-wrap').classList.add('error'); show('name-err'); $('name-err').textContent='이름을 입력해 주세요.'; alert('이름을 입력해 주세요.'); $('name-input').focus(); return false }
+    if (form.birthdate.length<8) { $('birth-wrap').classList.add('error'); show('birth-err'); $('birth-err').textContent='생년월일 8자리를 입력해 주세요.'; alert('생년월일 8자리를 입력해 주세요.'); $('birth-input').focus(); return false }
+    if (!isEmailValid(form.email))   { $('email-wrap').classList.add('error'); show('email-err'); $('email-err').textContent='올바른 이메일 형식을 입력해 주세요.'; alert('이메일을 확인해 주세요.'); $('email-input').focus(); return false }
+    return true
+  }
+  function validateBizInfoWithAlert() {
+    if (form.bizRegNum.replace(/[^0-9]/g,'').length!==10){ $('biz-reg-wrap').classList.add('error'); show('biz-reg-err'); $('biz-reg-err').textContent='사업자등록번호 10자리를 입력해 주세요.'; alert('사업자등록번호를 확인해 주세요.'); $('biz-reg-input').focus(); return false }
+    if (!form.companyName.trim()){ $('company-name-wrap').classList.add('error'); alert('상호명을 입력해 주세요.'); $('company-name-input').focus(); return false }
+    if (!form.ceo.trim())        { $('ceo-wrap').classList.add('error'); alert('대표자명을 입력해 주세요.'); $('ceo-input').focus(); return false }
+    if (!form.ceoPhone.trim())   { $('ceo-phone-wrap').classList.add('error'); alert('대표전화를 입력해 주세요.'); $('ceo-phone-input').focus(); return false }
+    if (!form.bizType.trim())    { $('biz-type-wrap').classList.add('error'); alert('업종을 입력해 주세요.'); $('biz-type-input').focus(); return false }
+    if (!form.bizCategory.trim()){ $('biz-category-wrap').classList.add('error'); alert('업태를 입력해 주세요.'); $('biz-category-input').focus(); return false }
+    return true
+  }
+  function validateBizAddrWithAlert() {
+    if (!form.bizZip)     { alert('우편번호를 입력해 주세요.'); return false }
+    if (!form.bizAddress) { alert('주소를 입력해 주세요.'); return false }
+    return true
+  }
 
   /* ── Next / complete ── */
   function handleNext() {
     if (phase === 'account') {
-      if (!accountValid()) return
-      advanceTo('personal')
+      if (!validateAccountWithAlert()) return
+      advanceTo(isBusiness ? 'bizInfo' : 'personal')
     } else if (phase === 'personal') {
-      if (!personalValid()) return
+      if (!validatePersonalWithAlert()) return
+      advanceTo(isOverseasPersonal ? 'idUpload' : 'address')
+    } else if (phase === 'idUpload') {
       advanceTo('address')
     } else if (phase === 'address') {
       if (!form.address) {
@@ -871,46 +1305,171 @@ const App = (() => {
         skipShown = true; show('skip-overlay'); return
       }
       goComplete()
+    } else if (phase === 'bizInfo') {
+      if (!validateBizInfoWithAlert()) return
+      advanceTo('bizAddr')
+    } else if (phase === 'bizAddr') {
+      goStep3()
     }
   }
 
   function advanceTo(next) {
     phase = next
-    updateStepBar()
-    updateTitle()
+    updateStepBar(); updateTitle()
     if (next === 'personal') {
-      show('personal-section'); $('personal-section').classList.add('open')
-      hide('btn-account-wrap')
-      show('btn-personal-wrap')
-      updateBtn()
-      setTimeout(() => $('name-input').focus(), 400)
+      const el = $('personal-section')
+      show('personal-section'); void el.offsetHeight; el.classList.add('open')
+      hide('btn-account-wrap'); show('btn-personal-wrap')
+      updateBtn(); setTimeout(() => $('name-input').focus(), 400)
+    } else if (next === 'idUpload') {
+      document.activeElement?.blur()
+      const el = $('id-upload-section')
+      show('id-upload-section'); void el.offsetHeight; el.classList.add('open')
+      hide('btn-personal-wrap'); show('btn-id-upload-wrap')
     } else if (next === 'address') {
-      show('addr-section'); $('addr-section').classList.add('open')
-      hide('btn-personal-wrap')
-      show('btn-addr-wrap')
+      document.activeElement?.blur()
+      const el = $('addr-section')
+      show('addr-section'); void el.offsetHeight; el.classList.add('open')
+      const prevBtn = isOverseasPersonal ? 'btn-id-upload-wrap' : 'btn-personal-wrap'
+      hide(prevBtn); show('btn-addr-wrap')
+    } else if (next === 'bizInfo') {
+      const el = $('biz-info-section')
+      show('biz-info-section'); void el.offsetHeight; el.classList.add('open')
+      hide('btn-account-wrap'); show('btn-biz-info-wrap')
+      updateBtn(); setTimeout(() => {
+        const fields = GROUP_FIELDS['bizInfo'] || []
+        for (const f of fields) {
+          if (form[f]) continue
+          const inp = $(FIELD_INPUT_IDS[f])
+          const wrap = inp?.closest('.field-wrap')
+          if (inp && !wrap?.classList.contains('disabled')) { inp.focus(); break }
+        }
+      }, 400)
+    } else if (next === 'bizAddr') {
+      const el = $('biz-addr-section')
+      show('biz-addr-section'); void el.offsetHeight; el.classList.add('open')
+      hide('btn-biz-info-wrap'); show('btn-biz-addr-wrap')
     }
     window.scrollTo({ top:0, behavior:'smooth' })
   }
 
   function goComplete() { window.location.href = 'complete.html' }
+  function goStep3()    { window.location.href = 'step3.html' }
 
   /* ── Step indicator click ── */
-  function clickStep(n) {
-    if (n === 1) history.back()
+  function clickStep(n) { if (n === 1) history.back() }
+
+  function _addSuccessMark(wrapEl) {
+    const sm = document.createElement('img')
+    sm.src = './public/textfield_success.svg'
+    sm.style.cssText = 'flex-shrink:0;width:1.25rem;height:1.25rem;'
+    wrapEl.querySelector('.field-row').appendChild(sm)
   }
 
   /* ── Init ── */
   function init() {
-    // detail field starts disabled (no address yet)
-    $('detail-wrap').classList.add('disabled')
-    $('detail-input').setAttribute('readonly','')
-    // Hide sections initially
-    hide('personal-section')
-    hide('btn-personal-wrap')
-    hide('addr-section')
-    hide('btn-addr-wrap')
-    updateStepBar()
-    updateBtn()
+    // Read member type from step1
+    const member = parseInt(localStorage.getItem('signup_member'), 10)
+    isBusiness        = member === 1 || member === 3
+    isOverseasBiz     = member === 3
+    isOverseasPersonal = member === 2
+
+    // Step indicator
+    if (isBusiness) show('bar3-wrap')
+
+    // Hide all non-initial sections
+    hide('personal-section');   hide('btn-personal-wrap')
+    hide('addr-section');       hide('btn-addr-wrap')
+    hide('biz-info-section');   hide('btn-biz-info-wrap')
+    hide('biz-addr-section');   hide('btn-biz-addr-wrap')
+
+    // Non-biz personal address
+    if (isOverseasPersonal) {
+      show('addr-country-field')
+      // Search rows stay visible (same visual as domestic) — onclick overridden to overseas direct-entry
+      $('addr-zip-search-row').setAttribute('onclick', 'App.openOverseasZipInput()')
+      const zipBtn = $('addr-zip-search-row').querySelector('.inner-btn')
+      if (zipBtn) zipBtn.setAttribute('onclick', 'event.stopPropagation();App.openOverseasZipInput()')
+      $('addr-road-search-row').setAttribute('onclick', 'App.openOverseasRoadInput()')
+      // Input wraps hidden until triggered
+      hide('addr-zip-input-wrap'); hide('addr-road-input-wrap')
+      $('detail-input').removeAttribute('readonly')
+    } else {
+      hide('addr-country-field')
+      show('addr-zip-search-row');  show('addr-road-search-row')
+      hide('addr-zip-input-wrap');  hide('addr-road-input-wrap')
+      $('detail-input').setAttribute('readonly','')
+    }
+
+    // Pre-configure biz address section for when it becomes visible
+    if (isBusiness) {
+      if (isOverseasBiz) {
+        // Overseas: show country select + manual text inputs
+        show('biz-country-field')
+        hide('biz-zip-search-row');  hide('biz-road-search-row')
+        show('biz-zip-input-wrap');  show('biz-road-input-wrap')
+        form.bizCountry = ''
+      } else {
+        // Domestic: postcode search, detail locked (readonly only — clickable to trigger API)
+        hide('biz-country-field')
+        show('biz-zip-search-row');  show('biz-road-search-row')
+        hide('biz-zip-input-wrap');  hide('biz-road-input-wrap')
+        $('biz-detail-input').setAttribute('readonly','')
+        form.bizCountry = 'KR'
+      }
+    }
+
+    updateStepBar(); updateBtn()
+
+    // 1단계 인증 결과 토스트 → 2단계에서 표시
+    const authToast = localStorage.getItem('signup_auth_toast')
+    if (authToast === 'phone') showToast('휴대폰 인증이 완료되었습니다.')
+    else if (authToast === 'email') showToast('이메일 인증이 완료되었습니다.')
+    localStorage.removeItem('signup_auth_toast')
+
+    // Prefill from step1 auth
+    const authMethod = localStorage.getItem('signup_auth_method')
+    if (authMethod === 'phone' || authMethod === 'telecom') {
+      const savedPhone = localStorage.getItem('signup_phone')
+      if (savedPhone) {
+        form.phone = savedPhone.replace(/[^0-9]/g, '')
+        const pi = $('phone-input')
+        if (pi) { pi.value = formatPhone(form.phone); pi.setAttribute('readonly',''); pi.setAttribute('tabindex','-1') }
+        const pw = $('phone-wrap')
+        if (pw) { pw.classList.add('disabled'); _addSuccessMark(pw) }
+        updateBtn()
+      }
+    } else if (authMethod === 'email') {
+      const savedEmail = localStorage.getItem('signup_email')
+      if (savedEmail) {
+        form.email = savedEmail
+        if (!isBusiness) {
+          // 개인회원: 계정정보에 인증 이메일 표시, 인적사항 이메일 필드 숨김
+          $('email-authed-value').textContent = savedEmail
+          show('field-email-authed')
+          hide('field-email')
+        }
+        updateBtn()
+      }
+    }
+
+    // 사업자등록번호 자동입력 (step1 인증, 국내 사업자만)
+    if (isBusiness && !isOverseasBiz) {
+      const savedBizReg = localStorage.getItem('signup_biz_reg')
+      if (savedBizReg) {
+        form.bizRegNum = savedBizReg
+        const raw = savedBizReg.replace(/[^0-9]/g,'')
+        let fmt = raw
+        if (raw.length > 5) fmt = raw.slice(0,3)+'-'+raw.slice(3,5)+'-'+raw.slice(5)
+        else if (raw.length > 3) fmt = raw.slice(0,3)+'-'+raw.slice(3)
+        const inp = $('biz-reg-input')
+        if (inp) { inp.value = fmt; inp.setAttribute('readonly',''); inp.setAttribute('tabindex','-1') }
+        const wrap = $('biz-reg-wrap')
+        if (wrap) { wrap.classList.add('disabled'); _addSuccessMark(wrap) }
+        updateBtn()
+      }
+    }
+
     setTimeout(() => $('id-input').focus(), 100)
   }
 
@@ -922,8 +1481,18 @@ const App = (() => {
     onPhoneInput, onNameInput, onBirthInput,
     onEmailInput, onEmailBlur, onEmailKeyDown, applyDomain,
     onDetailFocus, onDetailBlur, onDetailInput, onDetailKeyDown,
+    toggleAddrConsentCheck,
     openAddr, addrConsentConfirm, addrConsentCancel, closeAddrConsent,
+    openOverseasZipInput, openOverseasRoadInput, onOverseasZipEnter,
+    onOverseasCountryMousedown, onOverseasZipFocus, onOverseasRoadFocus, onOverseasAddrEnter,
     skipConfirm, skipCancel, closeSkip,
+    onBizRegInput, formatBizRegOnBlur, unformatBizRegOnFocus,
+    onBizFieldInput, onCeoPhoneInput, formatCeoPhoneOnBlur, unformatCeoPhoneOnFocus,
+    onBizCountryChange, onAddrCountryChange, onAddrFieldInput,
+    openIdGuide, closeIdGuide,
+    onIdFileSelect, onIdFileDrop, removeIdFile, maskIdFile,
+    openBizAddr, onBizZipInput, onBizRoadInput,
+    onBizDetailFocus, onBizDetailBlur, onBizDetailInput,
     handleNext, onFieldEnter,
   }
 })()
