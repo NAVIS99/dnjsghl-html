@@ -1387,6 +1387,10 @@ const App = (() => {
   /* ── Next / complete ── */
   function handleNext() {
     if (phase === 'account') {
+      // autofill 등으로 oninput 미발생 시 DOM 값으로 동기화
+      const pwEl = $('pw-input'), cpwEl = $('cpw-input')
+      if (pwEl  && !pwEl.hasAttribute('readonly'))  form.password  = pwEl.value
+      if (cpwEl && !cpwEl.hasAttribute('readonly')) form.confirmPw = cpwEl.value
       if (!validateAccountWithAlert()) return
       advanceTo(isBusiness ? 'bizInfo' : 'personal')
     } else if (phase === 'personal') {
