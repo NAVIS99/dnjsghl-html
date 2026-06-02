@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
-  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <link rel="stylesheet" href="tokens.css"/>
   <link rel="stylesheet" href="typography.css"/>
   <link rel="stylesheet" href="common.css"/>
@@ -146,9 +146,13 @@
               <div class="field-row">
                 <input type="text" id="biz-zip-input" placeholder="우편번호 입력"
                   oninput="App.onBizZipInput(this)"
+                  onkeydown="App.onBizZipKeyDown(event)"
                   onfocus="App.setFocus('bizZip')" onblur="App.clearFocus('bizZip')"/>
                 <div id="bizZip-clear" class="icon-btn hidden" onmousedown="App.clearField('bizZip',event)">
                   <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+                <div id="bizZip-enter" class="enter-icon-wrap hidden">
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                 </div>
               </div>
             </div>
@@ -160,9 +164,13 @@
               <div class="field-row">
                 <input type="text" id="biz-road-input" placeholder="주소 입력"
                   oninput="App.onBizRoadInput(this)"
+                  onkeydown="App.onBizRoadKeyDown(event)"
                   onfocus="App.setFocus('bizAddress')" onblur="App.clearFocus('bizAddress')"/>
                 <div id="bizAddress-clear" class="icon-btn hidden" onmousedown="App.clearField('bizAddress',event)">
                   <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+                <div id="bizAddress-enter" class="enter-icon-wrap hidden">
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                 </div>
               </div>
             </div>
@@ -173,8 +181,12 @@
                   onfocus="App.onBizDetailFocus(event)"
                   onblur="App.onBizDetailBlur()"
                   oninput="App.onBizDetailInput(this)"
+                  onkeydown="App.onBizDetailKeyDown(event)"
                   style="flex:1;font-size:1rem;color:#252525;letter-spacing:-0.008rem;"/>
-                <div id="biz-detail-enter" class="enter-icon-wrap hidden">
+                <div id="bizDetail-clear" class="icon-btn hidden" onmousedown="App.clearField('bizDetail',event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+                <div id="bizDetail-enter" class="enter-icon-wrap hidden">
                   <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                 </div>
               </div>
@@ -185,7 +197,7 @@
     </div>
     <!-- biz-addr CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-biz-addr-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-biz-addr" onclick="App.handleNext()">다음</button>
+      <button class="btn-main" id="btn-biz-addr" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
     <!-- [3] 주소 그룹 (phase >= 2) -->
@@ -195,7 +207,7 @@
           <!-- 주소 개인정보 동의 체크박스 -->
           <div id="addr-consent-check-row"
             onclick="App.toggleAddrConsentCheck()"
-            style="display:flex;align-items:center;gap:0.625rem;padding:0.75rem 1rem;border-radius:0.5rem;background:#F9F9F9;margin-bottom:0.75rem;cursor:pointer;">
+            style="display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;border-radius:0.25rem;background:var(--surface-gray-lighter1,#F3F3F3);margin-bottom:1.5rem;cursor:pointer;align-self:stretch;">
             <div id="addr-consent-checkbox" style="width:1.25rem;height:1.25rem;flex-shrink:0;border-radius:0.25rem;border:1px solid #D7D7D7;background:#fff;display:flex;align-items:center;justify-content:center;transition:background 0.1s,border-color 0.1s;">
               <svg id="addr-consent-check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none" style="opacity:0;">
                 <path d="M1 5L4 8L10 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -238,9 +250,16 @@
               <div class="field-row">
                 <input type="text" id="addr-zip-input" placeholder="우편번호 입력"
                   onfocus="App.onOverseasZipFocus(event)"
+                  onblur="App.onAddrZipBlur()"
                   oninput="App.onAddrFieldInput('addrZip', this)"
                   onkeydown="App.onOverseasZipEnter(event)"
                   style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
+                <div id="addrZip-clear" class="icon-btn hidden" onmousedown="App.clearAddrZip(event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+                <div id="addrZip-enter" class="enter-icon-wrap hidden">
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
+                </div>
               </div>
             </div>
             <!-- 도로명 주소 (KR: 주소검색 결과 / 해외: 직접입력) -->
@@ -251,9 +270,16 @@
               <div class="field-row">
                 <input type="text" id="addr-road-input" placeholder="주소 입력"
                   onfocus="App.onOverseasRoadFocus(event)"
+                  onblur="App.onAddrRoadBlur()"
                   oninput="App.onAddrFieldInput('addrRoad', this)"
                   onkeydown="App.onOverseasAddrEnter('detail-input', event)"
                   style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
+                <div id="addrRoad-clear" class="icon-btn hidden" onmousedown="App.clearAddrRoad(event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
+                <div id="addrRoad-enter" class="enter-icon-wrap hidden">
+                  <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
+                </div>
               </div>
             </div>
             <!-- 상세 주소 -->
@@ -265,6 +291,9 @@
                   oninput="App.onDetailInput(this)"
                   onkeydown="App.onDetailKeyDown(event)"
                   style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;"/>
+                <div id="detail-clear" class="icon-btn hidden" onmousedown="App.clearField('detail',event)">
+                  <img src="./public/textfield_delete.svg" width="16" height="16" alt=""/>
+                </div>
                 <div id="detail-enter" class="enter-icon-wrap hidden">
                   <img src="./public/enter_g_16.svg" width="16" height="16" alt=""/>
                 </div>
@@ -746,16 +775,30 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="id-skip-overlay" onclick="App.closeIdSkip()">
+  <div class="bottom-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-close"><button onclick="App.closeIdSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="sheet-body">
+      <p class="sheet-title">'신분증' 없이 가입하시겠어요?</p>
+      <p class="sheet-sub">경매 응찰 시 신분증 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
+    </div>
+    <div class="sheet-btns sheet-btns-col">
+      <button class="sheet-btn-confirm" onclick="App.idSkipConfirm()">'신분증' 없이 가입하기</button>
+      <button class="sheet-btn-cancel" onclick="App.idSkipCancel()">신분증 등록하기</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="skip-overlay" onclick="App.closeSkip()">
   <div class="bottom-sheet" onclick="event.stopPropagation()">
     <div class="sheet-close"><button onclick="App.closeSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
     <div class="sheet-body">
-      <p class="sheet-title">주소 정보를 입력하지 않고 가입하시겠어요?</p>
-      <p class="sheet-sub">경매 응찰을 원하신다면 주소 정보가 필요합니다.</p>
+      <p class="sheet-title">'주소' 없이 가입하시겠어요?</p>
+      <p class="sheet-sub">경매 응찰 시 주소 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
     </div>
-    <div class="sheet-btns">
-      <button class="sheet-btn-cancel" onclick="App.skipCancel()">주소 입력하기</button>
-      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">가입정보 제출하기</button>
+    <div class="sheet-btns sheet-btns-col">
+      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">'주소' 없이 가입하기</button>
+      <button class="sheet-btn-cancel" onclick="App.skipCancel()">개인정보 수집 이용 동의 및 주소 등록하기</button>
     </div>
   </div>
 </div>
@@ -791,6 +834,7 @@ const App = (() => {
   let addrConsentChecked = false
   let pendingAddrAction  = null
   let skipShown = false
+  let idSkipShown = false
   let emailSuggestions = [], emailSugIdx = -1
 
   /* ── Validations ── */
@@ -810,6 +854,7 @@ const App = (() => {
     form.bizRegNum.replace(/[^0-9]/g,'').length === 10 &&
     form.companyName.trim() !== '' && form.ceo.trim() !== '' &&
     form.ceoPhone.trim() !== '' && form.bizType.trim() !== '' && form.bizCategory.trim() !== ''
+  const bizAddrValid  = () => form.bizZip.trim() !== '' && form.bizAddress.trim() !== ''
 
   /* ── Step bar ── */
   function updateStepBar() {
@@ -857,6 +902,7 @@ const App = (() => {
     if (phase === 'account')  { $('btn-account').disabled  = !accountValid() }
     if (phase === 'personal') { $('btn-personal').disabled = !personalValid() }
     if (phase === 'bizInfo')  { $('btn-biz-info').disabled = !bizInfoValid() }
+    if (phase === 'bizAddr')  { $('btn-biz-addr').disabled  = !bizAddrValid() }
   }
 
   /* ── Focus / icon helpers ── */
@@ -896,7 +942,7 @@ const App = (() => {
       name:'name-input', birthdate:'birth-input', email:'email-input', detail:'detail-input',
       bizRegNum:'biz-reg-input', companyName:'company-name-input', ceo:'ceo-input',
       ceoPhone:'ceo-phone-input', bizType:'biz-type-input', bizCategory:'biz-category-input',
-      bizZip:'biz-zip-input', bizAddress:'biz-road-input'
+      bizZip:'biz-zip-input', bizAddress:'biz-road-input', bizDetail:'biz-detail-input'
     }
     const input = $(idMap[field])
     if (input) input.value = ''
@@ -1001,6 +1047,7 @@ const App = (() => {
   /* ── Email ── */
   function onEmailInput(el) {
     form.email = el.value; hide('email-err')
+    if (isEmailValid(form.email)) { $('email-wrap').classList.remove('error'); hide('email-err') }
     focusedField==='email' ? (form.email?show('email-clear'):hide('email-clear')) : null
     emailSuggestions = getEmailSuggestions(form.email)
     emailSugIdx = -1; renderEmailDrop(); updateBtn()
@@ -1010,6 +1057,8 @@ const App = (() => {
     setTimeout(()=>{ emailSuggestions=[]; renderEmailDrop() },150)
     if (form.email && !isEmailValid(form.email)) {
       $('email-err').textContent = '올바른 이메일 형식을 입력해 주세요.'; show('email-err')
+    } else {
+      $('email-wrap').classList.remove('error'); hide('email-err')
     }
   }
   function onEmailKeyDown(e) {
@@ -1089,7 +1138,12 @@ const App = (() => {
   function closeIdGuide() { hide('id-guide-modal'); document.body.style.overflow='' }
 
   function onAddrCountryChange(el) { form.addrCountry = el.value; el.classList.toggle('placeholder', !el.value); updateBtn() }
-  function onAddrFieldInput(field, el) { form[field] = el.value; updateBtn() }
+  function onAddrFieldInput(field, el) {
+    form[field] = el.value
+    if (field === 'addrZip')  { form.addrZip  ? show('addrZip-clear')  : hide('addrZip-clear') }
+    if (field === 'addrRoad') { form.addrRoad ? show('addrRoad-clear') : hide('addrRoad-clear') }
+    updateBtn()
+  }
 
   let idFile = null
   function _showIdFile(file) {
@@ -1112,17 +1166,25 @@ const App = (() => {
       $('biz-road-text').textContent = form.bizAddress; $('biz-road-text').style.color = '#252525'
       $('biz-detail-wrap').classList.remove('disabled')
       $('biz-detail-input').removeAttribute('readonly')
+      updateBtn()
       setTimeout(()=>$('biz-detail-input').focus(),100)
     }}).open()
   }
-  function onBizZipInput(el)  { form.bizZip = el.value; focusedField==='bizZip'?(form.bizZip?show('bizZip-clear'):hide('bizZip-clear')):null }
-  function onBizRoadInput(el) { form.bizAddress = el.value; focusedField==='bizAddress'?(form.bizAddress?show('bizAddress-clear'):hide('bizAddress-clear')):null }
+  function onBizZipInput(el)  { form.bizZip = el.value; focusedField==='bizZip'?(form.bizZip?show('bizZip-clear'):hide('bizZip-clear')):null; updateBtn() }
+  function onBizRoadInput(el) { form.bizAddress = el.value; focusedField==='bizAddress'?(form.bizAddress?show('bizAddress-clear'):hide('bizAddress-clear')):null; updateBtn() }
   function onBizDetailFocus(e) {
     if (!isOverseasBiz && !form.bizAddress) { e.target.blur(); openBizAddr(); return }
     setFocus('bizDetail')
   }
-  function onBizDetailBlur()  { focusedField=null; hide('biz-detail-enter') }
-  function onBizDetailInput(el) { form.bizDetail = el.value; show('biz-detail-enter') }
+  function onBizZipKeyDown(e)    { if (e.key === 'Enter') { e.preventDefault(); $('biz-road-input').focus() } }
+  function onBizRoadKeyDown(e)   { if (e.key === 'Enter') { e.preventDefault(); $('biz-detail-input').focus() } }
+  function onBizDetailKeyDown(e) { if (e.key === 'Enter') { e.preventDefault(); handleNext() } }
+  function onBizDetailBlur()  { focusedField=null; hide('bizDetail-enter'); hide('bizDetail-clear') }
+  function onBizDetailInput(el) {
+    form.bizDetail = el.value
+    show('bizDetail-enter')
+    form.bizDetail ? show('bizDetail-clear') : hide('bizDetail-clear')
+  }
 
   /* ── Address (personal) ── */
   function openAddr() {
@@ -1208,24 +1270,57 @@ const App = (() => {
       e.target.blur()
       pendingAddrAction = () => $('addr-zip-input').focus()
       show('addr-consent-overlay')
+      return
     }
+    show('addrZip-enter')
+    if (form.addrZip) show('addrZip-clear')
   }
+  function onAddrZipBlur()  { hide('addrZip-enter'); hide('addrZip-clear') }
+  function clearAddrZip(e)  { e.preventDefault(); form.addrZip=''; $('addr-zip-input').value=''; hide('addrZip-clear') }
   function onOverseasRoadFocus(e) {
     if (isOverseasPersonal && !addrConsentGranted) {
       e.target.blur()
       pendingAddrAction = () => $('addr-road-input').focus()
       show('addr-consent-overlay')
+      return
     }
+    show('addrRoad-enter')
+    if (form.addrRoad) show('addrRoad-clear')
   }
+  function onAddrRoadBlur()  { hide('addrRoad-enter'); hide('addrRoad-clear') }
+  function clearAddrRoad(e)  { e.preventDefault(); form.addrRoad=''; $('addr-road-input').value=''; hide('addrRoad-clear') }
   function onOverseasAddrEnter(nextId, e) {
     if (e.key === 'Enter') { e.preventDefault(); $(nextId)?.focus() }
   }
-  function onDetailBlur()   { focusedField=null; hide('detail-enter') }
-  function onDetailInput(el){ form.detail = el.value; show('detail-enter') }
+  function onDetailBlur()   { focusedField=null; hide('detail-enter'); hide('detail-clear') }
+  function onDetailInput(el){
+    form.detail = el.value
+    show('detail-enter')
+    form.detail ? show('detail-clear') : hide('detail-clear')
+  }
 
   /* ── Skip ── */
+  function idSkipConfirm() { hide('id-skip-overlay'); advanceTo('address') }
+  function idSkipCancel()  { hide('id-skip-overlay'); $('id-file-input').click() }
+  function closeIdSkip()   { hide('id-skip-overlay') }
+
   function skipConfirm() { hide('skip-overlay'); goComplete() }
-  function skipCancel()  { hide('skip-overlay'); openAddr() }
+  function skipCancel() {
+    hide('skip-overlay')
+    addrConsentGranted = true
+    if (!addrConsentChecked) {
+      addrConsentChecked = true
+      const box  = $('addr-consent-checkbox')
+      const icon = $('addr-consent-check-icon')
+      if (box)  { box.style.background = '#F76E33'; box.style.borderColor = '#F76E33' }
+      if (icon) icon.style.opacity = '1'
+    }
+    if (isOverseasPersonal) {
+      setTimeout(() => $('addr-zip-input').focus(), 0)
+    } else {
+      setTimeout(() => _openPostcode(), 0)
+    }
+  }
   function closeSkip()   { hide('skip-overlay') }
 
   /* ── Field Enter key nav ── */
@@ -1298,15 +1393,21 @@ const App = (() => {
       if (!validatePersonalWithAlert()) return
       advanceTo(isOverseasPersonal ? 'idUpload' : 'address')
     } else if (phase === 'idUpload') {
+      if (!idFile) {
+        if (idSkipShown) { advanceTo('address'); return }
+        idSkipShown = true; setTimeout(() => show('id-skip-overlay'), 0); return
+      }
       advanceTo('address')
     } else if (phase === 'address') {
-      if (!form.address) {
+      const addrFilled = isOverseasPersonal ? !!(form.addrZip || form.addrRoad) : !!form.address
+      if (!addrFilled) {
         if (skipShown) { goComplete(); return }
-        skipShown = true; show('skip-overlay'); return
+        skipShown = true; setTimeout(() => show('skip-overlay'), 0); return
       }
       goComplete()
     } else if (phase === 'bizInfo') {
       if (!validateBizInfoWithAlert()) return
+      document.activeElement?.blur()
       advanceTo('bizAddr')
     } else if (phase === 'bizAddr') {
       goStep3()
@@ -1346,9 +1447,11 @@ const App = (() => {
         }
       }, 400)
     } else if (next === 'bizAddr') {
+      document.activeElement?.blur()
       const el = $('biz-addr-section')
       show('biz-addr-section'); void el.offsetHeight; el.classList.add('open')
       hide('btn-biz-info-wrap'); show('btn-biz-addr-wrap')
+      updateBtn()
     }
     window.scrollTo({ top:0, behavior:'smooth' })
   }
@@ -1386,13 +1489,9 @@ const App = (() => {
     // Non-biz personal address
     if (isOverseasPersonal) {
       show('addr-country-field')
-      // Search rows stay visible (same visual as domestic) — onclick overridden to overseas direct-entry
-      $('addr-zip-search-row').setAttribute('onclick', 'App.openOverseasZipInput()')
-      const zipBtn = $('addr-zip-search-row').querySelector('.inner-btn')
-      if (zipBtn) zipBtn.setAttribute('onclick', 'event.stopPropagation();App.openOverseasZipInput()')
-      $('addr-road-search-row').setAttribute('onclick', 'App.openOverseasRoadInput()')
-      // Input wraps hidden until triggered
-      hide('addr-zip-input-wrap'); hide('addr-road-input-wrap')
+      // 해외 개인: 주소검색 버튼 행 숨기고 직접입력 필드 바로 표시
+      hide('addr-zip-search-row'); hide('addr-road-search-row')
+      show('addr-zip-input-wrap'); show('addr-road-input-wrap')
       $('detail-input').removeAttribute('readonly')
     } else {
       hide('addr-country-field')
@@ -1485,14 +1584,16 @@ const App = (() => {
     openAddr, addrConsentConfirm, addrConsentCancel, closeAddrConsent,
     openOverseasZipInput, openOverseasRoadInput, onOverseasZipEnter,
     onOverseasCountryMousedown, onOverseasZipFocus, onOverseasRoadFocus, onOverseasAddrEnter,
+    onAddrZipBlur, onAddrRoadBlur, clearAddrZip, clearAddrRoad,
+    idSkipConfirm, idSkipCancel, closeIdSkip,
     skipConfirm, skipCancel, closeSkip,
     onBizRegInput, formatBizRegOnBlur, unformatBizRegOnFocus,
     onBizFieldInput, onCeoPhoneInput, formatCeoPhoneOnBlur, unformatCeoPhoneOnFocus,
     onBizCountryChange, onAddrCountryChange, onAddrFieldInput,
     openIdGuide, closeIdGuide,
     onIdFileSelect, onIdFileDrop, removeIdFile, maskIdFile,
-    openBizAddr, onBizZipInput, onBizRoadInput,
-    onBizDetailFocus, onBizDetailBlur, onBizDetailInput,
+    openBizAddr, onBizZipInput, onBizRoadInput, onBizZipKeyDown, onBizRoadKeyDown,
+    onBizDetailFocus, onBizDetailBlur, onBizDetailInput, onBizDetailKeyDown,
     handleNext, onFieldEnter,
   }
 })()

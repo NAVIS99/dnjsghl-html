@@ -374,21 +374,14 @@
 <!-- 신분증 스킵 모달 (해외 사업자) -->
 <div id="id-skip-modal" style="display:none;" class="overlay" onclick="App.closeIDSkip()">
   <div class="bottom-sheet" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:flex-end;padding:1rem 1.25rem 0;">
-      <button onclick="App.closeIDSkip()" style="width:1.5rem;height:1.5rem;display:flex;align-items:center;justify-content:center;padding:0;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
+    <div class="sheet-close"><button onclick="App.closeIDSkip()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19.5 19.5L4.5 4.5M4.5 19.5L19.5 4.5" stroke="#252525" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="sheet-body">
+      <p class="sheet-title">'신분증' 없이 가입하시겠어요?</p>
+      <p class="sheet-sub">경매 응찰 시 신분증 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
     </div>
-    <div style="padding:0 1.25rem 1.5rem;">
-      <p class="ty-heading2" style="white-space:pre-line;">신분증은 선택 사항이지만,
-경매 응찰을 하려면 반드시 필요합니다.
-이대로 제출하시겠습니까?</p>
-    </div>
-    <div class="member-modal-footer sheet-btns">
-      <button class="sheet-btn-cancel" onclick="App.closeIDSkip()">취소</button>
-      <button class="sheet-btn-confirm" onclick="App.confirmIDSkip()">가입정보 제출하기</button>
+    <div class="sheet-btns sheet-btns-col">
+      <button class="sheet-btn-confirm" onclick="App.confirmIDSkip()">'신분증' 없이 가입하기</button>
+      <button class="sheet-btn-cancel" onclick="App.idSkipCancel()">신분증 등록하기</button>
     </div>
   </div>
 </div>
@@ -430,6 +423,7 @@ const App = (() => {
     emailSuggestions: [], emailSugIdx: -1,
     files: [],                  // [{id, src, label}]
     docGuideShown: false,
+    idSkipShown: false,
     isDomesticBiz: parseInt(localStorage.getItem('signup_member'), 10) === 1,
   }
 
@@ -726,12 +720,15 @@ const App = (() => {
     }
     const usedLabels = new Set(state.files.map(f => f.label).filter(Boolean))
     if (!state.isDomesticBiz && !usedLabels.has('id')) {
+      if (state.idSkipShown) { window.location.href = 'complete.html'; return }
+      state.idSkipShown = true
       $('id-skip-modal').style.display = 'flex'; return
     }
     window.location.href = 'complete.html'
   }
   function confirmIDSkip() { $('id-skip-modal').style.display = 'none'; window.location.href = 'complete.html' }
-  function closeIDSkip() { $('id-skip-modal').style.display = 'none' }
+  function idSkipCancel()  { $('id-skip-modal').style.display = 'none'; $('file-input').click() }
+  function closeIDSkip()   { $('id-skip-modal').style.display = 'none' }
 
   /* ── Doc Guide Modal ── */
   function openDocGuide() {
@@ -848,7 +845,7 @@ const App = (() => {
     onEmailKeyDown, applyEmailDomain, setFocus, clearFocus,
     onNameKeyDown, onBirthKeyDown,
     goToDocuments, addFiles, handleFileChange, resetFiles, removeFile, setLabel,
-    handleComplete, confirmIDSkip, closeIDSkip,
+    handleComplete, confirmIDSkip, idSkipCancel, closeIDSkip,
     openDocGuide, closeDocGuide, openTaxTip, closeTaxTip,
     goBack,
   }
