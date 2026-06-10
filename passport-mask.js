@@ -64,7 +64,11 @@ const CSS = `
   background: var(--surface-white);
 }
 @media (min-width: 64rem) {
-  #pm-right-after { width: 22.5rem; overflow-y: auto; }
+  #pm-right-after { width: 22.5rem; overflow: hidden; }
+  #pm-right-after .modal-header,
+  #pm-right-after .pm-toolbar,
+  #pm-right-after #pm-after-cta { flex-shrink: 0; }
+  #pm-right-after #pm-after-guide { flex: 1; min-height: 0; overflow-y: auto; }
 }
 @media (max-width: 63.9375rem) {
   #pm-after-guide .pm-example-wrap { display: none; }
@@ -83,7 +87,7 @@ const CSS = `
   padding: 0.625rem 1.25rem 1.5rem; flex-shrink: 0;
 }
 @media (min-width: 64rem) {
-  .pm-toolbar { padding: 0 1.25rem 0.25rem; margin-top: auto; }
+  .pm-toolbar { padding: 0.625rem 1.25rem 0.25rem; }
 }
 
 .pm-toggle-wrap {
