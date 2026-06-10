@@ -30,27 +30,6 @@ const CSS = `
   .pm-pc-only     { display: flex !important; }
 }
 
-
-#pm-before { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
-@media (min-width: 64rem) { #pm-before { flex-direction: row; width: 100%; } }
-
-#pm-dropzone { display: none; }
-@media (min-width: 64rem) {
-  #pm-dropzone {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    background: var(--surface-gray-lighter1); cursor: pointer;
-    border-right: 1px solid var(--divider-gray-light);
-  }
-  #pm-dropzone.drag-over { background: var(--surface-primary-lighter); }
-  #pm-dropzone .pm-dz-inner {
-    display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
-    color: var(--text-default); font-size: 1rem; font-weight: 500; letter-spacing: -0.008rem; line-height: 1.5rem;
-  }
-}
-
-#pm-right-before { display: flex; flex-direction: column; overflow-y: auto; flex: 1; min-height: 0; }
-@media (min-width: 64rem) { #pm-right-before { width: 22.5rem; flex: none; } }
-
 .pm-notice {
   display: flex; align-items: center; gap: 0.5rem;
   background: var(--surface-primary-lighter);
@@ -63,10 +42,8 @@ const CSS = `
 }
 .pm-example-wrap { margin: 0 1.25rem; overflow: hidden; }
 .pm-example-img  { width: 100%; height: auto; display: block; }
-.pm-file-btn { margin: 1.5rem 1.25rem 0; }
-.pm-hint { color: var(--text-secondary); margin: 1rem 1.25rem 2.5rem; }
 
-#pm-after { flex: 1; min-height: 0; display: none; flex-direction: column; overflow: hidden; }
+#pm-after { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 @media (min-width: 64rem) { #pm-after { flex-direction: row; width: 100%; } }
 
 #pm-canvas-col {
@@ -183,41 +160,9 @@ function _build() {
 }
 
 function _template() {
-  return `<div id="pm-overlay" onclick="PassportMask.close()">
+  return `<div id="pm-overlay">
 
-  <div id="pm-modal" onclick="event.stopPropagation()">
-
-    <div id="pm-before">
-      <div id="pm-dropzone"
-        onclick="PassportMask._onDropzoneClick()"
-        ondragover="event.preventDefault();this.classList.add('drag-over')"
-        ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('drag-over')"
-        ondrop="event.preventDefault();this.classList.remove('drag-over');PassportMask._onDrop(event)">
-        <div class="pm-dz-inner">
-          <img src="./public/add_40.svg" width="40" height="40" alt=""/>
-          <span>파일을 드래그하거나 첨부해 주세요</span>
-        </div>
-      </div>
-      <div id="pm-right-before">
-        <div class="modal-header">
-          <span class="modal-title">여권 사본 제출하기</span>
-          <button class="modal-close" onclick="PassportMask.close()">
-            <img src="./public/close_24.svg" width="24" height="24" alt="닫기"/>
-          </button>
-        </div>
-        <div class="pm-notice">
-          <img src="./public/mark-exclamation_o_16.svg" width="16" height="16" alt="" style="flex-shrink:0;"/>
-          <p class="ty-body3">이름, 생년월일, 국적, 발급일, 만료일을 <span class="pm-notice-em">제외한<br class="pm-notice-break"/>모든 정보를 마스킹</span>합니다.</p>
-        </div>
-        <div class="pm-example-wrap">
-          <img src="./public/passport-ex.png" alt="여권 예시" class="pm-example-img"/>
-        </div>
-        <button class="btn-outlined-secondary-large pm-file-btn" onclick="PassportMask._onFileBtn()">
-          <img src="./public/add_20.svg" width="20" height="20" alt=""/>파일첨부
-        </button>
-        <p class="pm-hint ty-body3">jpg, jpeg, png, heic, pdf 파일 첨부 가능</p>
-      </div>
-    </div>
+  <div id="pm-modal">
 
     <div id="pm-after">
       <div id="pm-canvas-col">
@@ -275,15 +220,7 @@ function _template() {
 }
 
 /* ── State switch ── */
-function _showBefore() {
-  document.getElementById('pm-before').style.display = ''
-  document.getElementById('pm-after').style.display = 'none'
-}
-
 function _showAfter(src) {
-  document.getElementById('pm-before').style.display = 'none'
-  document.getElementById('pm-after').style.display = 'flex'
-
   const img = new Image()
   img.onload = () => {
     _img = img
@@ -418,15 +355,6 @@ function _submit() {
 }
 
 /* ── File handling ── */
-function _onFileBtn() { document.getElementById('pm-file-input').click() }
-
-function _onDropzoneClick() { document.getElementById('pm-file-input').click() }
-
-function _onDrop(e) {
-  const file = e.dataTransfer?.files[0]
-  if (file && file.type.startsWith('image/')) _readFile(file)
-}
-
 function _onFileChange(input) {
   const file = input.files[0]
   if (file) _readFile(file)
@@ -444,7 +372,7 @@ return {
   open, close,
   _toggleExample, _resetMasks, _toggleMasking,
   _reattach, _submit,
-  _onFileBtn, _onDropzoneClick, _onDrop, _onFileChange,
+  _onFileChange,
 }
 
 })()
