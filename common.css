@@ -265,7 +265,7 @@ img { display: block; }
 /* ── Sheet buttons ── */
 .sheet-btns { display: flex; gap: 0.5rem; padding: 0.625rem 1.25rem; }
 @media (min-width: 48rem) { .sheet-btns { padding: 1.25rem; } }
-.sheet-btns .btn-solid-black-large { flex: 1; width: auto; padding: 0; gap: 0; }
+.sheet-btns .btn-solid-black-large { flex: 1; width: auto; }
 
 /* .sheet-btn-cancel → .btn-solid-cancel-large, .sheet-btn-confirm → .btn-solid-black-large로 교체됨, 삭제 가능 */
 .sheet-btn-cancel  { flex: 1; height: 3.25rem; display: flex; align-items: center; justify-content: center; border-radius: 0.375rem; background: var(--surface-gray-light); border: none; color: var(--text-gray-darker); font-size: 1rem; font-weight: 600; line-height: 1.5rem; letter-spacing: -0.008rem; cursor: pointer; transition: background 0.15s; }
@@ -274,7 +274,7 @@ img { display: block; }
 .sheet-btn-confirm:hover { background: var(--surface-gray-darker); }
 
 /* ── Solid cancel button (large) ── */
-.btn-solid-cancel-large { flex: 1; height: 3.25rem; display: flex; align-items: center; justify-content: center; border-radius: 0.375rem; background: var(--surface-gray-light); border: none; color: var(--text-gray-darker); font-size: 1rem; font-weight: 600; line-height: 1.5rem; letter-spacing: -0.008rem; cursor: pointer; transition: background 0.15s; }
+.btn-solid-cancel-large { flex: 1; height: 3.25rem; padding: 0 1rem; display: flex; align-items: center; justify-content: center; gap: 0.375rem; border-radius: 0.375rem; background: var(--surface-gray-light); border: none; color: var(--text-gray-darker); font-size: 1rem; font-weight: 600; line-height: 1.5rem; letter-spacing: -0.008rem; cursor: pointer; transition: background 0.15s; }
 .btn-solid-cancel-large:hover { background: var(--surface-gray); }
 
 /* ── Sheet buttons – column stack variant ── */
