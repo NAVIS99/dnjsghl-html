@@ -212,7 +212,7 @@
       </div>
     </div>
 
-    <button class="btn-main disabled" id="save-btn-info" style="margin-top:1.5rem;" onclick="App.saveInfo()">입력 정보 저장</button>
+    <button class="btn-solid-black-large disabled" id="save-btn-info" style="margin-top:1.5rem;" onclick="App.saveInfo()">입력 정보 저장</button>
   </div>
 
   <!-- 주소 (2단계에서 미입력 시 표시) -->
@@ -243,7 +243,7 @@
           </div>
         </div>
       </div>
-      <button class="btn-main disabled" id="save-btn-addr" style="margin-top:1.5rem;" onclick="App.saveAddr()">입력 정보 저장</button>
+      <button class="btn-solid-black-large disabled" id="save-btn-addr" style="margin-top:1.5rem;" onclick="App.saveAddr()">입력 정보 저장</button>
     </div>
   </div>
 
@@ -324,8 +324,8 @@
       <p class="sheet-title">맞춤 컨텐츠 추천을 위한<br>개인정보 수집 · 이용에 동의하시나요?</p>
     </div>
     <div class="sheet-btns">
-      <button class="sheet-btn-cancel" onclick="App.cancelMarketing()">비동의</button>
-      <button class="sheet-btn-confirm" onclick="App.confirmMarketing()">동의</button>
+      <button class="btn-solid-cancel-large" onclick="App.cancelMarketing()">비동의</button>
+      <button class="btn-solid-black-large" onclick="App.confirmMarketing()">동의</button>
     </div>
   </div>
 </div>
@@ -336,8 +336,8 @@
       <p class="sheet-title">경매 응찰을 위한 '주소'<br>개인정보 수집 · 이용에 동의하시나요?</p>
     </div>
     <div class="sheet-btns">
-      <button class="sheet-btn-cancel" onclick="App.cancelAddrConsent()">비동의</button>
-      <button class="sheet-btn-confirm" onclick="App.confirmAddrConsent()">동의</button>
+      <button class="btn-solid-cancel-large" onclick="App.cancelAddrConsent()">비동의</button>
+      <button class="btn-solid-black-large" onclick="App.confirmAddrConsent()">동의</button>
     </div>
   </div>
 </div>
@@ -424,7 +424,7 @@ const App = (() => {
     const hasOpt = optChans.sms||optChans.email||optChans.phone
     const active = gender!==''||job!==''||hasOpt
     const btn = $('save-btn-info')
-    btn.className = 'btn-main' + (active?'':' disabled')
+    btn.className = 'btn-solid-black-large' + (active?'':' disabled')
     btn.disabled  = !active
   }
   function saveInfo() {
@@ -458,7 +458,7 @@ const App = (() => {
   function updateAddrSaveBtn() {
     const active = !!(zip||address||detail)
     const btn=$('save-btn-addr')
-    btn.className='btn-main'+(active?'':' disabled')
+    btn.className='btn-solid-black-large'+(active?'':' disabled')
     btn.disabled=!active
   }
   function saveAddr() {

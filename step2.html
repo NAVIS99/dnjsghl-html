@@ -197,7 +197,7 @@
     </div>
     <!-- biz-addr CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-biz-addr-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-biz-addr" onclick="App.handleNext()" disabled>다음</button>
+      <button class="btn-solid-black-large" id="btn-biz-addr" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
     <!-- [3] 주소 그룹 (phase >= 2) -->
@@ -305,7 +305,7 @@
     </div>
     <!-- addr CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-addr-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-addr" onclick="App.handleNext()">가입정보 제출하기</button>
+      <button class="btn-solid-black-large" id="btn-addr" onclick="App.handleNext()">가입정보 제출하기</button>
     </div>
 
     <!-- [BIZ-INFO] 사업자 정보 (biz phase 1) -->
@@ -419,7 +419,7 @@
     </div>
     <!-- biz-info CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-biz-info-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-biz-info" onclick="App.handleNext()" disabled>다음</button>
+      <button class="btn-solid-black-large" id="btn-biz-info" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
     <!-- [ID-UPLOAD] 신분증 첨부 (해외 개인만) -->
@@ -435,12 +435,12 @@
               <span class="ty-label3" style="color:var(--text-secondary);font-weight:400;">(선택)</span>
             </div>
             <div id="id-upload-empty" class="upload-empty"
-              onclick="document.getElementById('id-file-input').click()"
+              onclick="App.onIdUploadClick()"
               ondragover="event.preventDefault();this.classList.add('dragging')"
               ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('dragging')"
               ondrop="event.preventDefault();this.classList.remove('dragging');App.onIdFileDrop(event.dataTransfer.files)">
               <img id="id-upload-icon" src="./public/add_40.svg" width="40" height="40" alt=""/>
-              <span id="id-upload-label" style="font-size:1rem;font-weight:500;letter-spacing:-0.008rem;color:var(--text-default);transition:color 0.15s;">
+              <span id="id-upload-label" style="font-size:1rem;font-weight:500;letter-spacing:-0.008rem;color:var(--text-default);transition:color 0.15s;line-height: 1.5rem;">
                 <span class="label-mobile">파일첨부</span>
                 <span class="label-desktop">파일을 드래그하거나 첨부해 주세요</span>
               </span>
@@ -470,12 +470,12 @@
               </div>
             </div>
           </div>
-          <p class="ty-caption1" style="color:var(--text-secondary);margin:0;">jpg, jpeg, png, heic 또는 pdf 파일 업로드 (검수 후 모든 서비스 이용 가능)</p>
+          <p class="ty-body3" style="color:var(--text-secondary);margin:0;">jpg, jpeg, png, heic, pdf 파일 첨부 (검수 후 모든 서비스 이용 가능)</p>
         </div>
       </div>
     </div>
     <div class="inline-btn-wrap section-fade hidden" id="btn-id-upload-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-id-upload" onclick="App.handleNext()">다음</button>
+      <button class="btn-solid-black-large" id="btn-id-upload" onclick="App.handleNext()">다음</button>
     </div>
 
     <!-- [2] 인적 사항 그룹 (phase >= 1) -->
@@ -550,7 +550,7 @@
     </div>
     <!-- personal CTA -->
     <div class="inline-btn-wrap section-fade hidden" id="btn-personal-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-personal" onclick="App.handleNext()" disabled>다음</button>
+      <button class="btn-solid-black-large" id="btn-personal" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
     <!-- [ID-UPLOAD] 신분증 첨부 (해외 개인만) -->
@@ -683,7 +683,7 @@
     </div><!-- /account-section -->
     <!-- account CTA -->
     <div class="inline-btn-wrap acct-fade-in" id="btn-account-wrap" style="padding-top:1.75rem;padding-bottom:1.75rem;">
-      <button class="btn-main" id="btn-account" onclick="App.handleNext()" disabled>다음</button>
+      <button class="btn-solid-black-large" id="btn-account" onclick="App.handleNext()" disabled>다음</button>
     </div>
 
     <div class="spacer-68"></div>
@@ -724,8 +724,8 @@
       <p class="sheet-title">경매 응찰을 위한 '주소'<br>개인정보 수집 · 이용에 동의하시나요?</p>
     </div>
     <div class="sheet-btns">
-      <button class="sheet-btn-cancel" onclick="App.addrConsentCancel()">비동의</button>
-      <button class="sheet-btn-confirm" onclick="App.addrConsentConfirm()">동의</button>
+      <button class="btn-solid-cancel-large" onclick="App.addrConsentCancel()">비동의</button>
+      <button class="btn-solid-black-large" onclick="App.addrConsentConfirm()">동의</button>
     </div>
   </div>
 </div>
@@ -770,7 +770,7 @@
 
     </div>
     <div class="sheet-btns">
-      <button class="sheet-btn-confirm" onclick="App.closeIdGuide()">확인</button>
+      <button class="btn-solid-black-large" onclick="App.closeIdGuide()">확인</button>
     </div>
   </div>
 </div>
@@ -783,8 +783,8 @@
       <p class="sheet-sub">경매 응찰 시 신분증 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
     </div>
     <div class="sheet-btns sheet-btns-col">
-      <button class="sheet-btn-confirm" onclick="App.idSkipConfirm()">'신분증' 없이 가입하기</button>
-      <button class="sheet-btn-cancel" onclick="App.idSkipCancel()">신분증 등록하기</button>
+      <button class="btn-solid-black-large" onclick="App.idSkipConfirm()">'신분증' 없이 가입하기</button>
+      <button class="btn-solid-cancel-large" onclick="App.idSkipCancel()">신분증 등록하기</button>
     </div>
   </div>
 </div>
@@ -797,8 +797,8 @@
       <p class="sheet-sub">경매 응찰 시 주소 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
     </div>
     <div class="sheet-btns sheet-btns-col">
-      <button class="sheet-btn-confirm" onclick="App.skipConfirm()">'주소' 없이 가입하기</button>
-      <button class="sheet-btn-cancel" onclick="App.skipCancel()">개인정보 수집 이용 동의 및 주소 등록하기</button>
+      <button class="btn-solid-black-large" onclick="App.skipConfirm()">'주소' 없이 가입하기</button>
+      <button class="btn-solid-cancel-large" onclick="App.skipCancel()">개인정보 수집 이용 동의 및 주소 등록하기</button>
     </div>
   </div>
 </div>
@@ -812,6 +812,7 @@
 </div>
 
 <script src="common.js"></script>
+<script src="passport-mask.js"></script>
 <script>
 const App = (() => {
   const $ = (id) => document.getElementById(id)
@@ -1146,17 +1147,43 @@ const App = (() => {
   }
 
   let idFile = null
-  function _showIdFile(file) {
-    idFile = file
-    const reader = new FileReader()
-    reader.onload = e => { $('id-file-preview').src = e.target.result }
-    reader.readAsDataURL(file)
+  let idFileDataUrl = null
+  function _onMasked(maskedUrl) {
+    idFile = maskedUrl
+    idFileDataUrl = maskedUrl
+    $('id-file-preview').src = maskedUrl
     hide('id-upload-empty'); show('id-file-card')
   }
-  function onIdFileSelect(files) { if (files[0]) _showIdFile(files[0]) }
-  function onIdFileDrop(files)   { if (files[0]) _showIdFile(files[0]) }
-  function removeIdFile()  { idFile = null; $('id-file-input').value=''; $('id-file-preview').src=''; show('id-upload-empty'); hide('id-file-card') }
-  function maskIdFile()    { alert('마스킹 기능은 실제 구현 시 처리됩니다.') }
+  function onIdUploadClick() {
+    $('id-file-input').click()
+  }
+  function onIdFileDrop(files) {
+    const file = files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = e => PassportMask.open(e.target.result, _onMasked)
+    reader.readAsDataURL(file)
+  }
+  function onIdFileSelect(files) {
+    const file = files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = e => PassportMask.open(e.target.result, _onMasked)
+    reader.readAsDataURL(file)
+    $('id-file-input').value = ''
+  }
+  function removeIdFile() {
+    idFile = null; idFileDataUrl = null
+    $('id-file-input').value = ''; $('id-file-preview').src = ''
+    show('id-upload-empty'); hide('id-file-card')
+  }
+  function maskIdFile() {
+    PassportMask.open(idFileDataUrl, (maskedUrl) => {
+      idFileDataUrl = maskedUrl
+      idFile = maskedUrl
+      $('id-file-preview').src = maskedUrl
+    })
+  }
   function openBizAddr() {
     if (!window.daum?.Postcode) { alert('주소검색 API 로드 중입니다.'); return }
     new window.daum.Postcode({ oncomplete(d) {
@@ -1595,7 +1622,7 @@ const App = (() => {
     onBizFieldInput, onCeoPhoneInput, formatCeoPhoneOnBlur, unformatCeoPhoneOnFocus,
     onBizCountryChange, onAddrCountryChange, onAddrFieldInput,
     openIdGuide, closeIdGuide,
-    onIdFileSelect, onIdFileDrop, removeIdFile, maskIdFile,
+    onIdUploadClick, onIdFileSelect, onIdFileDrop, removeIdFile, maskIdFile,
     openBizAddr, onBizZipInput, onBizRoadInput, onBizZipKeyDown, onBizRoadKeyDown,
     onBizDetailFocus, onBizDetailBlur, onBizDetailInput, onBizDetailKeyDown,
     handleNext, onFieldEnter,
