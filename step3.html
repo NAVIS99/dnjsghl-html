@@ -43,22 +43,14 @@
       margin: 0 -1.25rem;
     }
 
-    /* ── Reset & Upload buttons ── */
-    .btn-reset {
-      display: flex; height: 3.25rem; padding: 0 1rem;
-      justify-content: center; align-items: center; gap: 0.5rem;
-      border-radius: 0.25rem; border: 1px solid var(--border-gray-dark2); background: var(--surface-white);
-      color: var(--text-default); font-size: 1rem; font-weight: 500;
-      letter-spacing: -0.008rem; cursor: pointer; transition: border-color 0.15s;
-    }
-    .btn-reset:hover { border-color: var(--border-gray-dark); }
+    /* ── Upload button ── */
     .btn-upload {
       display: flex; flex: 1; height: 3.25rem; padding: 0 1rem;
-      justify-content: center; align-items: center; gap: 0.5rem;
-      border-radius: 0.25rem; border: none; cursor: pointer;
+      justify-content: center; align-items: center; gap: 0.375rem;
+      border-radius: 0.375rem; border: none; cursor: pointer;
       background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23C1C1C1' stroke-width='1.5' stroke-dasharray='6%2c4' stroke-linecap='square'/%3e%3c/svg%3e");
       background-color: var(--surface-white);
-      color: var(--text-default); font-size: 1rem; font-weight: 500;
+      color: var(--text-default); font-size: 1rem; font-weight: 600;
       letter-spacing: -0.008rem; transition: background-image 0.15s;
     }
     .btn-upload:hover {
@@ -151,7 +143,7 @@
             ondragleave="if(!this.contains(event.relatedTarget))this.classList.remove('dragging')"
             ondrop="event.preventDefault();this.classList.remove('dragging');App.addFiles(event.dataTransfer.files)">
             <img src="./public/add_40.svg" width="40" height="40" alt="" id="upload-icon"/>
-            <span id="upload-label" style="font-size:1rem;font-weight:500;letter-spacing:-0.008rem;color:var(--text-default);transition:color 0.15s;">
+            <span id="upload-label" style="font-size:1rem;font-weight:500;letter-spacing:-0.008rem;color:var(--text-default);transition:color 0.15s;line-height: 1.5rem;">
               <span class="label-mobile">파일첨부</span>
               <span class="label-desktop">파일을 드래그하거나 첨부해 주세요</span>
             </span>
@@ -163,7 +155,7 @@
             <div style="background:#F3F3F3;margin:0 -1.25rem;padding:1.25rem;display:flex;flex-direction:column;gap:0.5rem;">
               <div id="file-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
               <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
-                <button class="btn-reset" onclick="App.resetFiles()">
+                <button class="btn-outlined-secondary-large" onclick="App.resetFiles()">
                   <img src="./public/refresh_20.svg" width="20" height="20" alt=""/>
                   초기화
                 </button>
@@ -183,7 +175,7 @@
             <div class="status-chip" id="chip-cert" style="gap:0;">사업자등록증명원<span style="color:#868686;font-weight:400;margin-left:0.063rem;">(선택)</span></div>
             <div class="status-chip" id="chip-id" style="gap:0;">신분증<span style="color:#868686;font-weight:400;margin-left:0.063rem;">(선택)</span></div>
           </div>
-          <p class="format-hint ty-caption1">jpg, jpeg, png, heic 또는 pdf 파일 업로드 (검수 후 모든 서비스 이용 가능)</p>
+          <p class="format-hint ty-body3">jpg, jpeg, png, heic, pdf 파일 첨부 (검수 후 모든 서비스 이용 가능)</p>
 
           <input type="file" id="file-input" accept="image/*,.pdf" multiple style="display:none;"
             onchange="App.handleFileChange(this)"/>
@@ -191,7 +183,7 @@
 
         <!-- 가입 완료 버튼 -->
         <div class="btn-sticky section-fade" id="btn-complete-wrap" style="padding:1.75rem 1.25rem;">
-          <button class="btn-main" id="btn-complete" onclick="App.handleComplete()" disabled>가입정보 제출하기</button>
+          <button class="btn-solid-black-large" id="btn-complete" onclick="App.handleComplete()" disabled>가입정보 제출하기</button>
         </div>
       </div>
     </div>
@@ -274,7 +266,7 @@
 
     <!-- 다음 버튼 (personal phase) -->
     <div class="btn-sticky acct-fade-in" id="btn-next-wrap" style="padding:1.75rem 1.25rem;">
-      <button class="btn-main" id="btn-next" onclick="App.goToDocuments()" disabled>다음</button>
+      <button class="btn-solid-black-large" id="btn-next" onclick="App.goToDocuments()" disabled>다음</button>
     </div>
 
     <div style="height:4.25rem;"></div>
@@ -365,7 +357,7 @@
 
     <!-- 확인 버튼 -->
     <div class="member-modal-footer">
-      <button class="btn-main" onclick="App.closeDocGuide()">확인</button>
+      <button class="btn-solid-black-large" onclick="App.closeDocGuide()">확인</button>
     </div>
 
   </div>
@@ -380,8 +372,8 @@
       <p class="sheet-sub">경매 응찰 시 신분증 등록이 필요하나,<br>가입 후 마이페이지에서 언제든지 추가할 수 있습니다.</p>
     </div>
     <div class="sheet-btns sheet-btns-col">
-      <button class="sheet-btn-confirm" onclick="App.confirmIDSkip()">'신분증' 없이 가입하기</button>
-      <button class="sheet-btn-cancel" onclick="App.idSkipCancel()">신분증 등록하기</button>
+      <button class="btn-solid-black-large" onclick="App.confirmIDSkip()">'신분증' 없이 가입하기</button>
+      <button class="btn-solid-cancel-large" onclick="App.idSkipCancel()">신분증 등록하기</button>
     </div>
   </div>
 </div>
@@ -413,6 +405,7 @@
 </div>
 
 <script src="common.js"></script>
+<script src="passport-mask.js"></script>
 <script>
 const App = (() => {
   const $ = id => document.getElementById(id)
@@ -632,8 +625,12 @@ const App = (() => {
     renderFiles()
   }
   function setLabel(fileId, key) {
+    const prevLabel = state.files.find(f => f.id === fileId)?.label
     state.files = state.files.map(f => f.id !== fileId ? f : { ...f, label: f.label === key ? null : key })
     renderFiles()
+    if (key === 'id' && prevLabel !== 'id' && state.files.find(f => f.id === fileId)?.label === 'id') {
+      setTimeout(() => maskFile(fileId), 50)
+    }
   }
 
   // 국내 사업자: 사업자등록증/사업자등록증명원/명함 / 해외 사업자: 사업자증빙자료/명함/신분증(선택)
@@ -661,16 +658,16 @@ const App = (() => {
           const cls = isSelected ? 'selected' : isDisabled ? 'disabled' : 'default'
           const checkIcon = isSelected ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''
           const onclick = isDisabled ? '' : `onclick="App.setLabel('${file.id}','${key}')"`
-          return `<button class="label-chip ${cls}" ${onclick}>${checkIcon}${CARD_LABELS[i]}</button>`
+          return `<button class="chip ${cls} small" ${onclick}>${checkIcon}${CARD_LABELS[i]}</button>`
         }).join('')
-        const maskBtn = file.label === 'id' ? `<button class="file-action-btn"><img src="./public/pencil_16.svg" width="16" height="16" alt=""/>마스킹</button>` : ''
+        const maskBtn = file.label === 'id' ? `<button class="file-action-btn" onclick="App.maskFile('${file.id}')"><img src="./public/pencil_16.svg" width="16" height="16" alt=""/>마스킹</button>` : ''
         return `
           <div class="file-card">
             <div class="file-thumb-wrap">
               <div class="file-thumb"><img src="${file.src}" alt=""/></div>
             </div>
             <div class="file-right">
-              <div class="label-chips">${chips}</div>
+              <div class="chip-group">${chips}</div>
               <div class="file-actions">
                 ${maskBtn}
                 <button class="file-action-btn" onclick="App.removeFile('${file.id}')">삭제</button>
@@ -699,6 +696,34 @@ const App = (() => {
     // 가입완료 버튼
     const btn = $('btn-complete')
     btn.disabled = !docValid()
+  }
+
+  /* ── Masking ── */
+  function maskFile(id) {
+    const file = state.files.find(f => f.id === id)
+    if (!file) return
+    // Convert blob URL to dataURL if needed, then open masking modal
+    if (file.src.startsWith('data:')) {
+      PassportMask.open(file.src, (maskedUrl) => {
+        state.files = state.files.map(f => f.id === id ? { ...f, src: maskedUrl } : f)
+        renderFiles()
+      })
+    } else {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => {
+        const cv = document.createElement('canvas')
+        cv.width = img.naturalWidth; cv.height = img.naturalHeight
+        cv.getContext('2d').drawImage(img, 0, 0)
+        const dataUrl = cv.toDataURL('image/jpeg', 0.92)
+        state.files = state.files.map(f => f.id === id ? { ...f, src: dataUrl } : f)
+        PassportMask.open(dataUrl, (maskedUrl) => {
+          state.files = state.files.map(f => f.id === id ? { ...f, src: maskedUrl } : f)
+          renderFiles()
+        })
+      }
+      img.src = file.src
+    }
   }
 
   /* ── Complete ── */
@@ -844,7 +869,7 @@ const App = (() => {
     onNameInput, clearName, onBirthInput, clearBirth, onEmailInput, clearEmail,
     onEmailKeyDown, applyEmailDomain, setFocus, clearFocus,
     onNameKeyDown, onBirthKeyDown,
-    goToDocuments, addFiles, handleFileChange, resetFiles, removeFile, setLabel,
+    goToDocuments, addFiles, handleFileChange, resetFiles, removeFile, setLabel, maskFile,
     handleComplete, confirmIDSkip, idSkipCancel, closeIDSkip,
     openDocGuide, closeDocGuide, openTaxTip, closeTaxTip,
     goBack,
