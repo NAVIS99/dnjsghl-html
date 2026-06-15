@@ -205,15 +205,15 @@ img { display: block; }
 .toast-leave { animation: toastSlideDown 0.3s ease-in forwards; }
 
 /* ── Sticky CTA (is-stuck state) ── */
-.sticky-cta, .inline-btn-wrap, .btn-sticky { transition: padding-top 0.15s, padding-bottom 0.15s; }
-.sticky-cta.is-stuck, .inline-btn-wrap.is-stuck, .btn-sticky.is-stuck {
+.sticky-cta, .inline-btn-wrap, .btn-sticky, .save-sticky { transition: padding-top 0.15s, padding-bottom 0.15s; }
+.sticky-cta.is-stuck, .inline-btn-wrap.is-stuck, .btn-sticky.is-stuck, .save-sticky.is-stuck {
   padding-top: 0.625rem !important; padding-bottom: 0.625rem !important;
 }
 
 /* ── File card ── */
 .file-list-wrap { display: flex; padding: 1.25rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; background: var(--surface-gray-lighter1); margin: 0 -1.25rem; }
-.file-card { display: flex; height: 8.75rem; align-items: flex-start; gap: 1rem; align-self: stretch; border-radius: 0.5rem; border: 1px solid var(--divider-gray-light); background: var(--surface-white); box-shadow: 0 2px 0.625rem 0 rgba(0,0,0,0.04); overflow: hidden; }
-@media (min-width: 48rem) { .file-card { height: 7.5rem; } }
+.file-card { display: flex; min-height: 8.75rem; align-items: flex-start; gap: 1rem; align-self: stretch; border-radius: 0.5rem; border: 1px solid var(--divider-gray-light); background: var(--surface-white); box-shadow: 0 2px 0.625rem 0 rgba(0,0,0,0.04); overflow: hidden; }
+@media (min-width: 48rem) { .file-card { min-height: 7.5rem; } }
 .file-thumb-wrap { display: flex; padding: 0.5rem 0 0.5rem 0.5rem; align-items: center; align-self: stretch; }
 .file-thumb { position: relative; width: 8.75rem; min-width: 8.75rem; align-self: stretch; border-radius: 0.25rem; border: 1px solid var(--surface-gray-lighter1); background: var(--surface-gray-lighter1); overflow: hidden; }
 .file-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
@@ -221,7 +221,7 @@ img { display: block; }
 .chip-group { display: flex; align-items: center; gap: 0.5rem 0.375rem; flex-wrap: wrap; align-self: stretch; }
 .chip { display: flex; justify-content: center; align-items: center; border-radius: 31.25rem; border: none; letter-spacing: -0.007rem; cursor: pointer; transition: background 0.1s, color 0.1s; }
 .chip.small   { height: 2.25rem; padding: 0 1rem; gap: 0.25rem; font-size: 0.875rem; font-weight: 600; }
-.chip.medium2 { height: 2.5rem;  padding: 0 1rem; gap: 0.25rem; font-size: 0.9375rem; font-weight: 600; }
+.chip.medium2 { height: 2.5rem;  padding: 0 1rem; gap: 0.375rem; font-size: 0.9375rem; font-weight: 600; }
 .chip.default  { background: var(--surface-gray-light);    color: var(--text-gray-darker); }
 .chip.default:hover { background: var(--surface-gray); }
 .chip.selected { background: var(--surface-primary);        color: var(--text-white); }
@@ -315,8 +315,9 @@ img { display: block; }
 #toast-wrap {
   position: fixed; bottom: 2rem; left: 0; right: 0;
   display: flex; justify-content: center; z-index: 50; padding: 0 1.25rem;
-  pointer-events: none;
+  pointer-events: none; transition: bottom 0.15s;
 }
+html.has-sticky-cta #toast-wrap { bottom: calc(1.25rem + var(--sticky-cta-h, 0px)); }
 .toast {
   max-width: 35rem; width: 100%; padding: 0.8125rem 1.25rem;
   display: flex; justify-content: center; align-items: center;
@@ -352,6 +353,12 @@ img { display: block; }
 .ocheck.checked svg { display: block; }
 .ocheck svg path { stroke: var(--border-gray-dark2); }
 .ocheck.checked svg path { stroke: var(--text-white); }
+
+/* ── Select button (radio/checkbox를 감싸는 선택형 버튼) ── */
+.select-btn { display: flex; align-items: center; gap: 0.5rem; height: 3.25rem; padding: 0 1rem; border: 1px solid var(--border-gray); border-radius: 0.25rem; background: var(--surface-white); cursor: pointer; transition: border-color 0.1s; }
+.select-btn:hover { border-color: var(--border-gray-dark1); }
+.select-btn.selected { border-color: var(--border-selected); }
+.select-btn__label { color: var(--text-default); }
 
 /* ── Misc ── */
 .hidden { display: none !important; }

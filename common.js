@@ -30,9 +30,15 @@ window.getEmailSuggestions = (email) => {
 /* ── Sticky CTA detection ── */
 ;(function(){
   function checkSticky() {
-    document.querySelectorAll('.sticky-cta, .inline-btn-wrap, .btn-sticky').forEach(function(el) {
-      el.classList.toggle('is-stuck', Math.round(el.getBoundingClientRect().bottom) >= window.innerHeight)
+    let stuckHeight = 0
+    document.querySelectorAll('.sticky-cta, .inline-btn-wrap, .btn-sticky, .save-sticky').forEach(function(el) {
+      const rect = el.getBoundingClientRect()
+      const stuck = Math.round(rect.bottom) >= window.innerHeight
+      el.classList.toggle('is-stuck', stuck)
+      if (stuck) stuckHeight = Math.max(stuckHeight, rect.height)
     })
+    document.documentElement.style.setProperty('--sticky-cta-h', stuckHeight + 'px')
+    document.documentElement.classList.toggle('has-sticky-cta', stuckHeight > 0)
   }
   window.addEventListener('scroll', checkSticky, { passive: true })
   window.addEventListener('resize', checkSticky, { passive: true })

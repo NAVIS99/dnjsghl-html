@@ -30,7 +30,6 @@
     @keyframes drawCheck { from{stroke-dashoffset:32} to{stroke-dashoffset:0} }
     .heading1 { font-size:1.5rem; font-weight:600; color:var(--text-default); letter-spacing:-0.012rem; line-height:2rem; text-align:center; margin:0; }
     .heading2 { font-size:1.25rem; font-weight:600; color:var(--text-default); letter-spacing:-0.01rem; line-height:1.75rem; margin:0 0 1.5rem; }
-    .section-label { font-size:0.875rem; font-weight:600; letter-spacing:-0.007rem; margin:0 0 0.625rem; }
     .opt-label { font-weight:400; color:var(--text-secondary); }
 
     /* ── Divider ── */
@@ -43,6 +42,12 @@
     /* ── Radio ── */
     .radio-row { display:flex; align-items:center; gap:0.5rem; height:2.5rem; flex:1; cursor:pointer; }
     .radio-label { font-size:1rem; letter-spacing:-0.008rem; }
+
+    /* ── Interest grid (관심분야) ── */
+    .interest-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+
+    /* ── Sticky save button ── */
+    .save-sticky { position:sticky; bottom:0; background:var(--surface-white); margin:0 -1.25rem; padding:2.5rem 1.25rem 0; }
 
     .chevron { flex-shrink:0; margin-left:0.5rem; }
 
@@ -135,9 +140,56 @@
     <h3 class="heading2" style="margin-bottom:0;">추가 정보를 입력하고</h3>
     <h3 class="heading2">맞춤 컨텐츠 추천을 받아보세요.</h3>
 
+    <!-- 관심분야 -->
+    <div style="margin-bottom:2.5rem;">
+      <p class="sec-label">관심분야 <span class="opt-label">(선택)</span></p>
+      <div class="interest-grid">
+        <button class="select-btn" onclick="App.toggleInterest('근현대 미술')" id="interest-0">
+          <div class="ocheck" id="icheck-0"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">근현대 미술</span>
+        </button>
+        <button class="select-btn" onclick="App.toggleInterest('해외 미술')" id="interest-1">
+          <div class="ocheck" id="icheck-1"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">해외 미술</span>
+        </button>
+        <button class="select-btn" onclick="App.toggleInterest('판화')" id="interest-2">
+          <div class="ocheck" id="icheck-2"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">판화</span>
+        </button>
+        <button class="select-btn" onclick="App.toggleInterest('고미술')" id="interest-3">
+          <div class="ocheck" id="icheck-3"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">고미술</span>
+        </button>
+        <button class="select-btn" onclick="App.toggleInterest('아트')" id="interest-4">
+          <div class="ocheck" id="icheck-4"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">아트</span>
+        </button>
+        <button class="select-btn" onclick="App.toggleInterest('기타')" id="interest-5">
+          <div class="ocheck" id="icheck-5"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 5L4 8L10 1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="select-btn__label ty-body1">기타</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 관심작가 -->
+    <div style="margin-bottom:2.5rem;">
+      <p class="sec-label">관심작가 <span class="opt-label">(선택)</span></p>
+      <div class="field-wrap">
+        <div class="field-row">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="color:var(--text-default);flex-shrink:0;">
+            <path d="M12.4838 12.4783L16.7285 16.7189" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="8.48716" cy="8.48252" r="5.21567" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <input type="text" id="artist-input" placeholder="관심작가 입력" autocomplete="off"
+            onfocus="App.onArtistFocus(event)" onkeydown="App.onArtistKeydown(event)"/>
+        </div>
+      </div>
+      <div class="chip-group" id="artist-chips" style="margin-top:1rem;"></div>
+    </div>
+
     <!-- 성별 -->
-    <div style="margin-bottom:1.5rem;">
-      <p class="section-label">성별 <span class="opt-label">(선택)</span></p>
+    <div style="margin-bottom:2.5rem;">
+      <p class="sec-label">성별 <span class="opt-label">(선택)</span></p>
       <div style="display:flex;">
         <div class="radio-row" onclick="App.selectGender('여성')" id="gender-female">
           <div class="radio" id="r-female"></div>
@@ -155,8 +207,8 @@
     </div>
 
     <!-- 직업 -->
-    <div style="margin-bottom:1.5rem;">
-      <p class="section-label">직업 <span class="opt-label">(선택)</span></p>
+    <div style="margin-bottom:2.5rem;">
+      <p class="sec-label">직업 <span class="opt-label">(선택)</span></p>
       <div class="select-wrap">
         <select class="field-wrap placeholder" style="padding-right:2.5rem;" onchange="App.selectJob(this.value)">
           <option value="">직업 선택</option>
@@ -172,8 +224,8 @@
     </div>
 
     <!-- 광고성 정보 수신 동의 (1단계 미동의 시 표시) -->
-    <div style="margin-bottom:1.5rem;" id="opt-terms-section">
-      <p class="section-label">광고성 정보 수신 동의 <span class="opt-label">(선택)</span></p>
+    <div id="opt-terms-section">
+      <p class="sec-label">광고성 정보 수신 동의 <span class="opt-label">(선택)</span></p>
       <div class="terms-box">
         <div class="terms-body">
           <div class="terms-item">
@@ -202,7 +254,9 @@
       </div>
     </div>
 
-    <button class="btn-solid-black-large disabled" id="save-btn-info" style="margin-top:1.5rem;" onclick="App.saveInfo()">입력 정보 저장</button>
+    <div class="save-sticky">
+      <button class="btn-solid-black-large disabled" id="save-btn-info" onclick="App.saveInfo()">관심 정보 저장</button>
+    </div>
   </div>
 
   <!-- 주소 (2단계에서 미입력 시 표시) -->
@@ -211,8 +265,8 @@
     <div style="padding:2.5rem 1.25rem;">
       <h3 class="heading2" style="margin-bottom:0;">주소 정보를 입력하면</h3>
       <h3 class="heading2">경매 응찰에 참여하실 수 있습니다.</h3>
-      <p class="section-label">주소 <span class="opt-label">(선택)</span></p>
-      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
+      <p class="sec-label">주소 <span class="opt-label">(선택)</span></p>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
         <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
           <div class="field-row">
             <span id="zip-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:var(--text-secondary);">우편번호</span>
@@ -233,7 +287,9 @@
           </div>
         </div>
       </div>
-      <button class="btn-solid-black-large disabled" id="save-btn-addr" style="margin-top:1.5rem;" onclick="App.saveAddr()">입력 정보 저장</button>
+      <div class="save-sticky">
+        <button class="btn-solid-black-large disabled" id="save-btn-addr" onclick="App.saveAddr()">주소 정보 저장</button>
+      </div>
     </div>
   </div>
 
@@ -355,6 +411,9 @@ const App = (() => {
 
   let gender='', job='', optChans={sms:false,email:false,phone:false}
   let consentGranted=false, pendingAction=null
+  const INTEREST_LABELS = ['근현대 미술','해외 미술','판화','고미술','아트','기타']
+  const RECOMMENDED_ARTISTS = ['이우환','박서보','김환기','이강소','유영국']
+  let interests=[], selectedArtists=[], customArtists=[]
   let addrConsentGranted=false, pendingAddrAction=null
   let zip='', address='', detail=''
 
@@ -379,6 +438,68 @@ const App = (() => {
   }
   function confirmMarketing() { consentGranted=true; hide('marketing-overlay'); const a=pendingAction; pendingAction=null; setTimeout(()=>a?.(),0) }
   function cancelMarketing()  { pendingAction=null; hide('marketing-overlay') }
+
+  /* ── Interests (관심분야) ── */
+  function toggleInterest(label) {
+    withConsent(() => {
+      const i = interests.indexOf(label)
+      if (i>-1) interests.splice(i,1); else interests.push(label)
+      syncInterests()
+      updateInfoSaveBtn()
+    })
+  }
+  function syncInterests() {
+    INTEREST_LABELS.forEach((label, i) => {
+      const on = interests.includes(label)
+      $('interest-'+i).classList.toggle('selected', on)
+      setCheck('icheck-'+i, on)
+    })
+  }
+
+  /* ── Artists (관심작가) ── */
+  const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+  function onArtistFocus(e) {
+    if (consentGranted) return
+    e.target.blur()
+    withConsent(() => setTimeout(() => $('artist-input').focus(), 0))
+  }
+  function onArtistKeydown(e) {
+    if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return
+    e.preventDefault()
+    const val = e.target.value.trim()
+    if (!val || customArtists.includes(val) || selectedArtists.includes(val)) return
+    customArtists.push(val)
+    e.target.value = ''
+    renderArtistChips()
+    updateInfoSaveBtn()
+  }
+  function toggleArtist(name) {
+    withConsent(() => {
+      const i = selectedArtists.indexOf(name)
+      if (i>-1) selectedArtists.splice(i,1); else selectedArtists.push(name)
+      renderArtistChips()
+      updateInfoSaveBtn()
+    })
+  }
+  function removeCustomArtist(name) {
+    customArtists = customArtists.filter(a => a!==name)
+    renderArtistChips()
+    updateInfoSaveBtn()
+  }
+  function renderArtistChips() {
+    const plusIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 8M8 14L8 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`
+    const xIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`
+    const customHtml = customArtists.map(name =>
+      `<button class="chip selected medium2" onclick="App.removeCustomArtist('${escapeHtml(name)}')">${escapeHtml(name)}${xIcon}</button>`
+    ).join('')
+    const recHtml = RECOMMENDED_ARTISTS.map(name => {
+      const on = selectedArtists.includes(name)
+      return on
+        ? `<button class="chip selected medium2" onclick="App.toggleArtist('${name}')">${name}${xIcon}</button>`
+        : `<button class="chip default medium2" onclick="App.toggleArtist('${name}')">${plusIcon}${name}</button>`
+    }).join('')
+    $('artist-chips').innerHTML = customHtml + recHtml
+  }
 
   /* ── Gender ── */
   function selectGender(g) {
@@ -412,14 +533,20 @@ const App = (() => {
   /* ── Save info button ── */
   function updateInfoSaveBtn() {
     const hasOpt = optChans.sms||optChans.email||optChans.phone
-    const active = gender!==''||job!==''||hasOpt
+    const hasArtists = selectedArtists.length>0 || customArtists.length>0
+    const active = gender!==''||job!==''||hasOpt||interests.length>0||hasArtists
     const btn = $('save-btn-info')
     btn.className = 'btn-solid-black-large' + (active?'':' disabled')
     btn.disabled  = !active
   }
   function saveInfo() {
-    if (!gender && !job && !optChans.sms && !optChans.email && !optChans.phone) return
+    const hasOpt = optChans.sms||optChans.email||optChans.phone
+    const hasArtists = selectedArtists.length>0 || customArtists.length>0
+    if (!gender && !job && !hasOpt && !interests.length && !hasArtists) return
     showToast('입력하신 정보가 저장되었습니다.')
+    const btn = $('save-btn-info')
+    btn.className = 'btn-solid-black-large disabled'
+    btn.disabled = true
   }
 
   /* ── Address consent ── */
@@ -454,11 +581,16 @@ const App = (() => {
   function saveAddr() {
     if (!zip&&!address&&!detail) return
     showToast('입력하신 정보가 저장되었습니다.')
+    const btn = $('save-btn-addr')
+    btn.className = 'btn-solid-black-large disabled'
+    btn.disabled = true
   }
 
   syncOptChans()
+  renderArtistChips()
   return {
     selectGender, selectJob, toggleOptAll, toggleChan, saveInfo,
+    toggleInterest, onArtistFocus, onArtistKeydown, toggleArtist, removeCustomArtist,
     confirmMarketing, cancelMarketing,
     openAddr, confirmAddrConsent, cancelAddrConsent, onDetailFocus, onDetailInput, saveAddr,
   }

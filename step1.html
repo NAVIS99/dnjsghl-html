@@ -48,10 +48,6 @@
 
     /* ── Member type buttons ── */
     .member-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 2.5rem; }
-    .member-btn { display: flex; align-items: center; gap: 0.5rem; height: 3.25rem; padding: 0 1rem; border: 1px solid var(--border-gray); border-radius: 0.25rem; background: var(--surface-white); cursor: pointer; transition: border-color 0.1s; }
-    .member-btn:hover { border-color: var(--border-gray-dark1); }
-    .member-btn.selected { border-color: var(--border-selected); }
-    .member-btn__label { color: var(--text-default); }
 
     /* ── Terms ── */
     .terms-box { border: 1px solid var(--border-gray); border-radius: 0.5rem; overflow: hidden; }
@@ -355,21 +351,21 @@
         </button>
       </div>
       <div class="member-grid">
-        <button class="member-btn" onclick="App.selectMember(0)" id="member-0">
+        <button class="select-btn" onclick="App.selectMember(0)" id="member-0">
           <div class="radio" id="radio-0"></div>
-          <span class="member-btn__label ty-body1">국내 개인</span>
+          <span class="select-btn__label ty-body1">국내 개인</span>
         </button>
-        <button class="member-btn" onclick="App.selectMember(1)" id="member-1">
+        <button class="select-btn" onclick="App.selectMember(1)" id="member-1">
           <div class="radio" id="radio-1"></div>
-          <span class="member-btn__label ty-body1">국내 사업자</span>
+          <span class="select-btn__label ty-body1">국내 사업자</span>
         </button>
-        <button class="member-btn" onclick="App.selectMember(2)" id="member-2">
+        <button class="select-btn" onclick="App.selectMember(2)" id="member-2">
           <div class="radio" id="radio-2"></div>
-          <span class="member-btn__label ty-body1">해외 개인</span>
+          <span class="select-btn__label ty-body1">해외 개인</span>
         </button>
-        <button class="member-btn" onclick="App.selectMember(3)" id="member-3">
+        <button class="select-btn" onclick="App.selectMember(3)" id="member-3">
           <div class="radio" id="radio-3"></div>
-          <span class="member-btn__label ty-body1">해외 사업자</span>
+          <span class="select-btn__label ty-body1">해외 사업자</span>
         </button>
       </div>
 
