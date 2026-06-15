@@ -144,10 +144,50 @@ html.has-sticky-cta #toast-wrap { bottom: calc(1.25rem + var(--sticky-cta-h, 0px
 
 ---
 
+## 4. PC에서 토스트가 본문 영역(`#app`) 기준 가운데 정렬되지 않던 버그 수정
+
+PC(64rem 이상)에서 토스트가 좌측 배너를 제외한 흰색 본문 영역(`#app`, 35rem) 기준으로 가운데 정렬되어야 하는데, 실제로는 항상 뷰포트 전체 기준 `left:0`으로 적용되고 있었습니다.
+
+**원인**: `@media (min-width: 64rem) { #toast-wrap { left: 27.5rem; } }` 규칙이 기본 `#toast-wrap { left:0; right:0; ... }` 규칙보다 **소스상 앞**에 위치해 있었습니다. 두 규칙의 selector specificity가 동일(`#toast-wrap`)하면 미디어 쿼리 충족 여부와 무관하게 **나중에 나온 규칙이 이기기 때문에**, PC에서도 항상 기본 규칙의 `left:0`이 적용되어 기존 `left:27.5rem`은 사실상 한 번도 적용되지 않았습니다.
+
+**수정 내용**
+
+1. `common.js` — `#app`의 실제 위치/너비를 측정해 CSS 변수로 저장 (스크롤/리사이즈/DOM 변경 시 갱신)
+```js
+function checkAppRect() {
+  const app = document.getElementById('app')
+  if (!app) return
+  const rect = app.getBoundingClientRect()
+  document.documentElement.style.setProperty('--app-left',  rect.left + 'px')
+  document.documentElement.style.setProperty('--app-width', rect.width + 'px')
+}
+```
+
+2. `common.css` — PC용 `#toast-wrap` 규칙을 기본 규칙보다 **뒤**로 이동하고, `#app`의 위치/너비를 기준으로 정렬
+```css
+/* 변경 전 (38번째 줄, 기본 규칙보다 앞) */
+@media (min-width: 64rem) {
+  ...
+  #toast-wrap      { left: 27.5rem; }
+  ...
+}
+
+/* 변경 후 (toast 섹션, 기본 규칙 뒤로 이동) */
+@media (min-width: 64rem) {
+  #toast-wrap { left: var(--app-left, 27.5rem); width: var(--app-width, calc(100% - 27.5rem)); right: auto; }
+}
+```
+
+- 결과: PC에서 토스트가 `#app`(흰색 본문 영역)과 정확히 동일한 영역을 차지하고, 그 안에서 가운데 정렬됩니다.
+- Playwright로 1440x900 뷰포트에서 검증: `#app` rect(`left:660, width:560`)와 `#toast-wrap` rect(`left:660, width:560`)가 정확히 일치함을 확인.
+
+---
+
 ## 영향도
 
-- `common.js` / `common.css`를 공유하는 모든 페이지에 적용되는 변경이지만, 동작은 `.sticky-cta` / `.inline-btn-wrap` / `.btn-sticky` / `.save-sticky` 요소가 존재하고 화면 바닥에 붙어있는(`is-stuck`) 경우에만 영향을 줍니다.
+- `common.js` / `common.css`를 공유하는 모든 페이지에 적용되는 변경이지만, 동작은 `.sticky-cta` / `.inline-btn-wrap` / `.btn-sticky` / `.save-sticky` 요소가 존재하고 화면 바닥에 붙어있는(`is-stuck`) 경우, 그리고 PC(64rem 이상)에서 토스트가 노출되는 경우에만 영향을 줍니다.
 - complete.html 외 다른 페이지에서 사용 중인 sticky CTA(예: step 페이지 하단 버튼) + 토스트 동시 노출 시에도 동일하게 토스트 위치가 보정됩니다.
+- PC 토스트 가운데 정렬 보정은 `#app`을 사용하는 모든 페이지(step1~3, complete 등)에 동일하게 적용됩니다.
 
 ## 개발자 작업 필요사항
 

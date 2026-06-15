@@ -38,7 +38,6 @@ img { display: block; }
 @media (min-width: 64rem) {
   #left-panel      { display: block; }
   #pc-footer       { display: block; }
-  #toast-wrap      { left: 27.5rem; }
   #email-dropdown  { position: fixed; }
   .overlay         { left: 27.5rem; }
   .footer          { display: none !important; }
@@ -318,6 +317,9 @@ img { display: block; }
   pointer-events: none; transition: bottom 0.15s;
 }
 html.has-sticky-cta #toast-wrap { bottom: calc(1.25rem + var(--sticky-cta-h, 0px)); }
+@media (min-width: 64rem) {
+  #toast-wrap { left: var(--app-left, 27.5rem); width: var(--app-width, calc(100% - 27.5rem)); right: auto; }
+}
 .toast {
   max-width: 35rem; width: 100%; padding: 0.8125rem 1.25rem;
   display: flex; justify-content: center; align-items: center;

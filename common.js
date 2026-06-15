@@ -40,8 +40,16 @@ window.getEmailSuggestions = (email) => {
     document.documentElement.style.setProperty('--sticky-cta-h', stuckHeight + 'px')
     document.documentElement.classList.toggle('has-sticky-cta', stuckHeight > 0)
   }
-  window.addEventListener('scroll', checkSticky, { passive: true })
-  window.addEventListener('resize', checkSticky, { passive: true })
-  new MutationObserver(checkSticky).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] })
-  checkSticky()
+  function checkAppRect() {
+    const app = document.getElementById('app')
+    if (!app) return
+    const rect = app.getBoundingClientRect()
+    document.documentElement.style.setProperty('--app-left',  rect.left + 'px')
+    document.documentElement.style.setProperty('--app-width', rect.width + 'px')
+  }
+  function checkAll() { checkSticky(); checkAppRect() }
+  window.addEventListener('scroll', checkAll, { passive: true })
+  window.addEventListener('resize', checkAll, { passive: true })
+  new MutationObserver(checkAll).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] })
+  checkAll()
 })()
