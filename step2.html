@@ -9,7 +9,6 @@
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
   <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <link rel="stylesheet" href="kads-foundation.css"/>
-  
   <link rel="stylesheet" href="common.css"/>
   <style>
     select { font-family:inherit; font-size:inherit; outline:none; -webkit-appearance:none; appearance:none; }
@@ -1022,6 +1021,7 @@ const App = (() => {
   function onCpwInput(el) {
     form.confirmPw = el.value
     focusedField==='confirmPw' ? (form.confirmPw?show('confirmPw-clear'):hide('confirmPw-clear')) : null
+    if (form.confirmPw && form.password === form.confirmPw) $('cpw-wrap').classList.remove('error')
     updateCpwMsg(); updateBtn()
   }
   function toggleCpw() {
@@ -1164,7 +1164,7 @@ const App = (() => {
   function openIdGuide()  { show('id-guide-modal'); document.body.style.overflow='hidden' }
   function closeIdGuide() { hide('id-guide-modal'); document.body.style.overflow='' }
 
-  /* ── Country search dropdown (해외 주소 국가) ── */
+  /* ── Country search dropdown (해외 주소 국가, addr/biz 공용) ── */
   let countryDDOpen = null // 'addr' | 'biz' | null
   let countryDDList = COUNTRY_LIST
   let countryDDActiveIdx = -1
