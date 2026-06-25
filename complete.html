@@ -92,6 +92,9 @@
     /* ── Page animation ── */
     @keyframes pageFadeIn { from{opacity:0} to{opacity:1} }
     #page-body { opacity:0; animation:pageFadeIn 0.65s ease-out 0.1s forwards; }
+
+    /* ── 관심 정보/주소 정보 저장 후 접힘 속도 (common.css .section-reveal 기본 0.38s보다 느리게) ── */
+    #info-section, #addr-section { transition: grid-template-rows 0.6s ease-in-out; }
   </style>
 </head>
 <body>
@@ -132,12 +135,14 @@
     <h2 class="heading1">케이옥션 가입을 축하합니다!</h2>
   </div>
 
-  <div class="divider"></div>
+  <div class="section-reveal open" id="info-section">
+    <div class="section-reveal-inner">
+      <div class="divider"></div>
 
-  <!-- 추가 정보 -->
-  <div style="padding:2.5rem 1.25rem;">
-    <h3 class="heading2" style="margin-bottom:0;">추가 정보를 입력하고</h3>
-    <h3 class="heading2">맞춤 컨텐츠 추천을 받아보세요.</h3>
+      <!-- 추가 정보 -->
+      <div style="padding:2.5rem 1.25rem;">
+        <h3 class="heading2" style="margin-bottom:0;">추가 정보를 입력하고</h3>
+        <h3 class="heading2">맞춤 컨텐츠 추천을 받아보세요.</h3>
 
     <!-- 관심분야 -->
     <div style="margin-bottom:2.5rem;">
@@ -254,40 +259,44 @@
     </div>
 
     <div class="save-sticky">
-      <button class="btn-solid-black-large disabled" id="save-btn-info" onclick="App.saveInfo()">관심 정보 저장</button>
+      <button class="btn-solid-black-large disabled" id="save-btn-info" onclick="App.saveInfo()">추가 정보 저장</button>
+    </div>
+      </div>
     </div>
   </div>
 
   <!-- 주소 (2단계에서 미입력 시 표시) -->
-  <div id="addr-section">
-    <div class="divider"></div>
-    <div style="padding:2.5rem 1.25rem;">
-      <h3 class="heading2" style="margin-bottom:0;">주소 정보를 입력하면</h3>
-      <h3 class="heading2">경매 응찰에 참여하실 수 있습니다.</h3>
-      <p class="sec-label">주소 <span class="opt-label">(선택)</span></p>
-      <div style="display:flex;flex-direction:column;gap:0.5rem;">
-        <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
-          <div class="field-row">
-            <span id="zip-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:var(--text-secondary);">우편번호</span>
-            <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
+  <div class="section-reveal open" id="addr-section">
+    <div class="section-reveal-inner">
+      <div class="divider"></div>
+      <div style="padding:2.5rem 1.25rem;">
+        <h3 class="heading2" style="margin-bottom:0;">주소 정보를 입력하면</h3>
+        <h3 class="heading2">경매 응찰에 참여하실 수 있습니다.</h3>
+        <p class="sec-label">주소 <span class="opt-label">(선택)</span></p>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+          <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
+            <div class="field-row">
+              <span id="zip-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:var(--text-secondary);">우편번호</span>
+              <button class="inner-btn" tabindex="-1" onclick="event.stopPropagation();App.openAddr()">주소검색</button>
+            </div>
+          </div>
+          <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
+            <div class="field-row">
+              <span id="road-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:var(--text-secondary);">도로명 주소</span>
+            </div>
+          </div>
+          <div class="field-wrap disabled addr-click" id="detail-wrap" onclick="App.openAddr()">
+            <div class="field-row">
+              <input type="text" id="detail-input" placeholder="상세 주소 입력" readonly
+                style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;background:none;"
+                onfocus="App.onDetailFocus(event)"
+                oninput="App.onDetailInput(this)"/>
+            </div>
           </div>
         </div>
-        <div class="field-wrap disabled addr-click" onclick="App.openAddr()">
-          <div class="field-row">
-            <span id="road-text" style="flex:1;font-size:1rem;letter-spacing:-0.008rem;color:var(--text-secondary);">도로명 주소</span>
-          </div>
+        <div class="save-sticky">
+          <button class="btn-solid-black-large disabled" id="save-btn-addr" onclick="App.saveAddr()">주소 정보 저장</button>
         </div>
-        <div class="field-wrap disabled addr-click" id="detail-wrap" onclick="App.openAddr()">
-          <div class="field-row">
-            <input type="text" id="detail-input" placeholder="상세 주소 입력" readonly
-              style="flex:1;font-size:1rem;color:var(--text-default);letter-spacing:-0.008rem;background:none;"
-              onfocus="App.onDetailFocus(event)"
-              oninput="App.onDetailInput(this)"/>
-          </div>
-        </div>
-      </div>
-      <div class="save-sticky">
-        <button class="btn-solid-black-large disabled" id="save-btn-addr" onclick="App.saveAddr()">주소 정보 저장</button>
       </div>
     </div>
   </div>
@@ -546,6 +555,7 @@ const App = (() => {
     const btn = $('save-btn-info')
     btn.className = 'btn-solid-black-large disabled'
     btn.disabled = true
+    $('info-section').classList.remove('open')
   }
 
   /* ── Address consent ── */
@@ -583,6 +593,7 @@ const App = (() => {
     const btn = $('save-btn-addr')
     btn.className = 'btn-solid-black-large disabled'
     btn.disabled = true
+    $('addr-section').classList.remove('open')
   }
 
   syncOptChans()

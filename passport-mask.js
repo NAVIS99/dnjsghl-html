@@ -177,7 +177,7 @@ function _template() {
       <div id="pm-right-after">
         <div class="modal-header">
           <span class="modal-title">여권 사본 제출하기</span>
-          <button class="modal-close" onclick="PassportMask._closeAttempt()">
+          <button class="modal-close" onclick="PassportMask.close()">
             <img src="./public/close_24.svg" width="24" height="24" alt="닫기"/>
           </button>
         </div>
@@ -359,11 +359,6 @@ function _requireMasked() {
   return false
 }
 
-function _closeAttempt() {
-  if (!_requireMasked()) return
-  close()
-}
-
 function _submit() {
   if (!_img) return
   if (!_requireMasked()) return
@@ -397,7 +392,7 @@ function _readFile(file) {
 return {
   open, close,
   _toggleExample, _resetMasks, _toggleMasking,
-  _reattach, _submit, _closeAttempt,
+  _reattach, _submit,
   _onFileChange,
 }
 

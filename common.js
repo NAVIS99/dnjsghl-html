@@ -51,5 +51,11 @@ window.getEmailSuggestions = (email) => {
   window.addEventListener('scroll', checkAll, { passive: true })
   window.addEventListener('resize', checkAll, { passive: true })
   new MutationObserver(checkAll).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] })
+  // .section-reveal 펼침/접힘은 class 변화 없이 순수 CSS transition(grid-template-rows)으로만 진행되므로,
+  // MutationObserver가 못 잡는다. transition이 끝나는 시점에 다시 계산해야 sticky CTA가 중간 레이아웃
+  // 기준으로 잘못 "붙은" 상태로 남아있다가 한참 뒤에야 툭 떨어지는 현상을 막을 수 있다.
+  document.body.addEventListener('transitionend', function(e) {
+    if (e.propertyName === 'grid-template-rows') checkAll()
+  })
   checkAll()
 })()
