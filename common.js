@@ -30,12 +30,26 @@ window.getEmailSuggestions = (email) => {
 /* ── Sticky CTA detection ── */
 ;(function(){
   function checkSticky() {
-    document.querySelectorAll('.sticky-cta, .inline-btn-wrap, .btn-sticky').forEach(function(el) {
-      el.classList.toggle('is-stuck', Math.round(el.getBoundingClientRect().bottom) >= window.innerHeight)
+    let stuckHeight = 0
+    document.querySelectorAll('.sticky-cta, .inline-btn-wrap, .btn-sticky, .save-sticky').forEach(function(el) {
+      const rect = el.getBoundingClientRect()
+      const stuck = Math.round(rect.bottom) >= window.innerHeight
+      el.classList.toggle('is-stuck', stuck)
+      if (stuck) stuckHeight = Math.max(stuckHeight, rect.height)
     })
+    document.documentElement.style.setProperty('--sticky-cta-h', stuckHeight + 'px')
+    document.documentElement.classList.toggle('has-sticky-cta', stuckHeight > 0)
   }
-  window.addEventListener('scroll', checkSticky, { passive: true })
-  window.addEventListener('resize', checkSticky, { passive: true })
-  new MutationObserver(checkSticky).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] })
-  checkSticky()
+  function checkAppRect() {
+    const app = document.getElementById('app')
+    if (!app) return
+    const rect = app.getBoundingClientRect()
+    document.documentElement.style.setProperty('--app-left',  rect.left + 'px')
+    document.documentElement.style.setProperty('--app-width', rect.width + 'px')
+  }
+  function checkAll() { checkSticky(); checkAppRect() }
+  window.addEventListener('scroll', checkAll, { passive: true })
+  window.addEventListener('resize', checkAll, { passive: true })
+  new MutationObserver(checkAll).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] })
+  checkAll()
 })()

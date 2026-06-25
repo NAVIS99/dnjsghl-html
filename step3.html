@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
-  <link rel="stylesheet" href="tokens.css"/>
-  <link rel="stylesheet" href="typography.css"/>
+  <link rel="stylesheet" href="kads-foundation.css"/>
+  
   <link rel="stylesheet" href="common.css"/>
   <style>
     /* ── Sticky CTA ── */
@@ -528,8 +528,8 @@ const App = (() => {
     $(errId).classList.toggle('hidden', !msg)
   }
   function validateName()  { showFieldError('name-wrap',  'name-err',  state.name.trim()==='' ? '이름을 입력해 주세요.' : '') }
-  function validateBirth() { showFieldError('birth-wrap', 'birth-err', state.birth.length>0 && state.birth.length<8 ? '생년월일 8자리를 입력해 주세요.' : '') }
-  function validateEmail() { showFieldError('email-wrap', 'email-err', state.email && !isEmailValid(state.email) ? '올바른 이메일 형식을 입력해 주세요.' : '') }
+  function validateBirth() { showFieldError('birth-wrap', 'birth-err', state.birth.length<8 ? '생년월일 8자리를 입력해 주세요.' : '') }
+  function validateEmail() { showFieldError('email-wrap', 'email-err', !isEmailValid(state.email) ? '올바른 이메일 형식을 입력해 주세요.' : '') }
   function validateAll() {
     showFieldError('name-wrap',  'name-err',  state.name.trim()===''          ? '이름을 입력해 주세요.'              : '')
     showFieldError('birth-wrap', 'birth-err', state.birth.length<8            ? '생년월일 8자리를 입력해 주세요.'    : '')
@@ -658,7 +658,7 @@ const App = (() => {
           const cls = isSelected ? 'selected' : isDisabled ? 'disabled' : 'default'
           const checkIcon = isSelected ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''
           const onclick = isDisabled ? '' : `onclick="App.setLabel('${file.id}','${key}')"`
-          return `<button class="label-chip ${cls}" ${onclick}>${checkIcon}${CARD_LABELS[i]}</button>`
+          return `<button class="chip ${cls} small" ${onclick}>${checkIcon}${CARD_LABELS[i]}</button>`
         }).join('')
         const maskBtn = file.label === 'id' ? `<button class="file-action-btn" onclick="App.maskFile('${file.id}')"><img src="./public/pencil_16.svg" width="16" height="16" alt=""/>마스킹</button>` : ''
         return `
@@ -667,7 +667,7 @@ const App = (() => {
               <div class="file-thumb"><img src="${file.src}" alt=""/></div>
             </div>
             <div class="file-right">
-              <div class="label-chips">${chips}</div>
+              <div class="chip-group">${chips}</div>
               <div class="file-actions">
                 ${maskBtn}
                 <button class="file-action-btn" onclick="App.removeFile('${file.id}')">삭제</button>

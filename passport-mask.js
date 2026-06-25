@@ -102,7 +102,7 @@ const CSS = `
 .pm-tool-btns { display: flex; gap: 0.25rem; }
 @media (min-width: 64rem) {
   .pm-tool-btns { flex: 1; gap: 0.5rem; }
-  .pm-tool-btns .pm-tool-btn { flex: 1; justify-content: center; }
+  .pm-tool-btns .pm-tool-btn { flex: 1; justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
   .pm-tool-btn.btn-solid-white-medium2 { border: 1px solid var(--border-gray-dark2); transition: border-color 0.15s; }
   .pm-tool-btn.btn-solid-white-medium2:hover { border-color: var(--border-gray-dark); background: var(--surface-white); }
 }
@@ -177,14 +177,14 @@ function _template() {
       <div id="pm-right-after">
         <div class="modal-header">
           <span class="modal-title">여권 사본 제출하기</span>
-          <button class="modal-close" onclick="PassportMask.close()">
+          <button class="modal-close" onclick="PassportMask._closeAttempt()">
             <img src="./public/close_24.svg" width="24" height="24" alt="닫기"/>
           </button>
         </div>
         <div id="pm-after-guide">
           <div class="pm-notice">
             <img src="./public/mark-exclamation_o_16.svg" width="16" height="16" alt="" style="flex-shrink:0;"/>
-            <p class="ty-body3">이름, 생년월일, 국적, 발급일, 만료일을 <span class="pm-notice-em">제외한<br class="pm-notice-break"/>모든 정보를 마스킹</span>합니다.</p>
+            <p class="ty-body3">이름, 생년월일, 국적, 발급일, 만료일을 <span class="pm-notice-em">제외한 <br class="pm-notice-break"/>모든 정보를 마스킹</span>합니다.</p>
           </div>
           <div class="pm-example-wrap">
             <img src="./public/passport-ex.png" alt="여권 예시" class="pm-example-img"/>
@@ -235,9 +235,19 @@ function _showAfter(src) {
     S.masks = []
     S.currentRect = null
     _draw()
+    S.alreadyMasked = _detectExistingMask()
   }
   img.src = src
   S.src = src
+}
+
+function _detectExistingMask() {
+  if (!_ctx || !_canvas.width || !_canvas.height) return false
+  const data = _ctx.getImageData(0, 0, _canvas.width, _canvas.height).data
+  for (let i = 0; i < data.length; i += 4 * 7) {
+    if (Math.abs(data[i] - 247) < 12 && Math.abs(data[i + 1] - 110) < 12 && Math.abs(data[i + 2] - 51) < 12) return true
+  }
+  return false
 }
 
 /* ── Canvas draw ── */
@@ -343,8 +353,20 @@ function _reattach() {
   document.getElementById('pm-file-input').click()
 }
 
+function _requireMasked() {
+  if (S.masks.length || S.alreadyMasked) return true
+  alert('이름, 생년월일, 국적, 발급일, 만료일을 제외한 모든 정보를 마스킹해 주세요.')
+  return false
+}
+
+function _closeAttempt() {
+  if (!_requireMasked()) return
+  close()
+}
+
 function _submit() {
   if (!_img) return
+  if (!_requireMasked()) return
   const out = document.createElement('canvas')
   out.width = _img.naturalWidth; out.height = _img.naturalHeight
   const octx = out.getContext('2d')
@@ -375,7 +397,7 @@ function _readFile(file) {
 return {
   open, close,
   _toggleExample, _resetMasks, _toggleMasking,
-  _reattach, _submit,
+  _reattach, _submit, _closeAttempt,
   _onFileChange,
 }
 
