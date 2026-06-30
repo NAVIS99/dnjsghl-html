@@ -109,9 +109,13 @@ font-size 등을 손으로 다시 계산해서 적지 않는다.
 
 ## 7. 마스킹 모달 (`passport-mask.js`)
 
-여권/신분증 이미지 마스킹은 `step1.html`(회원별 준비사항), `step2.html`(해외 개인 신분증 첨부),
-`step3.html`(사업자 증빙자료) 세 곳이 **모두 같은 `passport-mask.js` 모듈을 공유**한다(별개
-시스템 아님). 이 파일을 고치면 세 페이지에 전부 영향을 준다는 것을 항상 의식할 것:
+여권/신분증 이미지 마스킹은 `step2.html`(해외 개인 신분증 첨부)과 `step3.html`(사업자 증빙자료)
+**두 곳이 같은 `passport-mask.js` 모듈을 공유**한다(별개 시스템 아님). 이 파일을 고치면 두 페이지에
+모두 영향을 준다는 것을 항상 의식할 것. **`step1.html`은 `passport-mask.js`를 로드하지도 호출하지도
+않는다** — step1의 "회원별 준비사항" 모달(`#mi-modal`)은 회원 유형별 준비물을 보여주는 **안내용**일
+뿐, 파일 첨부·마스킹 기능이 없다. 마스킹 동작/모달 HTML/모달 CSS는 전부 `passport-mask.js` 한 파일
+안에 들어있다(HTML은 `_template()`, CSS는 `_injectCSS()`의 `CSS` 상수). 단, `public/`의 아이콘·예시
+이미지 에셋과 `kads-foundation.css`의 토큰 변수(`--text-*` 등)·`ty-*` 클래스에는 의존한다:
 - `PassportMask.open(src, onSubmit)`로 호출하고, 마스킹 완료 시 `onSubmit(maskedDataUrl)`을 받는다.
 - 이미 마스킹된 이미지(주황색 `#F76E33` 영역이 픽셀에 baked-in)를 다시 열었을 때는 새로 마스킹하지
   않아도 제출이 막히지 않아야 한다(`_detectExistingMask()`로 기존 마스킹 여부를 판별).
